@@ -1,4 +1,4 @@
-package org.woen.Util;
+package org.woen.Util.Vectors;
 
 public class DoubleCoordinate implements Coordinate<DoubleCoordinate>{
     private final double data;

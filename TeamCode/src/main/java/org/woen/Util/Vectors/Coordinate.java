@@ -1,4 +1,4 @@
-package org.woen.Util;
+package org.woen.Util.Vectors;
 
 public interface Coordinate <T>{
     T plus(T b);

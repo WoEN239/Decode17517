@@ -1,4 +1,4 @@
-package org.woen.Util;
+package org.woen.Util.Vectors;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;

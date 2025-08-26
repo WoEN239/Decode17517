@@ -1,4 +1,4 @@
-package org.woen.Util;
+package org.woen.Util.Vectors;
 
 public class AbstractVector2d<X extends Coordinate<X>,Y extends Coordinate<Y>> {
     protected final X x;
