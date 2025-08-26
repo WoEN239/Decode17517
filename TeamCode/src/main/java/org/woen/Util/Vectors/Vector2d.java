@@ -3,7 +3,7 @@ package org.woen.Util.Vectors;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-public class Vector2d extends AbstractVector2d<DoubleCoordinate,DoubleCoordinate> implements Coordinate<Vector2d>{
+public class Vector2d extends AbstractVector2d<DoubleCoordinate,DoubleCoordinate> implements ICoordinate<Vector2d> {
 
     public Vector2d(DoubleCoordinate x, DoubleCoordinate y) {
         super(x, y);

@@ -1,0 +1,22 @@
+package org.woen.Util.ExponentialFilter;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+public class ExponentialFilter {
+    public  double k = 0.1;
+    private double x = 0;
+    private final ElapsedTime timer = new ElapsedTime();
+
+    public double getX() {
+        return x;
+    }
+
+    //☺☺☺
+
+    public void update(double d1, double d2) {
+        double dt = timer.seconds();
+
+        x = x + d1 + d2 * (dt / (k + dt));
+        timer.reset();
+    }
+}

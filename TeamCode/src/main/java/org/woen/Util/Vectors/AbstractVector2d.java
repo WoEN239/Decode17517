@@ -1,6 +1,6 @@
 package org.woen.Util.Vectors;
 
-public class AbstractVector2d<X extends Coordinate<X>,Y extends Coordinate<Y>> {
+public class AbstractVector2d<X extends ICoordinate<X>,Y extends ICoordinate<Y>> {
     protected final X x;
     protected final Y y;
 
