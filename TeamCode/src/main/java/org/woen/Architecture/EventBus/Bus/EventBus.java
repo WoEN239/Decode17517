@@ -1,4 +1,4 @@
-package org.woen.Architecture.EventBus;
+package org.woen.Architecture.EventBus.Bus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
