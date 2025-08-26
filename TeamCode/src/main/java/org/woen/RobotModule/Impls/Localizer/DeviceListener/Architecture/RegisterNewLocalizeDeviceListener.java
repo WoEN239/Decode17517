@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Localizer.DeviceListener.Architecture;
+package org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture;
 
 import org.woen.Architecture.EventBus.Bus.IEvent;
 import org.woen.Architecture.Observers.IListener;

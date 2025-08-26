@@ -1,10 +1,10 @@
-package org.woen.RobotModule.Localizer.DeviceListener;
+package org.woen.RobotModule.Impls.Localizer.DeviceListener;
 
 import org.woen.Hardware.Gyro;
 import org.woen.Hardware.Odometer;
 import org.woen.RobotModule.Interface.IRobotModule;
-import org.woen.RobotModule.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
-import org.woen.RobotModule.Localizer.DeviceListener.Architecture.LocalizerDeviceObserver;
+import org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
+import org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture.LocalizerDeviceObserver;
 
 public class DeviceListener implements IRobotModule {
 

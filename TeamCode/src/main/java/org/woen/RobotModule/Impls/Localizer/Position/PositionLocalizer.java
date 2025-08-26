@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Localizer.Position;
+package org.woen.RobotModule.Impls.Localizer.Position;
 
 import static org.woen.Config.OdometerConstant.METER_PER_ANGLE;
 import static org.woen.Config.OdometerConstant.Y_ODOMETER_RADIUS;
@@ -10,10 +10,10 @@ import static java.lang.Math.sin;
 import org.woen.Architecture.EventBus.Bus.EventBus;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Interface.IRobotModule;
-import org.woen.RobotModule.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
-import org.woen.RobotModule.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
-import org.woen.RobotModule.Localizer.Position.Architecture.LocalPositionObserver;
-import org.woen.RobotModule.Localizer.Position.Architecture.PositionObserver;
+import org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
+import org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
+import org.woen.RobotModule.Impls.Localizer.Position.Architecture.LocalPositionObserver;
+import org.woen.RobotModule.Impls.Localizer.Position.Architecture.PositionObserver;
 import org.woen.Util.Angel.AngelUtil;
 import org.woen.Util.ExponentialFilter.ExponentialFilter;
 import org.woen.Util.Vectors.AbstractVector2d;

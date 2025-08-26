@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Localizer.DeviceListener.Architecture;
+package org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture;
 
 public class LocalizeDeviceData {
     public double rightOdPos = 0;
