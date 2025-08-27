@@ -6,7 +6,8 @@ import org.woen.Util.Vectors.AbstractVector2d;
 import org.woen.Util.Vectors.DoubleCoordinate;
 import org.woen.Util.Vectors.Vector2d;
 
-public class PositionObserver extends Observer<AbstractVector2d<DoubleCoordinate, Vector2d>,RegisterNewPositionListener> {
+public class PositionObserver
+        extends Observer<AbstractVector2d<DoubleCoordinate, Vector2d>,RegisterNewPositionListener> {
 
     @Override
     public void onEvent(RegisterNewPositionListener registration) {
