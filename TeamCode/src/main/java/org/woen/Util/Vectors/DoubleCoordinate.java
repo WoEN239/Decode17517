@@ -1,7 +1,7 @@
 package org.woen.Util.Vectors;
 
 public class DoubleCoordinate implements ICoordinate<DoubleCoordinate> {
-    private final double data;
+    public final double data;
 
     public DoubleCoordinate(double data) {
         this.data = data;

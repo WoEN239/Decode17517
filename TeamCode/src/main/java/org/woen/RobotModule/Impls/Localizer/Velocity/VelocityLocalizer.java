@@ -19,16 +19,14 @@ public class VelocityLocalizer implements IRobotModule {
 
     private AbstractVector2d<DoubleCoordinate, Vector2d> velocity = new AbstractVector2d<>(
             new DoubleCoordinate(0),
-            new Vector2d( new DoubleCoordinate(0),
-                          new DoubleCoordinate(0))
+            new Vector2d()
     );
     private final VelocityObserver velocityObserver = new VelocityObserver();
 
 
     private AbstractVector2d<DoubleCoordinate, Vector2d> localVelocity = new AbstractVector2d<>(
             new DoubleCoordinate(MatchData.startPosition.getX().getData()),
-            new Vector2d( new DoubleCoordinate(0),
-                          new DoubleCoordinate(0))
+            new Vector2d()
     );
     private final LocalVelocityObserver localVelocityObserver = new LocalVelocityObserver();
 
@@ -62,8 +60,8 @@ public class VelocityLocalizer implements IRobotModule {
 
         localVelocity = new AbstractVector2d<>(
                 new DoubleCoordinate(h),
-                new Vector2d(new DoubleCoordinate(xLoc),
-                             new DoubleCoordinate(yLoc))
+                new Vector2d(xLoc,
+                             yLoc)
                 );
 
         velocity = new AbstractVector2d<>(

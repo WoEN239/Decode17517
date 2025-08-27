@@ -1,8 +1,8 @@
 package org.woen.Util.Vectors;
 
 public class AbstractVector2d<X extends ICoordinate<X>,Y extends ICoordinate<Y>> {
-    protected final X x;
-    protected final Y y;
+    public final X x;
+    public final Y y;
 
     public AbstractVector2d(X x, Y y) {
         this.x = x;

@@ -28,4 +28,21 @@ public class Vector2d extends AbstractVector2d<DoubleCoordinate,DoubleCoordinate
                             y.minus(b.y));
     }
 
+    public Vector2d multiply(double b) {
+        return new Vector2d(x.data*b,
+                            y.data*b);
+    }
+
+    public Vector2d() {
+        super(new DoubleCoordinate(0),new DoubleCoordinate(0));
+    }
+
+    public Vector2d(double x, double y) {
+        super(new DoubleCoordinate(x),new DoubleCoordinate(y));
+    }
+
+    public Vector2d(Vector2d vector2d) {
+        super(new DoubleCoordinate(vector2d.x.data),
+              new DoubleCoordinate(vector2d.y.data));
+    }
 }

@@ -27,8 +27,7 @@ public class PositionLocalizer implements IRobotModule {
 
     private AbstractVector2d<DoubleCoordinate, Vector2d> localPosition = new AbstractVector2d<>(
             new DoubleCoordinate(MatchData.startPosition.getX().getData()),
-            new Vector2d( new DoubleCoordinate(0),
-                          new DoubleCoordinate(0))
+            new Vector2d()
     );
     private final LocalPositionObserver localPositionObserver = new LocalPositionObserver();
 
@@ -77,8 +76,8 @@ public class PositionLocalizer implements IRobotModule {
         AbstractVector2d<DoubleCoordinate, Vector2d> deltaLocalPos = localPosition.minus(
                 new AbstractVector2d<>(
                         new DoubleCoordinate(h),
-                        new Vector2d(new DoubleCoordinate(xLoc),
-                                     new DoubleCoordinate(yLoc))
+                        new Vector2d(xLoc,
+                                     yLoc)
                 )
         );
 
@@ -87,14 +86,13 @@ public class PositionLocalizer implements IRobotModule {
         double dh = localPosition.getX().getData();
 
         Vector2d dpCorrected = new Vector2d(
-                new DoubleCoordinate(dx*sin(dh)/dh + dy*(cos(dh)-1)/dh),
-                new DoubleCoordinate(dx*(cos(dh)-1)/dh + dy*sin(dh)/dh)
+                dx*sin(dh)/dh + dy*(cos(dh)-1)/dh,
+                dx*(cos(dh)-1)/dh + dy*sin(dh)/dh
         );
 
         if(abs(dh)<0.001){
-            dpCorrected = new Vector2d(
-                    new DoubleCoordinate(dx),
-                    new DoubleCoordinate(dh)
+            dpCorrected = new Vector2d(dx,
+                                       dh
             );
         }
 
@@ -102,8 +100,8 @@ public class PositionLocalizer implements IRobotModule {
 
         localPosition  = new AbstractVector2d<>(
                 new DoubleCoordinate(h),
-                new Vector2d( new DoubleCoordinate(xLoc),
-                        new DoubleCoordinate(yLoc))
+                new Vector2d(xLoc,
+                             yLoc)
         );
 
         position = new AbstractVector2d<>(
