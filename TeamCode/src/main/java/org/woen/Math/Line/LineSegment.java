@@ -46,7 +46,7 @@ public class LineSegment {
         this.c = c;
     }
 
-    public static LineSegment makeFromOnePoint(Vector2d s, double h, double length){
+    public static LineSegment createFromOnePoint(Vector2d s, double h, double length){
         Vector2d dispVector = new Vector2d(sin(h), cos(h));
         Vector2d e = s.plus(dispVector).multiply(length);
         return makeFromTwoPoint(s,e);
