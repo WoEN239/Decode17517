@@ -1,14 +1,14 @@
 package org.woen.Math.Spline;
 
-import org.woen.Math.Point.Point;
+import org.woen.Util.Vectors.Vector2d;
 
 public class QuinticBezierSplineSegment {
 
-    private QuinticBezierSplineSegmentProjection x;
-    private QuinticBezierSplineSegmentProjection y;
+    private final QuinticBezierSplineSegmentProjection x;
+    private final QuinticBezierSplineSegmentProjection y;
 
-    private QuinticBezierSplineSegment(Point start0,Point start1,Point start2,
-                                       Point end0,  Point end1  ,Point end2  ){
+    private QuinticBezierSplineSegment(Vector2d start0, Vector2d start1, Vector2d start2,
+                                       Vector2d end0  , Vector2d end1  , Vector2d end2   ){
 
         x = QuinticBezierSplineSegmentProjection.create(
                 start0.x,start1.x,start2.x,
@@ -20,12 +20,12 @@ public class QuinticBezierSplineSegment {
 
     }
 
-    public Point get(double u){
-        return new Point(x.get(u),y.get(u));
+    public Vector2d get(double u){
+        return new Vector2d(x.get(u),y.get(u));
     }
 
-    public Point get(double u, int d){
-        return new Point(x.get(u,d),y.get(u,d));
+    public Vector2d get(double u, int d){
+        return new Vector2d(x.get(u,d),y.get(u,d));
     }
 
 }

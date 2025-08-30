@@ -19,7 +19,7 @@ public class LineSegment {
     private final double c;
 
     public static LineSegment makeFromTwoPoint(Vector2d start, Vector2d end) {
-        return new LineSegment(start.x.data, start.y.data, end.x.data, end.y.data);
+        return new LineSegment(start.x, start.y, end.x, end.y);
     }
 
     public LineSegment(double x1, double y1, double x2, double y2){
@@ -55,7 +55,7 @@ public class LineSegment {
     public Vector2d findProjection(Vector2d p){
         double kX1 = -kY;
         double kY1 = kX;
-        double c1 =  -(kX1*p.x.data + kY1*p.y.data);
+        double c1 =  -(kX1*p.x + kY1*p.y);
 
         double x = 0;
         double y = 0;

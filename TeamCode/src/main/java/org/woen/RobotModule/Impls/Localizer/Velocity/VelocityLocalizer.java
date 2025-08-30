@@ -11,30 +11,30 @@ import org.woen.RobotModule.Impls.Localizer.Position.Architecture.RegisterNewPos
 import org.woen.RobotModule.Impls.Localizer.Velocity.Architecture.LocalVelocityObserver;
 import org.woen.RobotModule.Impls.Localizer.Velocity.Architecture.VelocityObserver;
 import org.woen.RobotModule.Interface.IRobotModule;
-import org.woen.Util.Vectors.AbstractVector2d;
+import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.DoubleCoordinate;
 import org.woen.Util.Vectors.Vector2d;
 
 public class VelocityLocalizer implements IRobotModule {
 
-    private AbstractVector2d<DoubleCoordinate, Vector2d> velocity = new AbstractVector2d<>(
-            new DoubleCoordinate(0),
+    private Pose velocity = new Pose(
+            0,
             new Vector2d()
     );
     private final VelocityObserver velocityObserver = new VelocityObserver();
 
 
-    private AbstractVector2d<DoubleCoordinate, Vector2d> localVelocity = new AbstractVector2d<>(
-            new DoubleCoordinate(MatchData.startPosition.getX().getData()),
+    private Pose localVelocity = new Pose(
+            MatchData.startPosition.h,
             new Vector2d()
     );
     private final LocalVelocityObserver localVelocityObserver = new LocalVelocityObserver();
 
 
-    private double robotAngle = MatchData.startPosition.getX().getData();
+    private double robotAngle = MatchData.startPosition.h;
 
-    private void setRobotAngle(AbstractVector2d<DoubleCoordinate,Vector2d> pos){
-        robotAngle = pos.getX().getData();
+    private void setRobotAngle(Pose pos){
+        robotAngle = pos.h;
     }
 
 
@@ -58,15 +58,15 @@ public class VelocityLocalizer implements IRobotModule {
         double yLoc = deviceData.sideOdVel;
         yLoc += h*Y_ODOMETER_RADIUS;
 
-        localVelocity = new AbstractVector2d<>(
-                new DoubleCoordinate(h),
+        localVelocity = new Pose(
+                h,
                 new Vector2d(xLoc,
                              yLoc)
                 );
 
-        velocity = new AbstractVector2d<>(
-                new DoubleCoordinate(h),
-                localVelocity.getY().rotate(robotAngle)
+        velocity = new Pose(
+                h,
+                localVelocity.vector.rotate(robotAngle)
         );
 
         localVelocityObserver.notifyListeners(localVelocity);

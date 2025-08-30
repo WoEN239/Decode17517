@@ -16,17 +16,17 @@ import org.woen.RobotModule.Impls.Localizer.Position.Architecture.LocalPositionO
 import org.woen.RobotModule.Impls.Localizer.Position.Architecture.PositionObserver;
 import org.woen.Util.Angel.AngelUtil;
 import org.woen.Util.ExponentialFilter.ExponentialFilter;
-import org.woen.Util.Vectors.AbstractVector2d;
+import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.DoubleCoordinate;
 import org.woen.Util.Vectors.Vector2d;
 
 public class PositionLocalizer implements IRobotModule {
 
-    private AbstractVector2d<DoubleCoordinate, Vector2d> position = MatchData.startPosition;
+    private Pose position = MatchData.startPosition;
     private final PositionObserver positionObserver = new PositionObserver();
 
-    private AbstractVector2d<DoubleCoordinate, Vector2d> localPosition = new AbstractVector2d<>(
-            new DoubleCoordinate(MatchData.startPosition.getX().getData()),
+    private Pose localPosition = new Pose(
+            MatchData.startPosition.h,
             new Vector2d()
     );
     private final LocalPositionObserver localPositionObserver = new LocalPositionObserver();
@@ -69,21 +69,21 @@ public class PositionLocalizer implements IRobotModule {
         s1Old = hOd;
         xH2Old = filter.getX();
 
-        double h = filter.getX() + MatchData.startPosition.getX().getData();
+        double h = filter.getX() + MatchData.startPosition.h;
 
         h = AngelUtil.normolize(h);
 
-        AbstractVector2d<DoubleCoordinate, Vector2d> deltaLocalPos = localPosition.minus(
-                new AbstractVector2d<>(
-                        new DoubleCoordinate(h),
+        Pose deltaLocalPosition = localPosition.minus(
+                new Pose(
+                        h,
                         new Vector2d(xLoc,
                                      yLoc)
                 )
         );
 
-        double dx = localPosition.getY().getX().getData();
-        double dy = localPosition.getY().getY().getData();
-        double dh = localPosition.getX().getData();
+        double dx = deltaLocalPosition.vector.x;
+        double dy = deltaLocalPosition.vector.y;
+        double dh = deltaLocalPosition.h;
 
         Vector2d dpCorrected = new Vector2d(
                 dx*sin(dh)/dh + dy*(cos(dh)-1)/dh,
@@ -96,17 +96,15 @@ public class PositionLocalizer implements IRobotModule {
             );
         }
 
-        dpCorrected.rotate(localPosition.getX().getData());
-
-        localPosition  = new AbstractVector2d<>(
-                new DoubleCoordinate(h),
-                new Vector2d(xLoc,
-                             yLoc)
+        position = new Pose(
+                h,
+                position.vector.plus(dpCorrected.rotate(localPosition.h))
         );
 
-        position = new AbstractVector2d<>(
-                new DoubleCoordinate(h),
-                position.getY().plus(dpCorrected)
+        localPosition  = new Pose(
+                h,
+                new Vector2d(xLoc,
+                             yLoc)
         );
 
         positionObserver.notifyListeners(position);

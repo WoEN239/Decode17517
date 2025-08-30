@@ -7,8 +7,9 @@ import java.util.List;
 
 public class ArcLenghtReparametrizationSpline {
 
+    double ds = 0;
     QuinticBezierSplineSegment splineSegment;
     List<Double> lenght ;
-    List<Double> iternal;
+    List<Double> sampels;
 
 }
