@@ -3,6 +3,7 @@ package org.woen.Util.Vectors;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+
 public class Vector2d  {
 
     public final double y;
@@ -45,5 +46,9 @@ public class Vector2d  {
     public Vector2d(Vector2d vector2d) {
         x = vector2d.x;
         y = vector2d.y;
+    }
+
+    public double length(){
+        return Math.sqrt(x*x+y*y);
     }
 }
