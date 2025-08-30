@@ -52,4 +52,21 @@ public class QuinticBezierSplineSegmentProjection {
         return ((((a*u+b)*u+c)*u+d)*u+e)*u+f;
 
     }
+
+    public double get(double u,int d){
+        if(d == 0){
+            return get(u);
+        }
+
+        if(d == 1){
+            return (((5.0 * a * u + 4.0 * b) * u + 3.0 * c) * u + 2.0 * d) * u + e;
+        }
+
+        if(d == 2){
+            return ((20.0 * a * u + 12.0 * b) * u + 6.0 * c) * u + 2.0 * d;
+        }
+
+        throw new RuntimeException("incorrect derivative power");
+
+    }
 }

@@ -8,7 +8,7 @@ public class QuinticBezierSplineSegment {
     private QuinticBezierSplineSegmentProjection y;
 
     private QuinticBezierSplineSegment(Point start0,Point start1,Point start2,
-                                                     Point end0,  Point end1  ,Point end2  ){
+                                       Point end0,  Point end1  ,Point end2  ){
 
         x = QuinticBezierSplineSegmentProjection.create(
                 start0.x,start1.x,start2.x,
@@ -17,10 +17,15 @@ public class QuinticBezierSplineSegment {
         y = QuinticBezierSplineSegmentProjection.create(
                 start0.y,start1.y,start2.y,
                 end0.y,end1.y,end2.y);
+
     }
 
     public Point get(double u){
         return new Point(x.get(u),y.get(u));
+    }
+
+    public Point get(double u, int d){
+        return new Point(x.get(u,d),y.get(u,d));
     }
 
 }
