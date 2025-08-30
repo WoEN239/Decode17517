@@ -39,4 +39,17 @@ public class QuinticBezierSplineSegmentProjection {
 
         return createFromPoints(p0, p1, p2, p3, p4, p5);
     }
+
+    public double get(double u){
+        if(u>1){
+            u = 1;
+        }
+
+        if(u<0){
+            u = 0;
+        }
+
+        return ((((a*u+b)*u+c)*u+d)*u+e)*u+f;
+
+    }
 }

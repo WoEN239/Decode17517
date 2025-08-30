@@ -3,6 +3,7 @@ package org.woen.Math.Spline;
 import org.woen.Math.Point.Point;
 
 public class QuinticBezierSplineSegment {
+
     private QuinticBezierSplineSegmentProjection x;
     private QuinticBezierSplineSegmentProjection y;
 
@@ -17,4 +18,9 @@ public class QuinticBezierSplineSegment {
                 start0.y,start1.y,start2.y,
                 end0.y,end1.y,end2.y);
     }
+
+    public Point get(double u){
+        return new Point(x.get(u),y.get(u));
+    }
+
 }
