@@ -55,4 +55,9 @@ public class Vector2d  {
     public double lengthSquare(){
         return x*x + y*y;
     }
+
+    public Vector2d norm(){
+        double h = Math.atan2(x,y);
+        return new Vector2d(cos(h),sin(h));
+    }
 }
