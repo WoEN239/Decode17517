@@ -74,9 +74,20 @@ public class ArcLenghtReparametrizationSpline {
     }
 
     private void forwardConsistencyCompute(){
-        for(int i = 1; i<velocity.size(); i++){
+        for(int i = 1; i<velocity.size()-1; i++){
 
             double newVel = sqrt(velocity.get(i-1)*velocity.get(i-1)+ 2*ds*maxTranslationAccel);
+
+            if(newVel<velocity.get(i)){
+                velocity.set(i,newVel);
+            }
+        }
+    }
+
+    private void backwardConsistencyCompute(){
+        for(int i = velocity.size()-2; i > 0; i--){
+
+            double newVel = sqrt(velocity.get(i+1)*velocity.get(i+1)+ 2*ds*maxTranslationAccel);
 
             if(newVel<velocity.get(i)){
                 velocity.set(i,newVel);
