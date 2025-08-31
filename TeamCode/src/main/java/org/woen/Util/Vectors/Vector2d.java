@@ -51,4 +51,8 @@ public class Vector2d  {
     public double length(){
         return Math.sqrt(x*x+y*y);
     }
+
+    public double lengthSquare(){
+        return x*x + y*y;
+    }
 }
