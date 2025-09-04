@@ -17,14 +17,31 @@ public class OdometerImpl implements Odometer {
     }
 
 
+    private double oldVelo = 0d;
+
+    private double oldTimer = (double) System.nanoTime()/1E9;
+
+    public double getRawVelocity(){
+        double velo = dcMotorEx.getVelocity();
+        if(velo != oldVelo)
+            oldVelo = velo;
+        return velo;
+    }
+
     @Override
     public double getPos(){
         return  dcMotorEx.getCurrentPosition();
     }
 
+    private final static int CPS_STEP = 0x10000;
+
     @Override
     public double getVel(){
-        return  dcMotorEx.getCurrentPosition();
+        double real = getRawVelocity();
+        while (Math.abs(getPos() - real) > CPS_STEP / 2.0) {
+            real += Math.signum(getPos() - real) * CPS_STEP;
+        }
+        return real;
     }
 
     @Override

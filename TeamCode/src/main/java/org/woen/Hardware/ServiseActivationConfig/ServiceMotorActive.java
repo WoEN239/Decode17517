@@ -4,14 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 
-public class ServiceActivationConfig {
+public class ServiceMotorActive {
 
     public boolean isMotorActive = false;
 
     public boolean isOdometersActive = false;
 
-    public static ServiceActivationConfig getDef(){
-        return new ServiceActivationConfig();
+    public static ServiceMotorActive getDef(){
+        return new ServiceMotorActive();
     }
 
 }
