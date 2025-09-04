@@ -1,4 +1,4 @@
-package org.woen.Math.Spline;
+package org.woen.Trajectory.Math.TrajectorySegment;
 
 
 
@@ -15,6 +15,9 @@ import static java.lang.Math.sqrt;
 
 import com.acmerobotics.roadrunner.IntegralScanResult;
 
+import org.woen.Trajectory.Config.RobotDriveConstants;
+import org.woen.Trajectory.Math.Spline.QuinticBezierSplineSegment;
+import org.woen.Trajectory.TrajectoryPoint;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.util.ArrayList;
@@ -22,9 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ArcLenghtReparametrizationSpline {
+public class TrajectorySegment {
 
-    private double ds = 0;
+    private double ds = 1e-6;
+    public void setDs(double ds) {
+        this.ds = ds;
+    }
+
     private double maxTranslationVel = 0;
     private double maxAngularVel  = 0;
     private double maxTranslationAccel = 0;
@@ -39,18 +46,46 @@ public class ArcLenghtReparametrizationSpline {
     private final List<Double> timeSamples      = new ArrayList<>();
     private final List<Double> curvatureSamples = new ArrayList<>();
     private final List<Double> velocitySamples  = new ArrayList<>();
-    private final List<Double> accelerations    = new ArrayList<>();
     private final List<Double> lengthSamples    = new ArrayList<>();
 
 
+    public double getLengthOfCurve() {
+        return lengthOfCurve;
+    }
+    public double getDuration(){return timeSamples.get(timeSamples.size()-1);}
 
-    private double lenghtOfCurve = 0;
+    public TrajectorySegment(
+        QuinticBezierSplineSegment splineSegment, double startVelocityValue, double endVelocityValue,
+        double maxVelocityValue, double maxAccelValue, double maxAngularVel, double maxCentralForce, double mass){
 
-    private void computeSampels(double eps){
+        this.maxTranslationVel = maxVelocityValue;
+        this.maxAngularVel = maxAngularVel;
+        this.maxTranslationAccel = maxAccelValue;
+        this.maxCentralForce = maxCentralForce;
+        this.mass = mass;
+        this.endVelocity = endVelocityValue;
+        this.startVelocity = startVelocityValue;
+        this.splineSegment = splineSegment;
+
+        computeSamples(ds*0.1d);
+        computeMotionProfile();
+    }
+
+    public static TrajectorySegment createTrajectorySegment(QuinticBezierSplineSegment splineSegment,
+                    double startVelocityValue, double endVelocityValue, RobotDriveConstants constants){
+
+        return new TrajectorySegment(splineSegment,startVelocityValue,endVelocityValue,constants.maxVel,
+                    constants.maxAccel,constants.maxAngularVel,constants.maxCentralForce,constants.mass);
+
+    }
+
+    private double lengthOfCurve = 0;
+
+    private void computeSamples(double eps){
         IntegralScanResult scanResult =
                 integralScan(0,1,eps,u->splineSegment.get(u,1).length());
 
-        lenghtOfCurve = scanResult.sums.get(scanResult.sums.size()-1);
+        lengthOfCurve = scanResult.sums.get(scanResult.sums.size()-1);
         double currentS = 0;
 
         for(currentS+=ds; currentS < scanResult.sums.get(scanResult.sums.size()-1);){
@@ -78,6 +113,7 @@ public class ArcLenghtReparametrizationSpline {
         computeForwardConsistency();
         velocitySamples.set(velocitySamples.size()-1,endVelocity);
         computeBackwardConsistency();
+        //time samples
         computeTimeSamples();
     }
 
@@ -119,7 +155,7 @@ public class ArcLenghtReparametrizationSpline {
         }
     }
 
-    public double getLength(double time){
+    private double getLength(double time){
         int index = Arrays.binarySearch(timeSamples.toArray(),time);
         if(index >= 0){
             return lengthSamples.get(index);
@@ -152,4 +188,5 @@ public class ArcLenghtReparametrizationSpline {
                 lerpLookup(lengthSamples,samples,getLength(time))
                 ,0);
     }
+
 }

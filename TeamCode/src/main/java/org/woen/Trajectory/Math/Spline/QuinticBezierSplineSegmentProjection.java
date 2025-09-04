@@ -1,4 +1,4 @@
-package org.woen.Math.Spline;
+package org.woen.Trajectory.Math.Spline;
 
 public class QuinticBezierSplineSegmentProjection {
     private final double a;

@@ -1,4 +1,4 @@
-package org.woen.Math.Line;
+package org.woen.Trajectory.Math.Line;
 
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;

@@ -1,5 +1,6 @@
-package org.woen.Math.Spline;
+package org.woen.Trajectory.Math.Spline;
 
+import org.woen.Trajectory.TrajectoryPoint;
 import org.woen.Util.Vectors.Vector2d;
 
 public class QuinticBezierSplineSegment {
@@ -18,6 +19,11 @@ public class QuinticBezierSplineSegment {
                 start0.y,start1.y,start2.y,
                 end0.y,end1.y,end2.y);
 
+    }
+
+    public static QuinticBezierSplineSegment createSpline(TrajectoryPoint start, TrajectoryPoint end){
+        return new QuinticBezierSplineSegment(start.position,start.velocity,start.acceleration,
+                                       end.position,end.velocity,end.acceleration);
     }
 
     public Vector2d get(double u){
