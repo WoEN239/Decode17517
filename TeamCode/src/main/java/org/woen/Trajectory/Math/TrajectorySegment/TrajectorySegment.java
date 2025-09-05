@@ -119,7 +119,7 @@ public class TrajectorySegment {
 
     private void computeCurvature(){
         samples.forEach(
-        i-> curvatureSamples.add(
+        i -> curvatureSamples.add(
         ( splineSegment.get(i,2).length()
         * cos( PI*0.5 - atan2(splineSegment.get(i,1).x, splineSegment.get(i,1).y) +
                         atan2(splineSegment.get(i,2).x, splineSegment.get(i,2).y)) )
@@ -183,10 +183,21 @@ public class TrajectorySegment {
         return velTangent.multiply(velValue);
     }
 
+    private double getVelocityValue(double time){
+        return lerpLookup(timeSamples, velocitySamples,time);
+    }
+
     public Vector2d getPosition(double time){
         return splineSegment.get(
                 lerpLookup(lengthSamples,samples,getLength(time))
                 ,0);
     }
 
+    public double getAngularVelocity(double time){
+        return getVelocityValue(time)*getCurvature(time);
+    }
+
+    private double getCurvature(double time){
+        return  lerpLookup(timeSamples, curvatureSamples,time);
+    }
 }

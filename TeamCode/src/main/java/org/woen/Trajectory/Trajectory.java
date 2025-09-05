@@ -27,10 +27,12 @@ public class Trajectory {
         trajectorySegments.add(TrajectorySegment.createTrajectorySegment(
         createSpline(startSpline,endSpline),startVelValue,endVelValue,RobotDriveConstants.getDefault()
         ));
+        computeDurations();
     }
 
     private void manualAdd(TrajectorySegment... segments){
         trajectorySegments.addAll(Arrays.asList(segments));
+        computeDurations();
     }
 
     public Vector2d getPosition(double time){
@@ -49,6 +51,7 @@ public class Trajectory {
         int loIndex = -(index + 1) - 1;
         return trajectorySegments.get(loIndex+1).getPosition(time-trajectorySegmentsDuration.get(loIndex));
     }
+
     public Vector2d getVelocity(double time){
         int index = Arrays.binarySearch(trajectorySegmentsDuration.toArray(),time);
 
@@ -66,4 +69,22 @@ public class Trajectory {
         return trajectorySegments.get(loIndex+1).getVelocity(time-trajectorySegmentsDuration.get(loIndex));
     }
 
+    public double getAngularVelocity(double time){
+        int index = Arrays.binarySearch(trajectorySegmentsDuration.toArray(),time);
+
+        if(time>=trajectorySegmentsDuration.get(trajectorySegmentsDuration.size()-1)){
+            return trajectorySegments.get(trajectorySegments.size()-1).getAngularVelocity(
+                    trajectorySegments.get(trajectorySegments.size()-1).getDuration()
+            );
+        }
+
+        if(index >= 0){
+            return trajectorySegments.get(index+1).getAngularVelocity(0);
+        };
+
+        int loIndex = -(index + 1) - 1;
+        return trajectorySegments.get(loIndex+1).getAngularVelocity(time-trajectorySegmentsDuration.get(loIndex));
+    }
+
+    public Trajectory() {}
 }

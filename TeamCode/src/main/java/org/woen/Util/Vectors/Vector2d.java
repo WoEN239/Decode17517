@@ -60,4 +60,9 @@ public class Vector2d  {
         double h = Math.atan2(x,y);
         return new Vector2d(cos(h),sin(h));
     }
+
+    public double getAngle(){
+        return Math.atan2(x,y);
+    }
+
 }
