@@ -1,9 +1,8 @@
 package org.woen.RobotModule.Impls.Localizer.DeviceListener;
 
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Interfaces.Gyro;
-import org.woen.Hardware.Motor.Inter.Motor;
-import org.woen.Hardware.Odometers.Impl.Odometer;
+import org.woen.Hardware.Gyro.Impl.Gyro;
+import org.woen.Hardware.Odometers.Inter.Odometer;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Impls.Localizer.DeviceListener.Architecture.LocalizerDeviceObserver;

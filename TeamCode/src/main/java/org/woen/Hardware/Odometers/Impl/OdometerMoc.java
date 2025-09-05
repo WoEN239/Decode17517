@@ -1,6 +1,6 @@
-package org.woen.Hardware.Odometers.Inter;
+package org.woen.Hardware.Odometers.Impl;
 
-import org.woen.Hardware.Odometers.Impl.Odometer;
+import org.woen.Hardware.Odometers.Inter.Odometer;
 
 public class OdometerMoc implements Odometer {
 

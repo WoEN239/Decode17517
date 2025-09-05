@@ -1,4 +1,4 @@
-package org.woen.Hardware.Odometers.Impl;
+package org.woen.Hardware.Odometers.Inter;
 
 public interface Odometer {
     double getPos();//meter
