@@ -13,8 +13,8 @@ import org.woen.Util.Vectors.Pose;
 
 public class TrajectoryFollower implements IRobotModule {
     private Trajectory trajectory = new Trajectory();
-    private FeedforwardReferenceObserver feedforwardObserver = new FeedforwardReferenceObserver();
-    private FeedbackReferenceObserver feedbackObserver       = new FeedbackReferenceObserver();
+    private final FeedforwardReferenceObserver feedforwardObserver = new FeedforwardReferenceObserver();
+    private final FeedbackReferenceObserver feedbackObserver       = new FeedbackReferenceObserver();
     private final ElapsedTime timer = new ElapsedTime();
 
     @Override
@@ -28,4 +28,9 @@ public class TrajectoryFollower implements IRobotModule {
         feedforwardObserver.notifyListeners(new FeedforwardReference(vel,nextVel));
 
     }
+
+    private void set(Trajectory trajectory){
+        this.trajectory = trajectory;
+    }
+
 }
