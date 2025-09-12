@@ -9,11 +9,11 @@ import org.woen.Hardware.Gyro.Impl.Gyro;
 public class GyroMoc implements Gyro {
 
 
-    private AngularVelocity vel = null;
+    private double vel = 0;
     private double yaw = 0d;
 
 
-    public GyroMoc(AngularVelocity vel, double yaw){
+    public GyroMoc(double vel, double yaw){
         this.vel = vel;
         this.yaw = yaw;
     }
@@ -25,7 +25,7 @@ public class GyroMoc implements Gyro {
     }
 
     @Override
-    public AngularVelocity getVel() {
+    public double getVel() {
         return vel;
     }
 

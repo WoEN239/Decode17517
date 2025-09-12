@@ -9,6 +9,11 @@ public class Pose {
         this.vector = vector;
     }
 
+    public Pose(double h, double x,double y) {
+        this.h = h;
+        this.vector = new Vector2d(x,y) ;
+    }
+
     public Pose plus(Pose b){
         return new Pose(h+b.h,
                         vector.plus(b.vector));
