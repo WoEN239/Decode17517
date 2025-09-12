@@ -1,4 +1,4 @@
-package org.woen.OpModes;
+package org.woen.OpModes.ServiceOpMode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

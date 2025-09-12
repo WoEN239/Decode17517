@@ -17,8 +17,7 @@ public class RobotModuleFactory {
         return modules;
     }
 
-    private final ArrayList<IRobotModule> modules =new ArrayList<>();
-
+    private final ArrayList<IRobotModule> modules = new ArrayList<>();
     public void init(ModulesActivateConfig config){
         setConfig(config);
         for (IRobotModuleFactory i : factories) {

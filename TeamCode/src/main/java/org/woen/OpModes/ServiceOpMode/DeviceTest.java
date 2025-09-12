@@ -1,12 +1,12 @@
-package org.woen.OpModes;
+package org.woen.OpModes.ServiceOpMode;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
 import static org.woen.Hardware.ColorSensor.ColorSensorFix.fix;
-import static org.woen.OpModes.DeviceTest.DeviceType.ANALOG_INPUT;
-import static org.woen.OpModes.DeviceTest.DeviceType.BATTERY_VOLTAGE;
-import static org.woen.OpModes.DeviceTest.DeviceType.DISTANCE_SENSOR;
-import static org.woen.OpModes.DeviceTest.DeviceType.NONE;
-import static org.woen.OpModes.DeviceTest.DeviceType.SERVO;
+import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.ANALOG_INPUT;
+import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.BATTERY_VOLTAGE;
+import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.DISTANCE_SENSOR;
+import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.NONE;
+import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.SERVO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
