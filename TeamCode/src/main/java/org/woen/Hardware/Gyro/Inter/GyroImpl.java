@@ -21,8 +21,8 @@ public class GyroImpl implements Gyro {
     }
 
     @Override
-    public AngularVelocity getVel() {
-        return  imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+    public double getVel() {
+        return  imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package org.woen.RobotModule.Factory;
 
-import org.woen.Hardware.Factories.HardwareFactory;
+import org.woen.RobotModule.Factory.ModuleFactories.DriveTrainFactory;
 import org.woen.RobotModule.Interface.IRobotModule;
+import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Interface.ModuleCreate;
 
 import java.lang.reflect.Method;
@@ -12,8 +13,7 @@ import java.util.stream.Collectors;
 
 public class RobotModuleFactory {
     private final ArrayList<IRobotModuleFactory> factories = new ArrayList<>(Arrays.asList(
-           //TODO ad modules factories
-
+        new DriveTrainFactory()
     ));
 
     public ArrayList<IRobotModule> getModules() {
@@ -29,7 +29,7 @@ public class RobotModuleFactory {
                 List<Method> createMethods = Arrays.stream(methods)
                         .filter(a -> a.isAnnotationPresent(ModuleCreate.class)).collect(Collectors.toList());
                 for (Method j : createMethods) {
-                    modules.add((IRobotModule) j.invoke(i));
+                    modules.addAll(Arrays.asList((IRobotModule[]) j.invoke(i)));
                 }
             }
         } catch (Exception e) {
