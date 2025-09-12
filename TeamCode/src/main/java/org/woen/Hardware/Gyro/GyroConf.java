@@ -9,9 +9,9 @@ import org.woen.Telemetry.Configs.Provider;
 public class GyroConf {
 
 
-    public Provider<Boolean> vel = new Provider<>(true);
+    public Provider<Double> vel = new Provider<>(0d);
 
-    public Provider<Boolean> pos = new Provider<>(true);
+    public Provider<Double> pos = new Provider<>(0d);
 
     public void init(){
         FtcDashboard.getInstance().addConfigVariable("GyroConf", "vel", vel);
@@ -19,8 +19,8 @@ public class GyroConf {
     }
 
     public void off(){
-        vel.set(false);
-        pos.set(false);
+        vel.set(null);
+        pos.set(null);
     }
 
 }

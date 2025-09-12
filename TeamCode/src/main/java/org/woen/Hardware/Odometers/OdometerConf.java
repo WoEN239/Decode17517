@@ -6,12 +6,12 @@ import org.woen.Telemetry.Configs.Provider;
 
 public class OdometerConf {
 
-    public Provider<Boolean> rightOdPos= new Provider<>(true);
-    public Provider<Boolean> leftOdPos= new Provider<>(true);
-    public Provider<Boolean> sideOdPos= new Provider<>(true);
-    public Provider<Boolean> rightOdVol= new Provider<>(true);
-    public Provider<Boolean> leftOdVol= new Provider<>(true);
-    public Provider<Boolean> sideOdVol= new Provider<>(true);
+    public Provider<Double> rightOdPos= new Provider<>(0d);
+    public Provider<Double> leftOdPos= new Provider<>(0d);
+    public Provider<Double> sideOdPos= new Provider<>(0d);
+    public Provider<Double> rightOdVol= new Provider<>(0d);
+    public Provider<Double> leftOdVol= new Provider<>(0d);
+    public Provider<Double> sideOdVol= new Provider<>(0d);
 
     public void init(){
         FtcDashboard.getInstance().addConfigVariable("OdometerConf", "rightOdPos", rightOdPos);
@@ -24,12 +24,12 @@ public class OdometerConf {
     }
 
     public void off(){
-        rightOdPos.set(false);
-        leftOdPos.set(false);
-        sideOdPos.set(false);
+        rightOdPos.set(null);
+        leftOdPos.set(null);
+        sideOdPos.set(null);
 
-        rightOdVol.set(false);
-        leftOdVol.set(false);
-        sideOdVol.set(false);
+        rightOdVol.set(null);
+        leftOdVol.set(null);
+        sideOdVol.set(null);
     }
 }

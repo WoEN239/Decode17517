@@ -1,5 +1,6 @@
 package org.woen.Hardware.DevicePool;
 
+import org.woen.Hardware.DeviceActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.Factories.HardwareFactory;
 import org.woen.Hardware.Gyro.GyroConf;
 import org.woen.Hardware.Gyro.Impl.Gyro;
@@ -20,6 +21,8 @@ public class DevicePool {
     private Motor motorLF;
     private Motor motorRF;
 
+    private DeviceActivationConfig deviceActivationConfig = new DeviceActivationConfig();
+
 
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
@@ -27,21 +30,21 @@ public class DevicePool {
     }
 
     public void init(HardwareFactory hardwareFactory){
-        motorLB = hardwareFactory.createDcMotor("motorLB", MotorConfig.leftBackPos, MotorConfig.leftBackVol);
+        motorLB = hardwareFactory.createDcMotor("motorLB", deviceActivationConfig.motorConfig.cfLeftBackMotorPos.get(),  deviceActivationConfig.motorConfig.cfLeftBackMotorVol.get());
 
-        motorRB = hardwareFactory.createDcMotor("motorRB", MotorConfig.rightBackPos, MotorConfig.rightBackVol);
+        motorRB = hardwareFactory.createDcMotor("motorRB", deviceActivationConfig.motorConfig.cfRightBackMotorPos.get(), deviceActivationConfig.motorConfig.cfRightBackMotorVol.get());
 
-        motorLF = hardwareFactory.createDcMotor("motorLF", MotorConfig.leftFrontPos, MotorConfig.leftFrontVol);
+        motorLF = hardwareFactory.createDcMotor("motorLF", deviceActivationConfig.motorConfig.cfLeftFrontMotorPos.get(), deviceActivationConfig.motorConfig.cfLeftFrontMotorVol.get());
 
-        motorRF = hardwareFactory.createDcMotor("motorRF", MotorConfig.rightFrontPos, MotorConfig.rightFrontVol);
+        motorRF = hardwareFactory.createDcMotor("motorRF", deviceActivationConfig.motorConfig.cfRightFrontMotorPos.get(), deviceActivationConfig.motorConfig.cfRightFrontMotorVol.get());
 
-        gyro = hardwareFactory.createIMU("imu", GyroConf.vel, GyroConf.pos);
+        gyro = hardwareFactory.createIMU("imu", deviceActivationConfig.gyroConf.vel.get(), deviceActivationConfig.gyroConf.pos.get());
 
-        rightOd = hardwareFactory.createOdometer("rightOdometer", OdometerConf.rightOdPos, OdometerConf.rightOdVol);
+        rightOd = hardwareFactory.createOdometer("rightOdometer", deviceActivationConfig.odometerConf.rightOdPos.get(), deviceActivationConfig.odometerConf.rightOdVol.get());
 
-        leftOd = hardwareFactory.createOdometer("leftOdometer", OdometerConf.leftOdPos, OdometerConf.leftOdVol);
+        leftOd = hardwareFactory.createOdometer("leftOdometer",deviceActivationConfig.odometerConf.leftOdPos.get(), deviceActivationConfig.odometerConf.leftOdVol.get());
 
-        sideOd = hardwareFactory.createOdometer("sideOdometer", OdometerConf.sideOdPos, OdometerConf.sideOdVol);
+        sideOd = hardwareFactory.createOdometer("sideOdometer", deviceActivationConfig.odometerConf.sideOdPos.get(), deviceActivationConfig.odometerConf.sideOdVol.get());
 
     }
 

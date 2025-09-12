@@ -5,14 +5,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import org.woen.Telemetry.Configs.Provider;
 
 public class MotorConfig{
-    public Provider<Boolean> cfRightFrontMotorPos =  new Provider<>(true);
-    public Provider<Boolean> cfRightBackMotorPos =  new Provider<>(true);
-    public Provider<Boolean> cfLeftFrontMotorPos =  new Provider<>(true);
-    public Provider<Boolean> cfLeftBackMotorPos =  new Provider<>(true);
-    public Provider<Boolean> cfRightFrontMotorVol =  new Provider<>(true);
-    public Provider<Boolean>  cfRightBackMotorVol =  new Provider<>(true);
-    public Provider<Boolean>  cfLeftFrontMotorVol =  new Provider<>(true);
-    public Provider<Boolean> cfLeftBackMotorVol =  new Provider<>(true);
+    public Provider<Double> cfRightFrontMotorPos =  new Provider<>(0d);
+    public Provider<Double> cfRightBackMotorPos =  new Provider<>(0d);
+    public Provider<Double> cfLeftFrontMotorPos =  new Provider<>(0d);
+    public Provider<Double> cfLeftBackMotorPos =  new Provider<>(0d);
+    public Provider<Double> cfRightFrontMotorVol =  new Provider<>(0d);
+    public Provider<Double>  cfRightBackMotorVol =  new Provider<>(0d);
+    public Provider<Double>  cfLeftFrontMotorVol =  new Provider<>(0d);
+    public Provider<Double> cfLeftBackMotorVol =  new Provider<>(0d);
 
 
     public  void initMotorConfig(){
@@ -28,14 +28,14 @@ public class MotorConfig{
     }
 
     public void off(){
-        cfRightFrontMotorPos.set(false);
-        cfRightBackMotorPos.set(false);
-        cfLeftFrontMotorPos.set(false);
-        cfLeftBackMotorPos.set(false);
-        cfRightFrontMotorVol.set(false);
-        cfRightBackMotorVol.set(false);
-        cfLeftFrontMotorVol.set(false);
-        cfLeftBackMotorVol.set(false);
+        cfRightFrontMotorPos.set(null);
+        cfRightBackMotorPos.set(null);
+        cfLeftFrontMotorPos.set(null);
+        cfLeftBackMotorPos.set(null);
+        cfRightFrontMotorVol.set(null);
+        cfRightBackMotorVol.set(null);
+        cfLeftFrontMotorVol.set(null);
+        cfLeftBackMotorVol.set(null);
     }
 
 }
