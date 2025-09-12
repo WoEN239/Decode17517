@@ -4,6 +4,6 @@ import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActiva
 import org.woen.RobotModule.Modules.Localizer.ActivationConfig.LocalizerActivationConfig;
 
 public class ModulesActivateConfig {
-    public LocalizerActivationConfig locolizer    = LocalizerActivationConfig.getAllOn();
-    public DriveTrainActivationConfig driveTraint = DriveTrainActivationConfig.getAllOn();
+    public LocalizerActivationConfig localizer = LocalizerActivationConfig.getAllOn();
+    public DriveTrainActivationConfig driveTrain = DriveTrainActivationConfig.getAllOn();
 }

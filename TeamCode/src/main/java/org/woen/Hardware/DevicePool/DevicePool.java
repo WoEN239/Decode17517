@@ -22,6 +22,9 @@ public class DevicePool {
 
 
     private static final  DevicePool Instance = new DevicePool();
+    public static DevicePool getInstance(){
+        return Instance;
+    }
 
     public void init(HardwareFactory hardwareFactory){
         motorLB = hardwareFactory.createDcMotor("motorLB", MotorConfig.leftBackPos, MotorConfig.leftBackVol);
