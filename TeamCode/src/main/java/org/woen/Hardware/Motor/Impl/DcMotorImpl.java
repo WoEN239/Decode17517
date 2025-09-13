@@ -2,6 +2,7 @@ package org.woen.Hardware.Motor.Impl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.woen.Hardware.Motor.Inter.Motor;
@@ -25,6 +26,11 @@ public class DcMotorImpl implements Motor {
     @Override
     public void setPower(double v) {
         dcMotorEx.setPower(v);
+    }
+
+    @Override
+    public void setDirection(DcMotorSimple.Direction direction) {
+        dcMotorEx.setDirection(direction);
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.LocalVelocit
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.VelocityObserver;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Interface.VelocityLocalizer;
+import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
@@ -72,6 +73,8 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
         localVelocityObserver.notifyListeners(localVelocity);
         velocityObserver.notifyListeners(velocity);
 
+        Telemetry.getInstance().add("velocity",velocity.toString());
+        Telemetry.getInstance().add("local velocity",localVelocity.toString());
     }
 
     @Override

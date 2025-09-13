@@ -1,6 +1,7 @@
 package org.woen.Hardware.Motor.Impl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.woen.Hardware.Motor.Inter.Motor;
 
@@ -26,6 +27,12 @@ public class DcMotorMok implements Motor {
     public void setPower(double v){
 
     }
+
+    @Override
+    public void setDirection(DcMotorSimple.Direction direction) {
+
+    }
+
     @Override
     public double getVel() {
         return 0d;

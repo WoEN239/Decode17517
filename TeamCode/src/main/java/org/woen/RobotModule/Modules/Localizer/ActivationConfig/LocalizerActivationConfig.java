@@ -27,7 +27,7 @@ public class LocalizerActivationConfig {
         config.position.set(false);
         return config;
     }
-    public static LocalizerActivationConfig manual(){
+    public static LocalizerActivationConfig geManual(){
         LocalizerActivationConfig config = new LocalizerActivationConfig();
         config.initConfigs();
         return config;

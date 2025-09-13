@@ -15,6 +15,7 @@ import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.Regist
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.LocalPositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.PositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
+import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Angel.AngelUtil;
 import org.woen.Util.ExponentialFilter.ExponentialFilter;
 import org.woen.Util.Vectors.Pose;
@@ -69,7 +70,8 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         s1Old = hOd;
         xH2Old = filter.getX();
 
-        double h = filter.getX() + MatchData.startPosition.h;
+        //double h = filter.getX() + MatchData.startPosition.h;
+        double h = deviceData.gyroPos;
 
         h = AngelUtil.normalize(h);
 
@@ -110,6 +112,9 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         positionObserver.notifyListeners(position);
         localPositionObserver.notifyListeners(localPosition);
 
+        Telemetry.getInstance().add("position",position.toString());
+        Telemetry.getInstance().add("local position",localPosition.toString());
+        Telemetry.getInstance().setPosition(position);
     }
 
     @Override

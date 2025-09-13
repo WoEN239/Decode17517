@@ -10,16 +10,18 @@ import org.woen.RobotModule.Factory.ModulesActivateConfig;
 
 public abstract class MainOpMode extends LinearOpMode {
     protected Robot robot;
-    protected static DeviceActivationConfig deviceActivationConfig = new DeviceActivationConfig();
-    protected static ModulesActivateConfig modulesActivateConfig   = new ModulesActivateConfig();
+    protected static DeviceActivationConfig deviceActivationConfig =DeviceActivationConfig.getAllOn();
+    protected static ModulesActivateConfig modulesActivationConfig =ModulesActivateConfig.getAllOn();
 
     private void initOpMode(){
         DevicePool.getInstance().init(new HardwareFactory(hardwareMap,deviceActivationConfig));
     }
 
+    protected void initConfig(){}
+
     private void robotInit(){
         robot = new Robot();
-        robot.factoryInit(modulesActivateConfig);
+        robot.factoryInit(modulesActivationConfig);
         robot.modulesInit();
     }
 
@@ -27,6 +29,8 @@ public abstract class MainOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        initOpMode();
+        initConfig();
         initOpMode();
         robotInit();
         waitForStart();

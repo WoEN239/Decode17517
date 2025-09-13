@@ -6,7 +6,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.woen.Hardware.Odometers.Inter.Odometer;
 
 public class OdometerImpl implements Odometer {
+    private int dir = 1;
+    @Override
+    public void setDir(int dir) {
+        this.dir = dir;
+    }
 
+    private static final double TIK_TO_SM = 4.8*Math.PI/8192.0;
     protected DcMotorEx dcMotorEx;
 
     protected ElapsedTime time = new ElapsedTime();
@@ -30,7 +36,7 @@ public class OdometerImpl implements Odometer {
 
     @Override
     public double getPos(){
-        return  dcMotorEx.getCurrentPosition();
+        return dir*dcMotorEx.getCurrentPosition()*TIK_TO_SM;
     }
 
     private final static int CPS_STEP = 0x10000;
@@ -38,10 +44,11 @@ public class OdometerImpl implements Odometer {
     @Override
     public double getVel(){
         double real = getRawVelocity();
-        while (Math.abs(getPos() - real) > CPS_STEP / 2.0) {
-            real += Math.signum(getPos() - real) * CPS_STEP;
+        double pos = dcMotorEx.getCurrentPosition();
+        while (Math.abs(pos - real) > CPS_STEP / 2.0) {
+            real += Math.signum(pos - real) * CPS_STEP;
         }
-        return real;
+        return real*TIK_TO_SM*dir;
     }
 
     @Override

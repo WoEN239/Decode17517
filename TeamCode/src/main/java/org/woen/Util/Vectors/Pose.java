@@ -1,5 +1,7 @@
 package org.woen.Util.Vectors;
 
+import android.annotation.SuppressLint;
+
 public class Pose {
     public final double h;
     public final Vector2d vector;
@@ -25,4 +27,8 @@ public class Pose {
                 vector.minus(b.vector));
     }
 
+    @Override
+    public String toString() {
+        return "h:" + String.format("%.3f",h) + " x:" + String.format("%.3f",vector.x) + " y:" + String.format("%.3f",vector.y);
+    }
 }
