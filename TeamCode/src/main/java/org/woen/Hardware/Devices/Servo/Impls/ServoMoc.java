@@ -7,27 +7,22 @@ import org.woen.Hardware.Devices.Servo.ServoMotion;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class ServoMoc implements Servo {
-    Provider<Double> maxVel;
-    Provider<Double> target;
-    Provider<Double> accel;
-    Provider<Double> t;
 
-    ServoMotion servoMotion;
+    Provider<Boolean> isItTarget;
 
 
-    public ServoMoc(Provider<Double> maxVel, Provider<Double> target, Provider<Double> accel,  Provider<Double> t){
-        this.maxVel = maxVel;
-        this.target = target;
-        this.accel = accel;
-        this.t = t;
-        servoMotion = new ServoMotion(accel.get(), maxVel.get(), target.get());
+    public ServoMoc( Provider<Boolean> isItTarget){
+        this.isItTarget = isItTarget;
     }
 
     @Override
+    public void setPos(double pos, double startPos){
+
+    }
+
+
+    @Override
     public boolean isItTarget() {
-        if(servoMotion.getPos(t.get()) == target.get())
-            return true;
-        else
-            return false;
+      return isItTarget.get();
     }
 }
