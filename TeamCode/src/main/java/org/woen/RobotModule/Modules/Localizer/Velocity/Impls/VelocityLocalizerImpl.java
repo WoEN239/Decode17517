@@ -3,16 +3,14 @@ package org.woen.RobotModule.Modules.Localizer.Velocity.Impls;
 import static org.woen.Config.OdometerConstant.METER_PER_ANGLE;
 import static org.woen.Config.OdometerConstant.Y_ODOMETER_RADIUS;
 
-import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.LocalVelocityObserver;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.VelocityObserver;
-import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Interface.VelocityLocalizer;
-import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 

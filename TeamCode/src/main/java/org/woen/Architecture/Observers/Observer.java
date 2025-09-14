@@ -1,6 +1,6 @@
 package org.woen.Architecture.Observers;
 
-import org.woen.Architecture.EventBus.Bus.IEvent;
+import org.woen.Architecture.EventBus.IEvent;
 import java.util.ArrayList;
 
 public abstract class Observer <D,R extends IEvent<IListener<D>>>{

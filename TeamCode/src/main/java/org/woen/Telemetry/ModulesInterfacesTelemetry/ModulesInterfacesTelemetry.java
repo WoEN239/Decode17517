@@ -2,7 +2,7 @@ package org.woen.Telemetry.ModulesInterfacesTelemetry;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
-import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngularVelocityListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;

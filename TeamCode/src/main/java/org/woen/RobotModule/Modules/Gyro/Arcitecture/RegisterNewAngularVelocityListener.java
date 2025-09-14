@@ -1,6 +1,6 @@
 package org.woen.RobotModule.Modules.Gyro.Arcitecture;
 
-import org.woen.Architecture.EventBus.Bus.IEvent;
+import org.woen.Architecture.EventBus.IEvent;
 import org.woen.Architecture.Observers.IListener;
 
 public class RegisterNewAngularVelocityListener implements IEvent<IListener<Double>> {

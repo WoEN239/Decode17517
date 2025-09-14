@@ -1,8 +1,7 @@
 package org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback;
 
-import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Architecture.Observers.Observer;
-import org.woen.Util.Vectors.Pose;
 
 public class FeedbackReferenceObserver extends Observer<FeedbackReference,RegisterFeedbackReferenceListener> {
 

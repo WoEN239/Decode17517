@@ -1,4 +1,4 @@
-package org.woen.Architecture.EventBus.Bus;
+package org.woen.Architecture.EventBus;
 
 @FunctionalInterface
 public interface OnEventMethod <K,T extends IEvent<K>> {

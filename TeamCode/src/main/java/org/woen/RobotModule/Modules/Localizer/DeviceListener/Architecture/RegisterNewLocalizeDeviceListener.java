@@ -1,6 +1,6 @@
 package org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture;
 
-import org.woen.Architecture.EventBus.Bus.IEvent;
+import org.woen.Architecture.EventBus.IEvent;
 import org.woen.Architecture.Observers.IListener;
 
 public class RegisterNewLocalizeDeviceListener implements IEvent<IListener<LocalizeDeviceData>> {

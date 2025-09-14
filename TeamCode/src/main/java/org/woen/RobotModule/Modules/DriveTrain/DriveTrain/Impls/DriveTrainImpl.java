@@ -1,6 +1,6 @@
 package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls;
 
-import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.FeedbackController.FeedbackController;

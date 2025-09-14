@@ -1,4 +1,6 @@
-package org.woen.Architecture.EventBus.Bus;
+package org.woen.Architecture.EventBus;
+
+import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +27,7 @@ public class EventBus {
 
     public <K,T extends IEvent<K>> void invoke(T event){
         ArrayList<OnEventMethod> subscribers = eventUsers.get(event.getClass());
-
+        RobotLog.dd("event tray",event.getClass().getSimpleName());
         for (OnEventMethod i: subscribers) {
             i.onEvent(event);
         }

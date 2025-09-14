@@ -1,6 +1,6 @@
 package org.woen.RobotModule.Modules.Localizer.Velocity.Architecture;
 
-import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Architecture.Observers.Observer;
 import org.woen.Util.Vectors.Pose;
 

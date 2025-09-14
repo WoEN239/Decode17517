@@ -7,7 +7,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
@@ -15,7 +15,6 @@ import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.Regist
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.LocalPositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.PositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
-import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Angel.AngelUtil;
 import org.woen.Util.ExponentialFilter.ExponentialFilter;
 import org.woen.Util.Vectors.Pose;
