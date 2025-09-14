@@ -21,7 +21,7 @@ public class DcMotorMok implements Motor {
        return motorPos.get();
     }
 
-    /// do we need getPosition()?,i think nah
+
 
     @Override
     public void setPower(double power){

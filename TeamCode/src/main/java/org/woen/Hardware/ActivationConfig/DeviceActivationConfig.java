@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.woen.Hardware.Devices.Motor.MotorConfig;
 import org.woen.Hardware.Devices.Odometers.OdometerConf;
+import org.woen.Hardware.Devices.Servo.ServoConfig;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DeviceActivationConfig {
@@ -12,6 +13,7 @@ public class DeviceActivationConfig {
     public final Provider<Boolean> motors    = new Provider<>(true);
     public final MotorConfig motorConfig     = new MotorConfig();
     public final OdometerConf odometerConfig = new OdometerConf();
+    public final ServoConfig servoConfig = new ServoConfig();
 
 
     private void initConfigs(){
@@ -19,6 +21,7 @@ public class DeviceActivationConfig {
         FtcDashboard.getInstance().addConfigVariable("Motors", "TurnOff/On", motors);
         motorConfig.init();
         odometerConfig.init();
+        servoConfig.init();
     }
 
     public static DeviceActivationConfig getAllOn(){
