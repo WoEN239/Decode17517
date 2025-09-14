@@ -14,7 +14,6 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
     private Odometer rightOd;
     private Odometer leftOd;
     private Odometer sideOd;
-    private Gyro gyro;
 
     @Override
     public void deviceReadUpdate() {
@@ -23,12 +22,10 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
                 rightOd.getPos(),
                 leftOd.getPos(),
                 sideOd.getPos(),
-                gyro.getPos(),
 
                 rightOd.getVel(),
                 leftOd.getVel(),
-                sideOd.getVel(),
-                gyro.getVel()
+                sideOd.getVel()
         );
 
         observer.notifyListeners(data);
@@ -37,7 +34,6 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
 
     @Override
     public void init() {
-        gyro = DevicePool.getInstance().gyro;
         sideOd = DevicePool.getInstance().sideOd;
         leftOd = DevicePool.getInstance().leftOd;
         rightOd = DevicePool.getInstance().rightOd;

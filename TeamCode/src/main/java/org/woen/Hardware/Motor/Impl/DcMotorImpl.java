@@ -1,11 +1,10 @@
 package org.woen.Hardware.Motor.Impl;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.woen.Hardware.Motor.Inter.Motor;
+import org.woen.Hardware.Motor.Interface.Motor;
 
 public class DcMotorImpl implements Motor {
     protected DcMotorEx dcMotorEx;
@@ -24,8 +23,8 @@ public class DcMotorImpl implements Motor {
     /// do we need getPosition()?,i think nah
 
     @Override
-    public void setPower(double v) {
-        dcMotorEx.setPower(v);
+    public void setPower(double power) {
+        dcMotorEx.setPower(power);
     }
 
     @Override

@@ -2,11 +2,12 @@ package org.woen.Hardware.DevicePool;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.woen.Hardware.Factories.HardwareFactory;
 import org.woen.Hardware.Gyro.GyroConf;
 import org.woen.Hardware.Gyro.Impl.Gyro;
-import org.woen.Hardware.Motor.Inter.Motor;
+import org.woen.Hardware.Motor.Interface.Motor;
 import org.woen.Hardware.Motor.MotorConfig;
 import org.woen.Hardware.Odometers.Inter.Odometer;
 import org.woen.Hardware.Odometers.OdometerConf;
@@ -16,7 +17,7 @@ public class DevicePool {
     public Odometer rightOd;
     public Odometer leftOd;
     public Odometer sideOd;
-    public Gyro gyro;
+    public IMU gyro;
 
     public Motor motorRB;
     public Motor motorLB;
@@ -38,7 +39,7 @@ public class DevicePool {
 
         motorRF = hardwareFactory.createDcMotor("motorRF", MotorConfig.rightFrontPos, MotorConfig.rightFrontVol);
 
-        gyro = hardwareFactory.createIMU("imu", GyroConf.vel, GyroConf.pos);
+        gyro = hardwareFactory.createIMU("imu");
 
         rightOd = hardwareFactory.createOdometer("motorRF", OdometerConf.rightOdPos, OdometerConf.rightOdVol);
         rightOd.setDir(-1);

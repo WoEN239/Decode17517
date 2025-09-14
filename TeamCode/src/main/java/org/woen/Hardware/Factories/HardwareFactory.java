@@ -9,11 +9,12 @@ import org.woen.Hardware.Gyro.Inter.GyroImpl;
 import org.woen.Hardware.Gyro.Inter.GyroMoc;
 import org.woen.Hardware.Motor.Impl.DcMotorImpl;
 import org.woen.Hardware.Motor.Impl.DcMotorMok;
-import org.woen.Hardware.Motor.Inter.Motor;
+import org.woen.Hardware.Motor.Interface.Motor;
 import org.woen.Hardware.Odometers.Inter.Odometer;
 import org.woen.Hardware.Odometers.Impl.OdometerImpl;
 import org.woen.Hardware.Odometers.Impl.OdometerMoc;
 import org.woen.Hardware.DeviceActivationConfig.DeviceActivationConfig;
+import org.woen.Telemetry.Configs.Provider;
 
 public class HardwareFactory {
 
@@ -27,7 +28,7 @@ public class HardwareFactory {
         this.serviceActivation = serviceActivation;
     }
 
-    public Motor createDcMotor(String name,Double pos,Double vol){
+    public Motor createDcMotor(String name, Provider<Double> pos, Provider<Double> vol){
         if(serviceActivation.motors.get()){
             return new DcMotorImpl(hardwareMap.get(DcMotorEx.class, name));
         }
@@ -45,12 +46,9 @@ public class HardwareFactory {
         }
     }
 
-    public Gyro createIMU(String name, double vel, Double yaw){
+    public IMU createIMU(String name, double vel, Double yaw){
         if(serviceActivation.gyro.get()){
             return new GyroImpl(hardwareMap.get(IMU.class,name ));
-        }
-        else{
-            return new GyroMoc(vel, yaw);
         }
     }
 

@@ -1,4 +1,4 @@
-package org.woen.Hardware.Motor.Inter;
+package org.woen.Hardware.Motor.Interface;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +8,8 @@ public interface Motor {
 
     double getVel();
 
-    void setPower(double voltage);
+    void setPower(double power);
+
     void setDirection(DcMotorSimple.Direction direction);
 
     void reset();
