@@ -9,7 +9,6 @@ import static java.lang.Math.sin;
 
 import org.woen.Architecture.EventBus.Bus.EventBus;
 import org.woen.Config.MatchData;
-import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
@@ -116,9 +115,6 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         positionObserver.notifyListeners(position);
         localPositionObserver.notifyListeners(localPosition);
 
-        Telemetry.getInstance().add("position",position.toString());
-        Telemetry.getInstance().add("local position",localPosition.toString());
-        Telemetry.getInstance().setPosition(position);
     }
 
     @Override

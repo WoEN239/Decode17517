@@ -1,26 +1,49 @@
 package org.woen.Telemetry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
+import org.woen.Architecture.EventBus.Bus.EventBus;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.Telemetry.ModulesInterfacesTelemetry.ModulesInterfacesTelemetry;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.util.ArrayList;
 
+@Config
 public class Telemetry {
-    private static final Telemetry Instance = new Telemetry();
+    public static boolean robotPose = false;
+    public static boolean gyro = false;
 
+    public Telemetry() {
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setRectPos));
+    }
+
+    private static final Telemetry Instance = new Telemetry();
     public static Telemetry getInstance() {
         return Instance;
     }
 
     private TelemetryPacket telemetryPacket = new TelemetryPacket();
+
+    private final ModulesInterfacesTelemetry modulesTelemetry = new ModulesInterfacesTelemetry();
+    {
+        modulesTelemetry.init();
+    }
     private final ArrayList<Runnable> configUpdates = new ArrayList<>();
 
     public void loopAnd() {
         configUpdates.forEach(Runnable::run);
-        updateField();
+        if(robotPose){
+            modulesTelemetry.addRobotPoseToPacket(telemetryPacket);
+            updateField();
+        }
+        if(gyro){
+            modulesTelemetry.addGyroToPacket(telemetryPacket);
+        }
+
         FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket);
         telemetryPacket = new TelemetryPacket();
     }
@@ -51,18 +74,18 @@ public class Telemetry {
         }
     }
 
-    private Pose position = new Pose(0, 0, 0);
+    private Pose rectPos = new Pose(0, 0, 0);
 
     private final double smPerInch = 1.0 / 2.54;
-    private double height = 40.24 / 2.0;
-    private double width = 39. / 2.0;
+    private final double height = 40.24 / 2.0;
+    private final double width = 39. / 2.0;
 
     public void updateField() {
         double[] xPoints;
         double[] yPoints;
 
         Vector2d rect = new Vector2d(height, width);
-        rect.rotate(position.h);
+        rect.rotate(rectPos.h);
 
         xPoints = new double[]{
                 +height,
@@ -75,8 +98,8 @@ public class Telemetry {
                 (-width),
                 (+width)};
 
-        rotatePoints(xPoints, yPoints, position.h);
-        plusVector(xPoints, yPoints, position.vector);
+        rotatePoints(xPoints, yPoints, rectPos.h);
+        plusVector(xPoints, yPoints, rectPos.vector);
 
         telemetryPacket.fieldOverlay().setScale(smPerInch, smPerInch);
 
@@ -85,8 +108,8 @@ public class Telemetry {
 
     }
 
-    public void setPosition(Pose position) {
-        this.position = position;
+    public void setRectPos(Pose rectPos) {
+        this.rectPos = rectPos;
     }
 
 }

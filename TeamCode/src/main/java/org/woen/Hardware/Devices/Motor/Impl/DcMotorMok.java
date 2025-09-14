@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DcMotorMok implements Motor {
 

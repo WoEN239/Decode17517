@@ -1,7 +1,7 @@
 package org.woen.Hardware.Devices.Odometers.Impl;
 
 import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class OdometerMoc implements Odometer {
 

@@ -70,9 +70,6 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
 
         localVelocityObserver.notifyListeners(localVelocity);
         velocityObserver.notifyListeners(velocity);
-
-        Telemetry.getInstance().add("velocity",velocity.toString());
-        Telemetry.getInstance().add("local velocity",localVelocity.toString());
     }
 
     @Override

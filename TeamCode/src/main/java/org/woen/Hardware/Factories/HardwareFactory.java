@@ -11,7 +11,7 @@ import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
 import org.woen.Hardware.Devices.Odometers.Impl.OdometerImpl;
 import org.woen.Hardware.Devices.Odometers.Impl.OdometerMoc;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class HardwareFactory {
 

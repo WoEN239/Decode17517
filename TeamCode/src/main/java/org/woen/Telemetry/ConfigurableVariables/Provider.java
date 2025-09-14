@@ -1,4 +1,4 @@
-package org.woen.Telemetry.Configs;
+package org.woen.Telemetry.ConfigurableVariables;
 
 import com.acmerobotics.dashboard.config.ValueProvider;
 

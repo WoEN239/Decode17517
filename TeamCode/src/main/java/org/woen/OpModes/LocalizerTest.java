@@ -3,12 +3,12 @@ package org.woen.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.OpModes.Main.MainOpMode;
+import org.woen.OpModes.Main.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;
 import org.woen.RobotModule.Modules.Localizer.ActivationConfig.LocalizerActivationConfig;
 @TeleOp(name = "localizer_test")
-public class LocalizerTest extends MainOpMode {
+public class LocalizerTest extends BaseOpMode {
 
     @Override
     protected void initConfig(){
@@ -18,7 +18,7 @@ public class LocalizerTest extends MainOpMode {
         deviceActivationConfig = deviceConfig;
 
         ModulesActivateConfig moduleConfig = new ModulesActivateConfig();
-        moduleConfig.localizer = LocalizerActivationConfig.geManual();
+        moduleConfig.localizer = LocalizerActivationConfig.getManual();
         moduleConfig.driveTrain = DriveTrainActivationConfig.getAllOff();
         modulesActivationConfig = moduleConfig;
     }

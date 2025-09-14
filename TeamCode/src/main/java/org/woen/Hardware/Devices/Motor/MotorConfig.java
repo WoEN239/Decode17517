@@ -2,7 +2,7 @@ package org.woen.Hardware.Devices.Motor;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class MotorConfig{
     public final Provider<Double>  rightFrontPos = new Provider<>(0d);

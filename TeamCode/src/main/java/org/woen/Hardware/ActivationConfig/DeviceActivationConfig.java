@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.woen.Hardware.Devices.Motor.MotorConfig;
 import org.woen.Hardware.Devices.Odometers.OdometerConf;
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DeviceActivationConfig {
 

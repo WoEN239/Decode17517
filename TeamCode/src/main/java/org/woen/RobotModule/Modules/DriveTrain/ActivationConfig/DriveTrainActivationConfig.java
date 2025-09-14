@@ -2,7 +2,7 @@ package org.woen.RobotModule.Modules.DriveTrain.ActivationConfig;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DriveTrainActivationConfig {
 
@@ -28,8 +28,8 @@ public class DriveTrainActivationConfig {
         return config;
     }
 
-    public static DriveTrainActivationConfig manual(){
-        DriveTrainActivationConfig config = new DriveTrainActivationConfig();
+    public static DriveTrainActivationConfig getManual(){
+        DriveTrainActivationConfig config = DriveTrainActivationConfig.getAllOff();
         config.initConfigs();
         return config;
     }

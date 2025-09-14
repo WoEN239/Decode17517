@@ -3,7 +3,7 @@ package org.woen.RobotModule.Modules.Localizer.ActivationConfig;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Telemetry.Configs.Provider;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class LocalizerActivationConfig {
     public final Provider<Boolean> device   = new Provider<>(true);
@@ -27,8 +27,9 @@ public class LocalizerActivationConfig {
         config.position.set(false);
         return config;
     }
-    public static LocalizerActivationConfig geManual(){
-        LocalizerActivationConfig config = new LocalizerActivationConfig();
+
+    public static LocalizerActivationConfig getManual(){
+        LocalizerActivationConfig config = LocalizerActivationConfig.getAllOff();
         config.initConfigs();
         return config;
     }
