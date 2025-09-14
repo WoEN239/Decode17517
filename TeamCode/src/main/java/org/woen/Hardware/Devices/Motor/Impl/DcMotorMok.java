@@ -1,15 +1,15 @@
-package org.woen.Hardware.Motor.Impl;
+package org.woen.Hardware.Devices.Motor.Impl;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.woen.Hardware.Motor.Interface.Motor;
+import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.Telemetry.Configs.Provider;
 
 public class DcMotorMok implements Motor {
 
-    Provider<Double> motorPos = new Provider(0d);
-    Provider<Double> motorVol = new Provider(0d);
+    Provider<Double> motorPos;
+    Provider<Double> motorVol;
 
     public DcMotorMok(Provider<Double> motorPos, Provider<Double> motorVol){
         this.motorPos = motorPos;
@@ -18,7 +18,7 @@ public class DcMotorMok implements Motor {
 
     @Override
     public double getPosition(){
-       return motorPos;
+       return motorPos.get();
     }
 
     /// do we need getPosition()?,i think nah
@@ -39,7 +39,7 @@ public class DcMotorMok implements Motor {
     }
     @Override
     public double getCurrent(){
-        return motorVol;
+        return motorVol.get();
     }
     @Override
     public void reset(){

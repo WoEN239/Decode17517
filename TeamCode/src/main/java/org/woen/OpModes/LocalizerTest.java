@@ -2,7 +2,7 @@ package org.woen.OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.woen.Hardware.DeviceActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.OpModes.Main.MainOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;
@@ -15,7 +15,6 @@ public class LocalizerTest extends MainOpMode {
         DeviceActivationConfig deviceConfig = new DeviceActivationConfig();
         deviceConfig.motors.set(false);
         deviceConfig.odometers.set(true);
-        deviceConfig.gyro.set(true);
         deviceActivationConfig = deviceConfig;
 
         ModulesActivateConfig moduleConfig = new ModulesActivateConfig();

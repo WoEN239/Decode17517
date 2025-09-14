@@ -40,11 +40,9 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
 
 
     private LocalizeDeviceData deviceData = new LocalizeDeviceData();
-
     public void setDeviceData(LocalizeDeviceData data){
         deviceData = data;
     }
-
 
     @Override
     public void update(){

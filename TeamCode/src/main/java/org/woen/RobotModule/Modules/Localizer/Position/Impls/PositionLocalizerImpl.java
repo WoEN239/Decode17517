@@ -10,6 +10,7 @@ import static java.lang.Math.sin;
 import org.woen.Architecture.EventBus.Bus.EventBus;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Interface.IRobotModule;
+import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.LocalPositionObserver;
@@ -39,6 +40,10 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         deviceData = data;
     }
 
+    private double gyroAngle = 0;
+    public void setGyroAngle(double gyroAngle) {
+        this.gyroAngle = gyroAngle;
+    }
 
     private double s1Old = 0;
     private double xH2Old = 0;
@@ -59,8 +64,8 @@ public class PositionLocalizerImpl implements PositionLocalizer {
 
         hOd = AngelUtil.normalize(hOd);
 
-        double d1 = hOd                - s1Old;
-        double d2 = deviceData.gyroPos - xH2Old;
+        double d1 = hOd       - s1Old;
+        double d2 = gyroAngle - xH2Old;
 
         d1 = AngelUtil.normalize(d1);
         d2 = AngelUtil.normalize(d2);
@@ -70,8 +75,7 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         s1Old = hOd;
         xH2Old = filter.getX();
 
-        //double h = filter.getX() + MatchData.startPosition.h;
-        double h = deviceData.gyroPos;
+        double h = filter.getX() + MatchData.startPosition.h;
 
         h = AngelUtil.normalize(h);
 
@@ -121,5 +125,8 @@ public class PositionLocalizerImpl implements PositionLocalizer {
     public void init() {
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewLocalizeDeviceListener(this::setDeviceData));
+        EventBus.getListenersRegistration().invoke(
+                new RegisterNewAngleListener(this::setGyroAngle));
+
     }
 }

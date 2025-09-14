@@ -1,9 +1,9 @@
-package org.woen.Hardware.Odometers.Impl;
+package org.woen.Hardware.Devices.Odometers.Impl;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.woen.Hardware.Odometers.Inter.Odometer;
+import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
 
 public class OdometerImpl implements Odometer {
     private int dir = 1;

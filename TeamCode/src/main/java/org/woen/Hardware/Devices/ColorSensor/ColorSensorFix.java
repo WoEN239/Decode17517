@@ -1,4 +1,4 @@
-package org.woen.Hardware.ColorSensor;
+package org.woen.Hardware.Devices.ColorSensor;
 
 import static com.qualcomm.hardware.ams.AMSColorSensor.AMS_TCS34725_ADDRESS;
 

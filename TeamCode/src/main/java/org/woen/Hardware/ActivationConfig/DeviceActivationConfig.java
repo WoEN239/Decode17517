@@ -1,26 +1,24 @@
-package org.woen.Hardware.DeviceActivationConfig;
+package org.woen.Hardware.ActivationConfig;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Hardware.Gyro.GyroConf;
-import org.woen.Hardware.Gyro.Impl.Gyro;
-import org.woen.Hardware.Motor.MotorConfig;
-import org.woen.Hardware.Odometers.OdometerConf;
+import org.woen.Hardware.Devices.Motor.MotorConfig;
+import org.woen.Hardware.Devices.Odometers.OdometerConf;
 import org.woen.Telemetry.Configs.Provider;
 
 public class DeviceActivationConfig {
 
     public final Provider<Boolean> odometers = new Provider<>(true);
     public final Provider<Boolean> motors    = new Provider<>(true);
-    public final MotorConfig motorConfig = new MotorConfig();
-    public final OdometerConf odometerConf = new OdometerConf();
+    public final MotorConfig motorConfig     = new MotorConfig();
+    public final OdometerConf odometerConfig = new OdometerConf();
 
 
     private void initConfigs(){
         FtcDashboard.getInstance().addConfigVariable("Odometers", "TurnOff/On", odometers);
         FtcDashboard.getInstance().addConfigVariable("Motors", "TurnOff/On", motors);
-        motorConfig.initMotorConfig();
-        odometerConf.init();
+        motorConfig.init();
+        odometerConfig.init();
     }
 
     public static DeviceActivationConfig getAllOn(){
@@ -33,9 +31,12 @@ public class DeviceActivationConfig {
         config.odometers.set(false);
         return config;
     }
-    public static DeviceActivationConfig manual(){
+
+    public static DeviceActivationConfig getManual(){
         DeviceActivationConfig config = new DeviceActivationConfig();
         config.initConfigs();
+        config.motorConfig.init();
+        config.odometerConfig.init();
         return config;
     }
 

@@ -2,15 +2,13 @@ package org.woen.Hardware.DevicePool;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.Factories.HardwareFactory;
-import org.woen.Hardware.Gyro.GyroConf;
-import org.woen.Hardware.Gyro.Impl.Gyro;
-import org.woen.Hardware.Motor.Interface.Motor;
-import org.woen.Hardware.Motor.MotorConfig;
-import org.woen.Hardware.Odometers.Inter.Odometer;
-import org.woen.Hardware.Odometers.OdometerConf;
+import org.woen.Hardware.Devices.Motor.Interface.Motor;
+import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
 
 public class DevicePool {
 
@@ -30,24 +28,25 @@ public class DevicePool {
         return Instance;
     }
 
-    public void init(HardwareFactory hardwareFactory){
-        motorLB = hardwareFactory.createDcMotor("motorLB", MotorConfig.leftBackPos, MotorConfig.leftBackVol);
+    public void init(HardwareMap map, DeviceActivationConfig config){
+        HardwareFactory factory = new HardwareFactory(map,config);
+        motorLB = factory.createDcMotor("motorLB", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
 
-        motorRB = hardwareFactory.createDcMotor("motorRB", MotorConfig.rightBackPos, MotorConfig.rightBackVol);
+        motorRB = factory.createDcMotor("motorRB", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
 
-        motorLF = hardwareFactory.createDcMotor("motorLF", MotorConfig.leftFrontPos, MotorConfig.leftFrontVol);
+        motorLF = factory.createDcMotor("motorLF", config.motorConfig.leftFrontPos, config.motorConfig.leftFrontVol);
 
-        motorRF = hardwareFactory.createDcMotor("motorRF", MotorConfig.rightFrontPos, MotorConfig.rightFrontVol);
+        motorRF = factory.createDcMotor("motorRF", config.motorConfig.rightFrontPos, config.motorConfig.rightFrontVol);
 
-        gyro = hardwareFactory.createIMU("imu");
+        gyro = factory.createIMU("imu");
 
-        rightOd = hardwareFactory.createOdometer("motorRF", OdometerConf.rightOdPos, OdometerConf.rightOdVol);
+        rightOd = factory.createOdometer("motorRF", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
         rightOd.setDir(-1);
 
-        leftOd = hardwareFactory.createOdometer("motorLF", OdometerConf.leftOdPos, OdometerConf.leftOdVol);
+        leftOd = factory.createOdometer("motorLF", config.odometerConfig.leftOdPos, config.odometerConfig.leftOdVel);
         leftOd.setDir(-1);
 
-        sideOd = hardwareFactory.createOdometer("motorRB", OdometerConf.sideOdPos, OdometerConf.sideOdVol);
+        sideOd = factory.createOdometer("motorRB", config.odometerConfig.sideOdPos, config.odometerConfig.sideOdVel);
         sideOd.setDir(-1);
 
         motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

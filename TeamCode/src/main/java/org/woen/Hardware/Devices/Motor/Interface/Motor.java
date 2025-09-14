@@ -1,4 +1,4 @@
-package org.woen.Hardware.Motor.Interface;
+package org.woen.Hardware.Devices.Motor.Interface;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

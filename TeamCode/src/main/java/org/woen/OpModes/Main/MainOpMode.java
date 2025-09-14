@@ -2,7 +2,7 @@ package org.woen.OpModes.Main;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.woen.Hardware.DeviceActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Factories.HardwareFactory;
 import org.woen.Robot.Robot;
@@ -14,7 +14,7 @@ public abstract class MainOpMode extends LinearOpMode {
     protected static ModulesActivateConfig modulesActivationConfig =ModulesActivateConfig.getAllOn();
 
     private void initOpMode(){
-        DevicePool.getInstance().init(new HardwareFactory(hardwareMap,deviceActivationConfig));
+        DevicePool.getInstance().init(hardwareMap,deviceActivationConfig);
     }
 
     protected void initConfig(){}

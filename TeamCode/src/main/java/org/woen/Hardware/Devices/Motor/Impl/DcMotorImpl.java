@@ -1,10 +1,10 @@
-package org.woen.Hardware.Motor.Impl;
+package org.woen.Hardware.Devices.Motor.Impl;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.woen.Hardware.Motor.Interface.Motor;
+import org.woen.Hardware.Devices.Motor.Interface.Motor;
 
 public class DcMotorImpl implements Motor {
     protected DcMotorEx dcMotorEx;
@@ -13,14 +13,10 @@ public class DcMotorImpl implements Motor {
         this.dcMotorEx = motor;
     }
 
-
-
     @Override
     public double getPosition() {
         return dcMotorEx.getCurrentPosition();
     }
-
-    /// do we need getPosition()?,i think nah
 
     @Override
     public void setPower(double power) {
@@ -47,7 +43,6 @@ public class DcMotorImpl implements Motor {
         dcMotorEx.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         dcMotorEx.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
-
 
     @Override
     public void setZeroPowerBehavior(com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior m) {
