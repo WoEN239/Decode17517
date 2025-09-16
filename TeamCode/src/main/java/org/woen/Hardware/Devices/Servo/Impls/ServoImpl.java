@@ -18,11 +18,11 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
     Servo servo;
 
 
-    Provider<Double> accel;
-    Provider<Double> maxVel;
+    private double accel;
+    private double maxVel;
 
 
-    public ServoImpl(Servo servo, Provider<Double> accel, Provider<Double> maxVel) {
+    public ServoImpl(Servo servo, double accel, double maxVel) {
         this.servo = servo;
         this.accel = accel;
         this.maxVel = maxVel;
@@ -31,7 +31,7 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
 
     @Override
     public void setPos(double target, double startPos) {
-        servoMotion = new ServoMotion(accel.get(), maxVel.get(), target, startPos);
+        servoMotion = new ServoMotion(accel, maxVel, target, startPos);
         if (!isItTarget()) {
             setMotionPos();
         } else {
