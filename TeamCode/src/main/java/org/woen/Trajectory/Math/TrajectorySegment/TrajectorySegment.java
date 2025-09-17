@@ -5,6 +5,7 @@ package org.woen.Trajectory.Math.TrajectorySegment;
 
 import static com.acmerobotics.roadrunner.Math.integralScan;
 import static com.acmerobotics.roadrunner.Math.lerpLookup;
+import static com.acmerobotics.roadrunner.Math.snz;
 
 import static java.lang.Double.min;
 import static java.lang.Math.PI;
@@ -20,6 +21,8 @@ import org.woen.Trajectory.Math.Spline.QuinticBezierSplineSegment;
 import org.woen.Trajectory.TrajectoryPoint;
 import org.woen.Util.Vectors.Vector2d;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TrajectorySegment {
 
-    private double ds = 1e-6;
+    private double ds = 0.1;
     public void setDs(double ds) {
         this.ds = ds;
     }
@@ -41,7 +44,7 @@ public class TrajectorySegment {
     private double endVelocity = 0;
     private double startVelocity = 0;
 
-    private QuinticBezierSplineSegment splineSegment;
+    private final QuinticBezierSplineSegment splineSegment;
     private final List<Double> samples          = new ArrayList<>();
     private final List<Double> timeSamples      = new ArrayList<>();
     private final List<Double> curvatureSamples = new ArrayList<>();
@@ -67,8 +70,52 @@ public class TrajectorySegment {
         this.startVelocity = startVelocityValue;
         this.splineSegment = splineSegment;
 
-        computeSamples(ds*0.1d);
+        computeSamples(1e-6);
         computeMotionProfile();
+    }
+
+    public void  writeSamplesToFile(String path) throws IOException {
+        ArrayList<Double> pointsX = new ArrayList<>();
+        for (Double i: samples) {
+            pointsX.add(splineSegment.get(i).x);
+        }
+
+        ArrayList<Double> pointsY = new ArrayList<>();
+        for (Double i: samples) {
+            pointsY.add(splineSegment.get(i).y);
+        }
+
+        ArrayList<Double> timePointsX = new ArrayList<>();
+        timePointsX.add(0d);
+        for (int i = 2; i<timeSamples.size(); i++) {
+            double t = timeSamples.get(i)+timeSamples.get(i-1);
+            t*=0.5;
+            timePointsX.add(getPosition(t).x);
+        }
+
+        ArrayList<Double> timePointsY = new ArrayList<>();
+        timePointsY.add(0d);
+        for (int i = 2; i<timeSamples.size(); i++) {
+            double t = timeSamples.get(i)+timeSamples.get(i-1);
+            t*=0.5;
+            timePointsY.add(getPosition(t).y);
+        }
+
+
+        FileWriter fileWriter = new FileWriter(path);
+        fileWriter.write(
+        "samples ="+ samples + "\n" +
+        "lengths ="+lengthSamples + "\n"+
+        "x ="+ pointsX +"\n" +
+        "y ="+ pointsY +"\n" +
+        "velocity_value = "+velocitySamples+"\n"+
+        "curvature = " + curvatureSamples +"\n"+
+        "time_samples =" + timeSamples +"\n"+
+        "x_time ="+ timePointsX +"\n" +
+        "y_time ="+ timePointsY +"\n"
+
+        );
+        fileWriter.close();
     }
 
     public static TrajectorySegment createTrajectorySegment(QuinticBezierSplineSegment splineSegment,
@@ -86,12 +133,13 @@ public class TrajectorySegment {
                 integralScan(0,1,eps,u->splineSegment.get(u,1).length());
 
         lengthOfCurve = scanResult.sums.get(scanResult.sums.size()-1);
-        double currentS = 0;
 
-        for(currentS+=ds; currentS < scanResult.sums.get(scanResult.sums.size()-1);){
+        for(double currentS = 0;currentS < lengthOfCurve; currentS+=ds){
             lengthSamples.add(currentS);
             samples.add(lerpLookup(scanResult.sums,scanResult.values,currentS));
         }
+        lengthSamples.add(lengthOfCurve);
+        samples.add(1d);
     }
 
     private void computeMotionProfile(){
@@ -150,8 +198,9 @@ public class TrajectorySegment {
     }
 
     private void computeTimeSamples(){
+        timeSamples.add(0d);
         for (int i = 1; i < velocitySamples.size(); i++) {
-            timeSamples.add( 2*ds/( velocitySamples.get(i)+ velocitySamples.get(i-1) ) );
+            timeSamples.add( timeSamples.get(i-1) + 2*ds/( velocitySamples.get(i)+ velocitySamples.get(i-1) ) );
         }
     }
 

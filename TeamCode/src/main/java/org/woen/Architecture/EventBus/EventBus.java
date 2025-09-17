@@ -28,8 +28,10 @@ public class EventBus {
     public <K,T extends IEvent<K>> void invoke(T event){
         ArrayList<OnEventMethod> subscribers = eventUsers.get(event.getClass());
         RobotLog.dd("event tray",event.getClass().getSimpleName());
-        for (OnEventMethod i: subscribers) {
-            i.onEvent(event);
+        if(subscribers!=null) {
+            for (OnEventMethod i : subscribers) {
+                i.onEvent(event);
+            }
         }
     }
 }

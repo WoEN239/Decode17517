@@ -15,6 +15,7 @@ import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.Regist
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.LocalPositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.PositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
+import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Angel.AngelUtil;
 import org.woen.Util.ExponentialFilter.ExponentialFilter;
 import org.woen.Util.Vectors.Pose;
@@ -54,6 +55,8 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         xLoc *= 0.5;
 
         double hOd = -deviceData.leftOdPos + deviceData.rightOdPos;
+        Telemetry.getInstance().add("leftOd",deviceData.leftOdPos);
+        Telemetry.getInstance().add("rightOd",deviceData.rightOdPos);
         hOd *= 0.5;
         hOd *= METER_PER_ANGLE;
 
@@ -61,6 +64,7 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         yLoc += hOd*Y_ODOMETER_RADIUS;
 
         hOd = AngelUtil.normalize(hOd);
+        Telemetry.getInstance().add("hOd",hOd);
 
         double d1 = hOd       - s1Old;
         double d2 = gyroAngle - xH2Old;
@@ -74,7 +78,6 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         xH2Old = filter.getX();
 
         double h = filter.getX() + MatchData.startPosition.h;
-
         h = AngelUtil.normalize(h);
 
         Pose deltaLocalPosition = localPosition.minus(
@@ -100,6 +103,7 @@ public class PositionLocalizerImpl implements PositionLocalizer {
             );
         }
 
+        Telemetry.getInstance().add("filtred h",h);
         position = new Pose(
                 h,
                 position.vector.plus(dpCorrected.rotate(localPosition.h))

@@ -41,7 +41,7 @@ public class DevicePool {
         gyro = factory.createIMU("imu");
 
         rightOd = factory.createOdometer("motorRF", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
-        rightOd.setDir(-1);
+        rightOd.setDir(1);
 
         leftOd = factory.createOdometer("motorLF", config.odometerConfig.leftOdPos, config.odometerConfig.leftOdVel);
         leftOd.setDir(-1);

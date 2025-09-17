@@ -6,41 +6,43 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Telemetry.ModulesInterfacesTelemetry.ModulesInterfacesTelemetry;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.util.ArrayList;
 
-@Config
 public class Telemetry {
-    public static boolean robotPose = false;
-    public static boolean gyro = false;
+    public Provider<Boolean> robotPose = new Provider<>(false);
+    public Provider<Boolean> gyro = new Provider<>(false);
 
     public Telemetry() {
-        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setRectPos));
+        FtcDashboard.getInstance().addConfigVariable("telemetry","pose",robotPose);
+        FtcDashboard.getInstance().addConfigVariable("telemetry","gyro",gyro);
     }
 
     private static final Telemetry Instance = new Telemetry();
     public static Telemetry getInstance() {
         return Instance;
     }
-
+    public void subscribeInit(){
+        modulesTelemetry.init();
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setRectPos));
+    }
     private TelemetryPacket telemetryPacket = new TelemetryPacket();
 
     private final ModulesInterfacesTelemetry modulesTelemetry = new ModulesInterfacesTelemetry();
-    {
-        modulesTelemetry.init();
-    }
+
     private final ArrayList<Runnable> configUpdates = new ArrayList<>();
 
     public void loopAnd() {
         configUpdates.forEach(Runnable::run);
-        if(robotPose){
+        if(robotPose.get()){
             modulesTelemetry.addRobotPoseToPacket(telemetryPacket);
             updateField();
         }
-        if(gyro){
+        if(gyro.get()){
             modulesTelemetry.addGyroToPacket(telemetryPacket);
         }
 
@@ -105,7 +107,6 @@ public class Telemetry {
 
         telemetryPacket.fieldOverlay().setFill("blue");
         telemetryPacket.fieldOverlay().fillPolygon(xPoints, yPoints);
-
     }
 
     public void setRectPos(Pose rectPos) {

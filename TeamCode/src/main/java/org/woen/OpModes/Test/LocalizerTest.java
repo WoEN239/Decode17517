@@ -1,4 +1,4 @@
-package org.woen.OpModes;
+package org.woen.OpModes.Test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,7 +18,7 @@ public class LocalizerTest extends BaseOpMode {
         deviceActivationConfig = deviceConfig;
 
         ModulesActivateConfig moduleConfig = new ModulesActivateConfig();
-        moduleConfig.localizer = LocalizerActivationConfig.getManual();
+        moduleConfig.localizer = LocalizerActivationConfig.getAllOn();
         moduleConfig.driveTrain = DriveTrainActivationConfig.getAllOff();
         modulesActivationConfig = moduleConfig;
     }

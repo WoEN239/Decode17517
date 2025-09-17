@@ -15,6 +15,7 @@ public class Robot {
     public void modulesInit(){
         factory.getModules().forEach(IRobotModule::subscribeInit);
         factory.getModules().forEach(IRobotModule::init);
+        Telemetry.getInstance().subscribeInit();
     }
 
     public void update(){

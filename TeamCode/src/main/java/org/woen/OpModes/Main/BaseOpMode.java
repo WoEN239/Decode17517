@@ -6,11 +6,12 @@ import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Robot.Robot;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
+import org.woen.Telemetry.Telemetry;
 
 public abstract class BaseOpMode extends LinearOpMode {
     protected Robot robot;
-    protected static DeviceActivationConfig deviceActivationConfig =DeviceActivationConfig.getAllOn();
-    protected static ModulesActivateConfig modulesActivationConfig =ModulesActivateConfig.getAllOn();
+    protected static DeviceActivationConfig deviceActivationConfig = DeviceActivationConfig.getAllOn();
+    protected static ModulesActivateConfig modulesActivationConfig = ModulesActivateConfig.getAllOn();
 
     private void initOpMode(){
         DevicePool.getInstance().init(hardwareMap,deviceActivationConfig);

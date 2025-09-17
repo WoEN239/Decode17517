@@ -7,6 +7,7 @@ import org.woen.Trajectory.Math.Spline.QuinticBezierSplineSegment;
 import org.woen.Trajectory.Math.TrajectorySegment.TrajectorySegment;
 import org.woen.Util.Vectors.Vector2d;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -21,7 +22,7 @@ public class Trajectory {
         }
     }
 
-    private void manualAddSingle(TrajectoryPoint startSpline, TrajectoryPoint endSpline,
+    public void manualAddSingle(TrajectoryPoint startSpline, TrajectoryPoint endSpline,
                               double startVelValue,double endVelValue){
 
         trajectorySegments.add(TrajectorySegment.createTrajectorySegment(
@@ -30,7 +31,7 @@ public class Trajectory {
         computeDurations();
     }
 
-    private void manualAdd(TrajectorySegment... segments){
+    public void manualAdd(TrajectorySegment... segments){
         trajectorySegments.addAll(Arrays.asList(segments));
         computeDurations();
     }
@@ -84,6 +85,12 @@ public class Trajectory {
 
         int loIndex = -(index + 1) - 1;
         return trajectorySegments.get(loIndex+1).getAngularVelocity(time-trajectorySegmentsDuration.get(loIndex));
+    }
+
+    public void write(String path) throws IOException {
+        for(TrajectorySegment i : trajectorySegments){
+            i.writeSamplesToFile(path);
+        }
     }
 
     public Trajectory() {}

@@ -16,7 +16,7 @@ public class RobotDriveConstants {
     }
 
     public static RobotDriveConstants getDefault(){
-        return new RobotDriveConstants(0,0,0,0,0);
+        return new RobotDriveConstants(100,120,6,1.5,50);
     }
     //TODO - config
 }
