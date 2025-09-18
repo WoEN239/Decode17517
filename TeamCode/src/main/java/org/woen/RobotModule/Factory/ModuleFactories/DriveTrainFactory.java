@@ -8,7 +8,7 @@ import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainImpl;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainMoc;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
-import org.woen.RobotModule.Modules.DriveTrain.VoltageController.VoltageContrloller;
+import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Impls.TrajectoryFollowerImpl;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Impls.TrajectoryFollowerMoc;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
@@ -34,11 +34,11 @@ public class DriveTrainFactory implements IRobotModuleFactory {
             return new DriveTrainMoc();
         }
     }
-    public VoltageContrloller createVoltageController(){
+    public VoltageController createVoltageController(){
         if(config.driveTrain.voltageController.get()){
-            return new VoltageContrloller() {};
+            return new VoltageController() {};
         }else{
-            return new VoltageContrloller() {};
+            return new VoltageController() {};
         }
     }
     public TrajectoryFollower createTrajectoryFollower(){
