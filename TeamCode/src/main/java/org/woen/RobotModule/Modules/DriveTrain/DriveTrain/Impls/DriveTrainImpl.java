@@ -34,10 +34,10 @@ public class DriveTrainImpl implements DriveTrain {
         this.velocity = velocity;
     }
 
-    private FeedbackController feedbackController = new FeedbackController(
+    private final FeedbackController feedbackController = new FeedbackController(
             ControlSystemConstant.xPid,
             ControlSystemConstant.hPid);
-    private FeedforwardController feedforwardController = new FeedforwardController(ControlSystemConstant.feedforwardK);
+    private final FeedforwardController feedforwardController = new FeedforwardController(ControlSystemConstant.feedforwardK);
 
     public void setFeedforwardReference(FeedforwardReference feedforwardReference) {
         this.feedforwardReference = feedforwardReference;
@@ -55,7 +55,7 @@ public class DriveTrainImpl implements DriveTrain {
                 feedbackController.computeU(feedbackReference.pos,position,
                                             feedbackReference.vel,velocity));
 
-        WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(velocity));
+        WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(feedforwardReference.now));
 
         wheelsVoltageObserver.notifyListeners(feedforward.plus(feedback));
     }
