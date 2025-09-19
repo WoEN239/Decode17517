@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.DriveTrain.FeedforwardController;
+package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedforwardController;
 
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 

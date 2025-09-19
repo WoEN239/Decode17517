@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.DriveTrain.FeedbackController;
+package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController;
 
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
