@@ -10,14 +10,15 @@ public class DeviceActivationConfig {
 
     public final Provider<Boolean> odometers = new Provider<>(true);
     public final Provider<Boolean> motors    = new Provider<>(true);
+    public final Provider<Boolean> rev       = new Provider<>(true);
     public final MotorConfig motorConfig     = new MotorConfig();
     public final OdometerConf odometerConfig = new OdometerConf();
 
 
-
     private void initConfigs(){
-        FtcDashboard.getInstance().addConfigVariable("Odometers", "TurnOff/On", odometers);
-        FtcDashboard.getInstance().addConfigVariable("Motors", "TurnOff/On", motors);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActive", "odometers", odometers);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActive", "motors",    motors);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActive", "rev",       rev);
         motorConfig.init();
         odometerConfig.init();
 
@@ -31,6 +32,7 @@ public class DeviceActivationConfig {
         DeviceActivationConfig config = new DeviceActivationConfig();
         config.motors   .set(false);
         config.odometers.set(false);
+        config.rev      .set(false);
         return config;
     }
 

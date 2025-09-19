@@ -62,8 +62,7 @@ public class Telemetry {
         for (int i = 0; i < xPoints.length; i++) {
             double x = xPoints[i];
             double y = yPoints[i];
-            Vector2d p = new Vector2d(x, y);
-            p.rotate(angle);
+            Vector2d p = new Vector2d(x, y).rotate(angle);
             xPoints[i] = p.x;
             yPoints[i] = p.y;
         }

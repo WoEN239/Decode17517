@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factories.HardwareFactory;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
@@ -22,6 +23,7 @@ public class DevicePool {
     public Motor motorLF;
     public Motor motorRF;
 
+    public RevVoltageSensor revVoltageSensor;
 
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
@@ -30,6 +32,7 @@ public class DevicePool {
 
     public void init(HardwareMap map, DeviceActivationConfig config){
         HardwareFactory factory = new HardwareFactory(map,config);
+
         motorLB = factory.createDcMotor("motorLB", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
 
         motorRB = factory.createDcMotor("motorRB", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
@@ -64,6 +67,7 @@ public class DevicePool {
         motorRB.reset();
         motorRF.reset();
 
+        revVoltageSensor = factory.createVoltageSensor();
     }
 
 }

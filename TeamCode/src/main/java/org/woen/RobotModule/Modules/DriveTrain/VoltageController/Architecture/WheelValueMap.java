@@ -16,4 +16,8 @@ public class WheelValueMap {
     public WheelValueMap plus(WheelValueMap b){
         return new WheelValueMap(lf+b.lf, rf +b.rf,rb+b.rb,lb+b.lb);
     }
+
+    public WheelValueMap multiply(double k){
+        return new WheelValueMap(lf*k,rf*k,rb*k,lb*k);
+    }
 }
