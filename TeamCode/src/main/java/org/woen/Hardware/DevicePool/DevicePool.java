@@ -43,14 +43,17 @@ public class DevicePool {
 
         gyro = factory.createIMU("imu");
 
-        rightOd = factory.createOdometer("motorRF", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
+        rightOd = factory.createOdometer("motorRB", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
         rightOd.setDir(1);
+        rightOd.reset();
 
         leftOd = factory.createOdometer("motorLF", config.odometerConfig.leftOdPos, config.odometerConfig.leftOdVel);
         leftOd.setDir(-1);
+        leftOd.reset();
 
-        sideOd = factory.createOdometer("motorRB", config.odometerConfig.sideOdPos, config.odometerConfig.sideOdVel);
+        sideOd = factory.createOdometer("sideOdometer", config.odometerConfig.sideOdPos, config.odometerConfig.sideOdVel);
         sideOd.setDir(-1);
+        sideOd.reset();
 
         motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

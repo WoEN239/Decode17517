@@ -1,7 +1,5 @@
 package org.woen.RobotModule.Modules.Localizer.Velocity.Impls;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.LocalVelocityObserver;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.VelocityObserver;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Interface.VelocityLocalizer;
@@ -23,7 +21,7 @@ public class VelocityLocalizerMoc implements VelocityLocalizer {
 
     @Override
     public void init() {
-        FtcDashboard.getInstance().addConfigVariable("manual_localizer","vel",velocityProvider);
-        FtcDashboard.getInstance().addConfigVariable("manual_localizer","local_vel", localVelocityProvider);
+        //FtcDashboard.getInstance().addConfigVariable("manual localizer","vel",velocityProvider);
+        //FtcDashboard.getInstance().addConfigVariable("manual localizer","local_vel", localVelocityProvider);
     }
 }

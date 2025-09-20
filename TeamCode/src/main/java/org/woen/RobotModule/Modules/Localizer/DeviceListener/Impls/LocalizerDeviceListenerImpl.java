@@ -16,7 +16,6 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
 
     @Override
     public void deviceReadUpdate() {
-
         LocalizeDeviceData data = new LocalizeDeviceData(
                 rightOd.getPos(),
                 leftOd.getPos(),
@@ -28,7 +27,6 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
         );
 
         observer.notifyListeners(data);
-
     }
 
     @Override

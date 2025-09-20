@@ -1,12 +1,14 @@
 package org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture;
 
-public class WheelValueMap {
-    public final double lf;
-    public final double rf;
-    public final double rb;
-    public final double lb;
+import androidx.annotation.NonNull;
 
-    public WheelValueMap(double lf, double rf, double rb, double lb) {
+public class WheelValueMap {
+    public final Double lf;
+    public final Double rf;
+    public final Double rb;
+    public final Double lb;
+
+    public WheelValueMap(Double lf, Double rf, Double rb, Double lb) {
         this.lf = lf;
         this.rf = rf;
         this.rb = rb;
@@ -19,5 +21,11 @@ public class WheelValueMap {
 
     public WheelValueMap multiply(double k){
         return new WheelValueMap(lf*k,rf*k,rb*k,lb*k);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return String.format("lf %.3f rf %.3f rb %.3f lb %.3f", lf,rf,rb,lb);
     }
 }

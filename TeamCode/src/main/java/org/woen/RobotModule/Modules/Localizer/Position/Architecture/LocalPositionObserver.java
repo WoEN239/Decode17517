@@ -4,15 +4,14 @@ import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Architecture.Observers.Observer;
 import org.woen.Util.Vectors.Pose;
 
-public class LocalPositionObserver extends Observer<Pose,RegisterNewPositionListener> {
+public class LocalPositionObserver extends Observer<Pose,RegisterNewLocalPositionListener> {
     @Override
-    public void onEvent(RegisterNewPositionListener registration) {
+    public void onEvent(RegisterNewLocalPositionListener registration) {
         listeners.add(registration.getData());
     }
 
     public LocalPositionObserver() {
-        EventBus.getListenersRegistration().subscribe(RegisterNewPositionListener.class,this::onEvent);
+        EventBus.getListenersRegistration().subscribe(RegisterNewLocalPositionListener.class,this::onEvent);
     }
-
 
 }

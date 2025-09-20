@@ -3,8 +3,12 @@ package org.woen.Telemetry.ModulesInterfacesTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.RegisterNewWheelsVoltageListener;
+import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngularVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
+import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewLocalVelocityListener;
@@ -21,6 +25,9 @@ public class ModulesInterfacesTelemetry {
     private Double gyroAngle = 0d;
     private Double gyroAngularVel = 0d;
 
+    private WheelValueMap voltage = new WheelValueMap(0d,0d,0d,0d);
+    private LocalizeDeviceData localizeDeviceData = new LocalizeDeviceData();
+
     public void addRobotPoseToPacket(TelemetryPacket packet){
         packet.put("robot pos",robotPos.toString());
         packet.put("robot vel",robotVel.toString());
@@ -34,6 +41,20 @@ public class ModulesInterfacesTelemetry {
         packet.put("gyro vel",gyroAngularVel);
     }
 
+    public void addVoltageToPacket(TelemetryPacket packet){
+        packet.put("wheels",voltage.toString());
+    }
+
+    public void addLocalizeDevicesTopacket(TelemetryPacket packet){
+        packet.put("rightPos",localizeDeviceData.rightOdPos);
+        packet.put("leftPos",localizeDeviceData.leftOdPos);
+        packet.put("sidePos",localizeDeviceData.sideOdPos);
+
+        packet.put("rightVel",localizeDeviceData.rightOdVel);
+        packet.put("leftVel",localizeDeviceData.leftOdVel);
+        packet.put("sideVel",localizeDeviceData.sideOdVel);
+    }
+
     public void init(){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setRobotPos));
         EventBus.getListenersRegistration().invoke(new RegisterNewVelocityListener(this::setRobotVel));
@@ -43,6 +64,9 @@ public class ModulesInterfacesTelemetry {
 
         EventBus.getListenersRegistration().invoke(new RegisterNewAngleListener(this::setGyroAngle));
         EventBus.getListenersRegistration().invoke(new RegisterNewAngularVelocityListener(this::setGyroAngularVel));
+
+        EventBus.getListenersRegistration().invoke(new RegisterNewWheelsVoltageListener(this::setVoltage));
+        EventBus.getListenersRegistration().invoke(new RegisterNewLocalizeDeviceListener(this::setLocalizeDeviceData));
     }
 
     public void setRobotPos(Pose robotPos) {
@@ -69,5 +93,7 @@ public class ModulesInterfacesTelemetry {
         this.gyroAngularVel = gyroAngularVel;
     }
 
+    public void setVoltage(WheelValueMap voltage) {this.voltage = voltage;}
 
+    public void setLocalizeDeviceData(LocalizeDeviceData localizeDeviceData) {this.localizeDeviceData = localizeDeviceData;}
 }

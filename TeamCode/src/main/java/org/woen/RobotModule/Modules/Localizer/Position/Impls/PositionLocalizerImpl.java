@@ -54,17 +54,17 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         double xLoc = deviceData.leftOdPos + deviceData.rightOdPos;
         xLoc *= 0.5;
 
-        double hOd = -deviceData.leftOdPos + deviceData.rightOdPos;
+        double hOd = +deviceData.leftOdPos - deviceData.rightOdPos;
         Telemetry.getInstance().add("leftOd",deviceData.leftOdPos);
         Telemetry.getInstance().add("rightOd",deviceData.rightOdPos);
         hOd *= 0.5;
         hOd *= METER_PER_ANGLE;
+        Telemetry.getInstance().add("hOd",hOd);
 
         double yLoc = deviceData.sideOdPos;
         yLoc += hOd*Y_ODOMETER_RADIUS;
 
         hOd = AngelUtil.normalize(hOd);
-        Telemetry.getInstance().add("hOd",hOd);
 
         double d1 = hOd       - s1Old;
         double d2 = gyroAngle - xH2Old;

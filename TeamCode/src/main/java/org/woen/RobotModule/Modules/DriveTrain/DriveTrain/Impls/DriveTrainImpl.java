@@ -22,7 +22,6 @@ public class DriveTrainImpl implements DriveTrain {
     private FeedforwardReference feedforwardReference;
     private FeedbackReference feedbackReference;
 
-
     private Pose position = MatchData.startPosition;
     private Pose velocity = new Pose(0,0,0);
 
@@ -37,7 +36,8 @@ public class DriveTrainImpl implements DriveTrain {
     private final FeedbackController feedbackController = new FeedbackController(
             ControlSystemConstant.xPid,
             ControlSystemConstant.hPid);
-    private final FeedforwardController feedforwardController = new FeedforwardController(ControlSystemConstant.feedforwardK);
+    private final FeedforwardController feedforwardController = new FeedforwardController(new WheelValueMap(feedforwardK,
+                                                                                   feedforwardK,feedforwardK,feedforwardK));
 
     public void setFeedforwardReference(FeedforwardReference feedforwardReference) {
         this.feedforwardReference = feedforwardReference;
@@ -72,10 +72,10 @@ public class DriveTrainImpl implements DriveTrain {
 
     private WheelValueMap toWheelsFromRobotVelocities(Pose r){
         return new WheelValueMap(
-                (r.vector.x - r.vector.y -  (lx+ly)*r.h)/wheelR,
-                (r.vector.x + r.vector.y +  (lx+ly)*r.h)/wheelR,
-                (r.vector.x + r.vector.y -  (lx+ly)*r.h)/wheelR,
-                (r.vector.x - r.vector.y +  (lx+ly)*r.h)/wheelR
+                (r.vector.x - r.vector.y - (lx+ly)*r.h)/wheelR,
+                (r.vector.x + r.vector.y + (lx+ly)*r.h)/wheelR,
+                (r.vector.x - r.vector.y + (lx+ly)*r.h)/wheelR,
+                (r.vector.x + r.vector.y - (lx+ly)*r.h)/wheelR
         );
     }
 

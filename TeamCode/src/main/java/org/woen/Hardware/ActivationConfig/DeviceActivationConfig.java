@@ -16,9 +16,9 @@ public class DeviceActivationConfig {
 
 
     private void initConfigs(){
-        FtcDashboard.getInstance().addConfigVariable("DeviceActive", "odometers", odometers);
-        FtcDashboard.getInstance().addConfigVariable("DeviceActive", "motors",    motors);
-        FtcDashboard.getInstance().addConfigVariable("DeviceActive", "rev",       rev);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "odometers", odometers);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "motors",    motors);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "rev",       rev);
         motorConfig.init();
         odometerConfig.init();
 

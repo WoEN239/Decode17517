@@ -1,7 +1,6 @@
 package org.woen.Telemetry;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.woen.Architecture.EventBus.EventBus;
@@ -16,10 +15,14 @@ import java.util.ArrayList;
 public class Telemetry {
     public Provider<Boolean> robotPose = new Provider<>(false);
     public Provider<Boolean> gyro = new Provider<>(false);
+    public Provider<Boolean> voltage = new Provider<>(false);
+    public Provider<Boolean> localizeDevice = new Provider<>(false);
 
     public Telemetry() {
         FtcDashboard.getInstance().addConfigVariable("telemetry","pose",robotPose);
         FtcDashboard.getInstance().addConfigVariable("telemetry","gyro",gyro);
+        FtcDashboard.getInstance().addConfigVariable("telemetry","voltage",voltage);
+        FtcDashboard.getInstance().addConfigVariable("telemetry","localizeDevice",localizeDevice);
     }
 
     private static final Telemetry Instance = new Telemetry();
@@ -45,7 +48,12 @@ public class Telemetry {
         if(gyro.get()){
             modulesTelemetry.addGyroToPacket(telemetryPacket);
         }
-
+        if(voltage.get()){
+            modulesTelemetry.addVoltageToPacket(telemetryPacket);
+        }
+        if(localizeDevice.get()){
+            modulesTelemetry.addLocalizeDevicesTopacket(telemetryPacket);
+        }
         FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket);
         telemetryPacket = new TelemetryPacket();
     }

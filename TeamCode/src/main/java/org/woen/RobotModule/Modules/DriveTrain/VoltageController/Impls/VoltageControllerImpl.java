@@ -9,7 +9,7 @@ import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.Wh
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
 
 public class VoltageControllerImpl implements VoltageController {
-    private WheelValueMap target = new WheelValueMap(0,0,0,0);
+    private WheelValueMap target = new WheelValueMap(0d,0d,0d,0d);
     private double voltage = 12;
 
     private void onEvent(NewVoltageAvailable e) {
