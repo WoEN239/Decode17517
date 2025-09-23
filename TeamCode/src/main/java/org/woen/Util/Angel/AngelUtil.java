@@ -5,7 +5,7 @@ import static java.lang.Math.signum;
 
 public class AngelUtil {
     public static double normalize(double angle){
-        while (abs(angle)>2*Math.PI) angle -= 4*Math.PI*signum(angle);
+        while (abs(angle)>Math.PI) angle -= 2*Math.PI*signum(angle);
         return angle;
     }
 }
