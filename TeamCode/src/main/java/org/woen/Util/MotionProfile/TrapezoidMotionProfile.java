@@ -2,38 +2,60 @@ package org.woen.Util.MotionProfile;
 
 public class TrapezoidMotionProfile {
     private final double accel;
-    private final double maxVel;
+    private double maxVel;
     private final double startVel;
-    private final double target;
+    private final double targetDisp;
+    private final double targetPos;
 
-    private double t1;
-    private double t2;
-    private double duration;
+    private final double t1;
+    private final double t2;
+    public  final double duration;
+    private final double accelLength;
 
     public TrapezoidMotionProfile(double accel, double maxVel,double targetPos,double pos, double vel) {
-        this.accel = accel;
-        this.maxVel = maxVel;
-        this.target = targetPos-pos;
+        this.targetPos = targetPos;
+
+        this.targetDisp = targetPos-pos;
+        final double direction =Math.signum(targetDisp);
+
+        this.accel = accel*direction;
+        this.maxVel = maxVel*direction;
+
         this.startVel = vel;
 
-        double accelTime = (maxVel-vel)/accel;
-        double accelLength = accelTime*vel + accelTime*accelTime * accel*0.5;
-        if(target<accelLength*2){
-            t1 = accelLength;
-            t2 = (target-accelTime*2)/maxVel+accelTime;
+        double accelTime = Math.abs((maxVel-vel)/accel);
+        accelLength = accelTime*vel + accelTime*accelTime*accel*0.5;
+
+        if(targetDisp > accelLength*2d){
+            t1 = accelTime;
+            if(maxVel!=0) {
+                t2 = Math.abs((targetDisp - accelLength * 2d) / maxVel) + accelTime;
+                duration = t2 + accelTime;
+            }else{
+                t2 = 0;
+                duration = 0;
+            }
         }else{
-            t1 = (-vel+Math.sqrt(vel*vel+2*accel*target*0.5))/accel;
+            t1 = (-vel+Math.sqrt(vel*vel+2d*accel* targetDisp *0.5))/accel;
+            this.maxVel = vel+accel*t1;
             t2 = t1;
+            duration = 2d*t1;
         }
+    }
+
+    public TrapezoidMotionProfile reset(double targetPos,double pos, double vel){
+        return new TrapezoidMotionProfile(accel,maxVel,targetPos,pos,vel);
     }
 
     public double getPos(double t){
         if(t<t1){
             return t*t*accel*0.5+startVel*t;
         }else if(t>t1 && t<t2){
-            return t*t*accel*0.5+startVel*t + (t-t1)*maxVel;
+            return accelLength + (t-t1)*maxVel;
+        }else if(t<duration){
+            return (t2-t1)*maxVel - accel*0.5*(t-t2)*(t-t2);
         }else{
-            return t*t*accel*0.5+startVel*t + (t-t1)*maxVel + (t-t2)*maxVel - accel*0.5*(t-t2)*(t-t2);
+            return targetPos;
         }
     }
 
@@ -42,8 +64,10 @@ public class TrapezoidMotionProfile {
             return startVel+accel*t;
         }else if(t>t1 && t<t2){
             return maxVel;
+        }else if(t<duration){
+            return maxVel - accel*(t-t2);
         }else{
-            return maxVel - accel*t;
+            return 0;
         }
     }
 

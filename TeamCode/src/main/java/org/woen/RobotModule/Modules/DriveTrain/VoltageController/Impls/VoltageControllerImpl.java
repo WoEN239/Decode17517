@@ -7,6 +7,7 @@ import org.woen.RobotModule.Modules.Battery.NewVoltageAvailable;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.RegisterNewWheelsVoltageListener;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
+import org.woen.Telemetry.Telemetry;
 
 public class VoltageControllerImpl implements VoltageController {
     private WheelValueMap target = new WheelValueMap(0d,0d,0d,0d);
@@ -14,6 +15,7 @@ public class VoltageControllerImpl implements VoltageController {
 
     private void onEvent(NewVoltageAvailable e) {
         this.voltage = e.getData();
+        Telemetry.getInstance().add("battery",voltage);
     }
 
     public void setTarget(WheelValueMap target) {

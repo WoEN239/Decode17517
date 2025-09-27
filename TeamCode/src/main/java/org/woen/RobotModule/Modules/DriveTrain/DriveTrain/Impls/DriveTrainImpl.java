@@ -36,7 +36,7 @@ public class DriveTrainImpl implements DriveTrain {
     private final FeedbackController feedbackController = new FeedbackController(
             ControlSystemConstant.xPid,
             ControlSystemConstant.hPid);
-    private final FeedforwardController feedforwardController = new FeedforwardController(new WheelValueMap(feedforwardK,
+    private FeedforwardController feedforwardController = new FeedforwardController(new WheelValueMap(feedforwardK,
                                                                                    feedforwardK,feedforwardK,feedforwardK));
 
     public void setFeedforwardReference(FeedforwardReference feedforwardReference) {
@@ -54,6 +54,9 @@ public class DriveTrainImpl implements DriveTrain {
         WheelValueMap feedback = toWheelsFromRobotVoltage(
                 feedbackController.computeU(feedbackReference.pos,position,
                                             feedbackReference.vel,velocity));
+
+        feedforwardController = new FeedforwardController(new WheelValueMap(feedforwardK,
+                feedforwardK,feedforwardK,feedforwardK));
 
         WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(feedforwardReference.now));
 
