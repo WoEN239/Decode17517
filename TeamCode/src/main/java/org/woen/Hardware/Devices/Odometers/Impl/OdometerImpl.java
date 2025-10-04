@@ -31,9 +31,9 @@ public class OdometerImpl implements Odometer {
 
     @Override
     public double getVel(){
-        filter.setPos(getPos());
+        filter.setPos(dcMotorEx.getCurrentPosition());
         filter.update();
-        return filter.getVelocity();
+        return filter.getVelocity()*TIK_TO_SM;
     }
 
     @Override

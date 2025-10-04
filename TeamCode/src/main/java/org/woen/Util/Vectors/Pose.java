@@ -1,7 +1,5 @@
 package org.woen.Util.Vectors;
 
-import android.annotation.SuppressLint;
-
 public class Pose {
     public final double h;
     public final Vector2d vector;
@@ -25,6 +23,9 @@ public class Pose {
     public Pose minus(Pose b){
         return new Pose(h-b.h,
                 vector.minus(b.vector));
+    }
+    public Pose unaryMinus(){
+        return new Pose(-h,new Vector2d(-vector.x, -vector.y));
     }
 
     @Override

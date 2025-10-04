@@ -85,28 +85,30 @@ public class PositionLocalizerImpl implements PositionLocalizer {
                         h,
                         new Vector2d(xLoc,
                                      yLoc)
-                )
+                ).unaryMinus()
         );
 
         double dx = deltaLocalPosition.vector.x;
         double dy = deltaLocalPosition.vector.y;
         double dh = deltaLocalPosition.h;
 
-        Vector2d dpCorrected = new Vector2d(
-                dx*sin(dh)/dh + dy*(cos(dh)-1)/dh,
-                dx*(cos(dh)-1)/dh + dy*sin(dh)/dh
-        );
+        Vector2d dpCorrected;
 
         if(abs(dh)<0.001){
             dpCorrected = new Vector2d(dx,
                                        dh
             );
+        }else{
+            dpCorrected = new Vector2d(
+                    dx*sin(dh)/dh + dy*(cos(dh)-1)/dh,
+                    dx*(cos(dh)-1)/dh + dy*sin(dh)/dh
+            );
         }
 
-        Telemetry.getInstance().add("filtred h",h);
+        Telemetry.getInstance().add("filtered h",h);
         position = new Pose(
                 h,
-                position.vector.plus(dpCorrected.rotate(localPosition.h))
+                position.vector.plus(dpCorrected.rotate(h))
         );
 
         localPosition  = new Pose(

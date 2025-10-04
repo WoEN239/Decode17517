@@ -3,18 +3,15 @@ package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedforwardController
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 
 public class FeedforwardController {
-    private final WheelValueMap kMap;
+    private final WheelValueMap kVMap;
+    private final WheelValueMap kAMap;
 
-    public FeedforwardController(WheelValueMap kMap) {
-        this.kMap = kMap;
+    public FeedforwardController(WheelValueMap kVMap, WheelValueMap kAMap) {
+        this.kVMap = kVMap;
+        this.kAMap = kAMap;
     }
 
-    public WheelValueMap computeU(WheelValueMap targetVel){
-        return new WheelValueMap(
-                targetVel.lf*kMap.lf,
-                targetVel.rf*kMap.rf,
-                targetVel.rb*kMap.rb,
-                targetVel.lb*kMap.lb
-        );
+    public WheelValueMap computeU(WheelValueMap targetVel,WheelValueMap targetA){
+        return targetVel.dot(kVMap).plus(targetA.dot(kAMap));
     }
 }
