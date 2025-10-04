@@ -1,7 +1,6 @@
 package org.woen.Hardware.Devices.Odometers.Impl;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
 import org.woen.Util.filter.Filter;
@@ -14,7 +13,7 @@ public class OdometerImpl implements Odometer {
         this.dir = dir;
     }
 
-    private static final double TIK_TO_SM = 4.8*Math.PI/8192.0;
+    private static final double SM_PER_TIK = 4.8*Math.PI/8192.0;
     protected DcMotorEx dcMotorEx;
 
     public OdometerImpl(DcMotorEx dcMotorEx){
@@ -26,14 +25,14 @@ public class OdometerImpl implements Odometer {
 
     @Override
     public double getPos(){
-        return dir*dcMotorEx.getCurrentPosition()*TIK_TO_SM;
+        return dir*dcMotorEx.getCurrentPosition()*SM_PER_TIK;
     }
 
     @Override
     public double getVel(){
         filter.setPos(dcMotorEx.getCurrentPosition());
         filter.update();
-        return filter.getVelocity()*TIK_TO_SM;
+        return filter.getVelocity()*dir*SM_PER_TIK;
     }
 
     @Override
