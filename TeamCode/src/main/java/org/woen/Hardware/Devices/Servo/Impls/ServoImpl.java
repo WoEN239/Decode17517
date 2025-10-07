@@ -1,14 +1,16 @@
 package org.woen.Hardware.Devices.Servo.Impls;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcontroller.internal.FtcOpModeRegister;
 import org.woen.Hardware.Devices.Servo.ServoMotion;
 
 
 public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
 
-    ServoMotion servoMotion;
+
 
     ElapsedTime t = new ElapsedTime();
 
@@ -31,6 +33,7 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
     private double oldTarget = 0d;
 
     double target = 0;
+    ServoMotion servoMotion = new ServoMotion(accel, maxVel, target, oldTarget);
 
     @Override
     public void setPos(double target, double startPos) {
@@ -45,7 +48,9 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
     }
 
     private void setMotionPos() {
-      servo.setPosition(servoMotion.getPos(t.milliseconds()));
+        servo.setPosition(servoMotion.getPos(t.milliseconds()));
+        FtcDashboard.getInstance().getTelemetry().addData("pos", servoMotion.getPos(t.milliseconds()));
+        FtcDashboard.getInstance().getTelemetry().update();
     }
 
     @Override

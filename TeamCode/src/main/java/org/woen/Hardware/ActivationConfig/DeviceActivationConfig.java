@@ -1,10 +1,12 @@
 package org.woen.Hardware.ActivationConfig;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.woen.Hardware.Devices.Motor.MotorConfig;
 import org.woen.Hardware.Devices.Odometers.OdometerConf;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.Telemetry;
 
 public class DeviceActivationConfig {
 
