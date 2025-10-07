@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 public class RobotModuleFactory {
     private final ArrayList<IRobotModuleFactory> factories = new ArrayList<>(Arrays.asList(
-        new DriveTrainFactory(),new LocalizerFactory()
+        new LocalizerFactory(),new DriveTrainFactory()
     ));
 
     public ArrayList<IRobotModule> getModules() {

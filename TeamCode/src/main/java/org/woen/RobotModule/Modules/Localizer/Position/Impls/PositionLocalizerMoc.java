@@ -33,6 +33,5 @@ public class PositionLocalizerMoc implements PositionLocalizer {
         FtcDashboard.getInstance().addConfigVariable("manual localizer","posX",positionProviderX);
         FtcDashboard.getInstance().addConfigVariable("manual localizer","posH",positionProviderH);
         FtcDashboard.getInstance().addConfigVariable("manual localizer","posY",positionProviderY);
-      //  FtcDashboard.getInstance().addConfigVariable("manual localizer","local_pos",localPositionProvider);
     }
 }

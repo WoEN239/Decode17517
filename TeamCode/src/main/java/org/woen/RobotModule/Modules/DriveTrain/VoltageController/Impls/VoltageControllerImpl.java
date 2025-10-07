@@ -1,12 +1,14 @@
 package org.woen.RobotModule.Modules.DriveTrain.VoltageController.Impls;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Config.ControlSystemConstant;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.RobotModule.Modules.Battery.NewVoltageAvailable;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.RegisterNewWheelsVoltageListener;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
+import org.woen.Telemetry.Telemetry;
 
 public class VoltageControllerImpl implements VoltageController {
     private WheelValueMap target = new WheelValueMap(0d,0d,0d,0d);
@@ -14,6 +16,7 @@ public class VoltageControllerImpl implements VoltageController {
 
     private void onEvent(NewVoltageAvailable e) {
         this.voltage = e.getData();
+        Telemetry.getInstance().add("battery",voltage);
     }
 
     public void setTarget(WheelValueMap target) {
@@ -35,11 +38,24 @@ public class VoltageControllerImpl implements VoltageController {
             double k = voltage/maxV;
             power = power.multiply(k);
         }
+        power = new WheelValueMap(
+                power.lf+ControlSystemConstant.staticVoltageOffset*Math.signum(power.lf),
+                power.rf+ControlSystemConstant.staticVoltageOffset*Math.signum(power.rf),
+                power.rb+ControlSystemConstant.staticVoltageOffset*Math.signum(power.rb),
+                power.lb+ControlSystemConstant.staticVoltageOffset*Math.signum(power.lb)
+        );
+
+        power = power.border(new WheelValueMap(
+                ControlSystemConstant.staticVoltageOffset+0.1,ControlSystemConstant.staticVoltageOffset+0.1,
+                ControlSystemConstant.staticVoltageOffset+0.1,ControlSystemConstant.staticVoltageOffset+0.1));
+
         power = power.multiply(1d/voltage);
+
         lf.setPower(power.lf);
         rf.setPower(power.rf);
         rb.setPower(power.rb);
         lb.setPower(power.lb);
+        Telemetry.getInstance().add("lf volt",power.lf);
     }
 
     @Override

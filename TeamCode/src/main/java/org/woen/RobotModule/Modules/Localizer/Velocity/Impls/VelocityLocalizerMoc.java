@@ -21,7 +21,5 @@ public class VelocityLocalizerMoc implements VelocityLocalizer {
 
     @Override
     public void init() {
-        //FtcDashboard.getInstance().addConfigVariable("manual localizer","vel",velocityProvider);
-        //FtcDashboard.getInstance().addConfigVariable("manual localizer","local_vel", localVelocityProvider);
     }
 }

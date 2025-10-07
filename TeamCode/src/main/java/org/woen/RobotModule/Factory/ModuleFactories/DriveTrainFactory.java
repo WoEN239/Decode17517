@@ -5,6 +5,7 @@ package org.woen.RobotModule.Factory.ModuleFactories;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
+import org.woen.RobotModule.Modules.Battery.Battery;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainImpl;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainMoc;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
@@ -24,7 +25,7 @@ public class DriveTrainFactory implements IRobotModuleFactory {
     @Override
     public IRobotModule[] create(){
         return new IRobotModule[]{
-            createTrajectoryFollower(),createDriveTrain(),createVoltageController()
+            createTrajectoryFollower(),createDriveTrain(),createVoltageController(),new Battery()
         };
     }
 

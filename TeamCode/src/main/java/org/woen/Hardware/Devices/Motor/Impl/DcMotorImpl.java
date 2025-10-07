@@ -1,5 +1,6 @@
 package org.woen.Hardware.Devices.Motor.Impl;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -45,7 +46,7 @@ public class DcMotorImpl implements Motor {
     }
 
     @Override
-    public void setZeroPowerBehavior(com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior m) {
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior m) {
         dcMotorEx.setZeroPowerBehavior(m);
     }
 

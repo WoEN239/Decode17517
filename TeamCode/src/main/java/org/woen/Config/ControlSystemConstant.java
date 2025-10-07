@@ -11,7 +11,9 @@ public class ControlSystemConstant {
     public static PidStatus xPid = new PidStatus(0,0,0,0,0,0,0);
     public static PidStatus hPid = new PidStatus(0,0,0,0,0,0,0);
 
-    public static Double feedforwardK = 1d;
+    public static Double feedforwardKV = 1.1d;
+    public static Double feedforwardKA = 0.3d;
+    public static Double staticVoltageOffset = 1d;
 
     //sm
     public static double lx = 12.7;
