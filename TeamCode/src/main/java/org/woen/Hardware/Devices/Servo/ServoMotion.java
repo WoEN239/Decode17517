@@ -1,6 +1,9 @@
 package org.woen.Hardware.Devices.Servo;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 
 public class ServoMotion {
 
@@ -9,9 +12,9 @@ public class ServoMotion {
     private final double maxVel;
     private double target = 0;
 
-    private final double t1;
+    public final double t1;
 
-    private final double t2;
+    public final double t2;
     public final double t3;
 
 
@@ -23,15 +26,18 @@ public class ServoMotion {
 
         double accelTime = maxVel / acceleration;
         double accelLength = (accelTime * accelTime * acceleration) / 2.0;
-        double lengthWithoutAccel = (target - startPos) - accelLength * 2;
+        double lengthWithoutAccel = abs(target - startPos) - accelLength * 2;
+
+        FtcDashboard.getInstance().getTelemetry().addData("lenght", lengthWithoutAccel);
+        FtcDashboard.getInstance().getTelemetry().update();
 
         if ((target - startPos) < accelLength * 2 + lengthWithoutAccel) {
             t1 = t3 = accelLength;
-            t2 = ((target - startPos) - 2 * accelTime) / maxVel;
+            t2 = (abs(target - startPos) - 2 * accelTime) / maxVel;
         } else {
-            t1 = t3 = sqrt(2 * (target - startPos) / acceleration);
+            t1 = t3 = sqrt(2 * abs(target - startPos) / acceleration);
             t2 = 0;
-            maxVel = (2 * (target - startPos)) / t1;
+            maxVel = (2 * abs(target - startPos)) / t1;
         }
 
     }

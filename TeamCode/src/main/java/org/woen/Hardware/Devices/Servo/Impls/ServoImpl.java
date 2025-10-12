@@ -4,8 +4,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcOpModeRegister;
 import org.woen.Hardware.Devices.Servo.ServoMotion;
+import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
 
 
 public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
@@ -33,12 +33,12 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
     private double oldTarget = 0d;
 
     double target = 0;
-    ServoMotion servoMotion = new ServoMotion(accel, maxVel, target, oldTarget);
+    public TrapezoidMotionProfile servoMotion = new TrapezoidMotionProfile(accel, maxVel, target, oldTarget, 0);
 
     @Override
     public void setPos(double target, double startPos) {
         if (!isItTarget() && target != oldTarget) {
-            servoMotion = new ServoMotion(accel, maxVel, target, startPos);
+            servoMotion = new TrapezoidMotionProfile(accel, maxVel, target, startPos, 0);
             this.target = target;
             setMotionPos();
         }
@@ -53,13 +53,23 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
         FtcDashboard.getInstance().getTelemetry().update();
     }
 
+    public double getPos(){
+        FtcDashboard.getInstance().getTelemetry().addData("pos", servoMotion.getPos(t.milliseconds()));
+        FtcDashboard.getInstance().getTelemetry().update();
+        return servoMotion.getPos(t.milliseconds());
+    }
+
+    public void resetTimer(){
+        t.reset();
+    }
+
     @Override
     public boolean isItTarget() {
-        if (servoMotion.t3 > t.milliseconds())
-            return false;
+        if (servoMotion.duration > t.milliseconds())
+            return true;
         else {
             oldTarget = target;
-            return true;
+            return false;
         }
     }
 }

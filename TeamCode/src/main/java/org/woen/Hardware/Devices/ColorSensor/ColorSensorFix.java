@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchDeviceWithParameters;
 import java.lang.reflect.Field;
 
 public class ColorSensorFix {
-    public static AdafruitI2cColorSensor fix(AdafruitI2cColorSensor sensor){
+    public static AdafruitI2cColorSensor fix(AdafruitI2cColorSensor sensor) {
         try {
             AMSColorSensor.class.getDeclaredField("AMS_TCS34725_ID").setAccessible(true);
 

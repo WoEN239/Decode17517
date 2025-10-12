@@ -14,10 +14,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvPipeline;
+import org.woen.Robot.TEAM;
 
 import java.util.List;
 
@@ -36,9 +38,6 @@ public class Camera {
 
     private VisionPortal visionPortal;
 
-    private List<AprilTagDetection> detectionList;
-
-    OpenCvCamera openCvCamera;
 
     private int id = 0;
 
@@ -48,20 +47,32 @@ public class Camera {
 
     public int id23 = 23;
 
-    public static int height = 640;
+    public static int height = 600;
 
-    public static int width = 480;
+    public static int width = 800;
 
+    public static TEAM TEAM = null;
 
-    public void initAprilTag(HardwareMap hardwareMap) {
+    Position position = null;
+
+    YawPitchRollAngles orient = null;
+
+    AprilTagPoseFtc pos = new AprilTagPoseFtc(0,0,0,0,0,0,0,0,0);
+
+    public void initAprilTag(HardwareMap hardwareMap, TEAM TEAM) {
         aprilTag = new AprilTagProcessor.Builder()
                 .setCameraPose(cameraPosition, cameraOrient)
                 .build();
 
+        this.TEAM = TEAM;
+
+        this.position = position;
+
+        this.orient = orient;
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
-        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam1"));
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         builder.addProcessor(aprilTag);
 
@@ -76,24 +87,30 @@ public class Camera {
     }
 
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    Pose3D pos = null;
 
-    public Pose3D getDistance(){
+    public AprilTagPoseFtc getDistance() {
         return pos;
     }
 
     public void update() {
         List<AprilTagDetection> currentDetectionList = aprilTag.getDetections();
 
-        if (currentDetectionList.size() != 0) {
+        if (!currentDetectionList.isEmpty()) {
             for (AprilTagDetection tag : currentDetectionList) {
                 if (tag.id == id21 || tag.id == id22 || tag.id == id23) {
                     id = tag.id;
-                    pos = tag.robotPose;
+                    break;
+                }
+                if (tag.id == 24 && TEAM == org.woen.Robot.TEAM.RED) {
+                    pos = tag.ftcPose;
+                    break;
+                }
+                if (tag.id == 20 && TEAM == org.woen.Robot.TEAM.BLUE) {
+                    pos = tag.ftcPose;
                     break;
                 }
             }
