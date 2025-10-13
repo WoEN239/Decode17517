@@ -1,5 +1,7 @@
 package org.woen.Hardware.Devices.Servo.Impls;
 
+import static java.lang.Math.abs;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,18 +29,20 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
         this.accel = accel;
         this.maxVel = maxVel;
 
+        t.reset();
+
     }
 
 
     private double oldTarget = 0d;
 
     double target = 0;
-    public TrapezoidMotionProfile servoMotion = new TrapezoidMotionProfile(accel, maxVel, target, oldTarget, 0);
+    public ServoMotion servoMotion = new ServoMotion(accel, maxVel, 0, 0);
 
     @Override
     public void setPos(double target, double startPos) {
         if (!isItTarget() && target != oldTarget) {
-            servoMotion = new TrapezoidMotionProfile(accel, maxVel, target, startPos, 0);
+            servoMotion = new ServoMotion(accel, maxVel, target, startPos);
             this.target = target;
             setMotionPos();
         }
@@ -53,11 +57,6 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
         FtcDashboard.getInstance().getTelemetry().update();
     }
 
-    public double getPos(){
-        FtcDashboard.getInstance().getTelemetry().addData("pos", servoMotion.getPos(t.milliseconds()));
-        FtcDashboard.getInstance().getTelemetry().update();
-        return servoMotion.getPos(t.milliseconds());
-    }
 
     public void resetTimer(){
         t.reset();
@@ -65,11 +64,11 @@ public class ServoImpl implements org.woen.Hardware.Devices.Servo.Inter.Servo {
 
     @Override
     public boolean isItTarget() {
-        if (servoMotion.duration > t.milliseconds())
-            return true;
+        if (abs(servoMotion.t3 + servoMotion.t2 + servoMotion.t1) > t.milliseconds())
+            return false;
         else {
             oldTarget = target;
-            return false;
+            return true;
         }
     }
 }
