@@ -1,4 +1,4 @@
-package org.woen.Camera;
+package org.woen.RobotModule.Camera;
 
 import android.icu.text.Transliterator;
 import android.util.Size;

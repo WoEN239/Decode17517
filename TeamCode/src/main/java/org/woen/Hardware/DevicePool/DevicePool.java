@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factories.HardwareFactory;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
@@ -22,6 +23,8 @@ public class DevicePool {
     public Motor motorLB;
     public Motor motorLF;
     public Motor motorRF;
+
+    public ColorSensor colorSensor;
 
     public RevVoltageSensor revVoltageSensor;
 
@@ -55,6 +58,8 @@ public class DevicePool {
         sideOd.setDir(-1);
         sideOd.reset();
 
+        colorSensor = factory.createColorSensor("colorSensoiIdX", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+
         motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -69,6 +74,8 @@ public class DevicePool {
         motorLF.reset();
         motorRB.reset();
         motorRF.reset();
+
+
 
         revVoltageSensor = factory.createVoltageSensor();
     }

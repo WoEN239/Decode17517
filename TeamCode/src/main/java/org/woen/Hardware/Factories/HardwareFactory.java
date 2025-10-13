@@ -1,9 +1,13 @@
 package org.woen.Hardware.Factories;
 
+import com.qualcomm.hardware.adafruit.AdafruitI2cColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.woen.Hardware.Devices.ColorSensor.Impl.ColorSensorImpl;
+import org.woen.Hardware.Devices.ColorSensor.Impl.ColorSensorMok;
+import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.Motor.Impl.DcMotorImpl;
 import org.woen.Hardware.Devices.Motor.Impl.DcMotorMok;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
@@ -53,6 +57,12 @@ public class HardwareFactory {
         }
     }
 
+    public ColorSensor createColorSensor(String name, Provider<Integer> red, Provider<Integer> green, Provider<Integer> blue){
+        if (config.colorSensor.get())
+            return new ColorSensorImpl(hardwareMap.get(AdafruitI2cColorSensor.class, name));
+        else
+            return new ColorSensorMok(red, green, blue);
+    }
     public IMU createIMU(String name){
         return hardwareMap.get(IMU.class,name );
     }
