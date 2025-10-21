@@ -37,8 +37,8 @@ public class DriveTrainImpl implements DriveTrain {
             ControlSystemConstant.xPid,
             ControlSystemConstant.hPid);
     private FeedforwardController feedforwardController = new FeedforwardController(
-            new WheelValueMap(feedforwardKV, feedforwardKV, feedforwardKV, feedforwardKV),
-            new WheelValueMap(feedforwardKA,feedforwardKA,feedforwardKA,feedforwardKA));
+            new WheelValueMap(xFeedforwardKV, xFeedforwardKV, xFeedforwardKV, xFeedforwardKV),
+            new WheelValueMap(xFeedforwardKA, xFeedforwardKA, xFeedforwardKA, xFeedforwardKA));
 
     public void setFeedforwardReference(FeedforwardReference feedforwardReference) {
         this.feedforwardReference = feedforwardReference;
@@ -57,8 +57,8 @@ public class DriveTrainImpl implements DriveTrain {
                                             feedbackReference.vel,velocity));
 
         feedforwardController = new FeedforwardController(
-                new WheelValueMap(feedforwardKV, feedforwardKV, feedforwardKV, feedforwardKV),
-                new WheelValueMap(feedforwardKA,feedforwardKA,feedforwardKA,feedforwardKA));
+                new WheelValueMap(xFeedforwardKV, xFeedforwardKV, xFeedforwardKV, xFeedforwardKV),
+                new WheelValueMap(xFeedforwardKA, xFeedforwardKA, xFeedforwardKA, xFeedforwardKA));
 
         WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(feedforwardReference.now),
                                                                    toWheelsFromRobotVelocities(feedforwardReference.next));
@@ -78,10 +78,10 @@ public class DriveTrainImpl implements DriveTrain {
 
     private WheelValueMap toWheelsFromRobotVelocities(Pose r){
         return new WheelValueMap(
-                (r.vector.x - r.vector.y - (lx+ly)*r.h)/wheelR,
-                (r.vector.x + r.vector.y + (lx+ly)*r.h)/wheelR,
-                (r.vector.x - r.vector.y + (lx+ly)*r.h)/wheelR,
-                (r.vector.x + r.vector.y - (lx+ly)*r.h)/wheelR
+                (r.vector.x - r.vector.y - hSlip*(lx+ly)*r.h)/wheelR,
+                (r.vector.x + r.vector.y + hSlip*(lx+ly)*r.h)/wheelR,
+                (r.vector.x - r.vector.y + hSlip*(lx+ly)*r.h)/wheelR,
+                (r.vector.x + r.vector.y - hSlip*(lx+ly)*r.h)/wheelR
         );
     }
 

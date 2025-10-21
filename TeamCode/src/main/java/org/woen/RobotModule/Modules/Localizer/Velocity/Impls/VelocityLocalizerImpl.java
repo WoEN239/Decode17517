@@ -48,7 +48,7 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
         double xLoc = deviceData.leftOdVel + deviceData.rightOdVel;
         xLoc *= 0.5;
 
-        double h = +deviceData.leftOdVel - deviceData.rightOdVel;
+        double h = -deviceData.leftOdVel + deviceData.rightOdVel;
         h *= 0.5;
         h *= METER_PER_ANGLE;
 

@@ -17,28 +17,28 @@ public class TrapezoidMotionProfile {
         this.targetPos = targetPos;
         this.startPos = pos;
         this.targetDisp = targetPos-pos;
-        final double direction =Math.signum(targetDisp);
+        final double direction = Math.signum(targetDisp);
 
         this.accel = accel*direction;
         this.maxVel = maxVel*direction;
 
         this.startVel = vel;
 
-        double accelTime = Math.abs((maxVel-vel)/accel);
-        accelLength = accelTime*vel + accelTime*accelTime*accel*0.5;
+        double accelTime = Math.abs((this.maxVel-vel)/this.accel);
+        accelLength = accelTime*vel + accelTime*accelTime*this.accel*0.5;
 
-        if(targetDisp > accelLength*2d){
+        if(Math.abs(targetDisp) > Math.abs(accelLength)*2d){
             t1 = accelTime;
-            if(maxVel!=0) {
-                t2 = Math.abs((targetDisp - accelLength * 2d) / maxVel) + accelTime;
+            if(this.maxVel!=0) {
+                t2 = Math.abs((targetDisp - accelLength * 2d) / this.maxVel) + accelTime;
                 duration = t2 + accelTime;
             }else{
                 t2 = 0;
                 duration = 0;
             }
         }else{
-            t1 = (-vel+Math.sqrt(vel*vel+2d*accel* targetDisp *0.5))/accel;
-            this.maxVel = vel+accel*t1;
+            t1 = Math.abs((-vel+Math.sqrt(vel*vel+2d*this.accel*targetDisp *0.5))/this.accel);
+            this.maxVel = vel+this.accel*t1;
             t2 = t1;
             duration = 2d*t1;
         }
@@ -50,11 +50,11 @@ public class TrapezoidMotionProfile {
 
     public double getPos(double t){
         if(t<t1){
-            return startPos+t*t*accel*0.5+startVel*t;
+            return startPos + t*t*accel*0.5 + startVel*t;
         }else if(t>t1 && t<t2){
-            return startPos+accelLength+(t-t1)*maxVel;
+            return startPos + accelLength + (t-t1)*maxVel;
         }else if(t<duration){
-            return startPos+accelLength + (t2-t1)*maxVel - accel*0.5*(t-t2)*(t-t2);
+            return startPos+accelLength + (t2-t1)*maxVel  + maxVel*(t-t2) - accel*0.5*(t-t2)*(t-t2);
         }else{
             return targetPos;
         }

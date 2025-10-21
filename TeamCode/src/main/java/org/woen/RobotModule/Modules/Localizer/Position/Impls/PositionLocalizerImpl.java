@@ -54,7 +54,7 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         double xLoc = deviceData.leftOdPos + deviceData.rightOdPos;
         xLoc *= 0.5;
 
-        double hOd = +deviceData.leftOdPos - deviceData.rightOdPos;
+        double hOd = -deviceData.leftOdPos + deviceData.rightOdPos;
         Telemetry.getInstance().add("leftOd",deviceData.leftOdPos);
         Telemetry.getInstance().add("rightOd",deviceData.rightOdPos);
         hOd *= 0.5;
@@ -85,8 +85,8 @@ public class PositionLocalizerImpl implements PositionLocalizer {
                         h,
                         new Vector2d(xLoc,
                                      yLoc)
-                ).unaryMinus()
-        );
+                )
+        ).unaryMinus();
 
         double dx = deltaLocalPosition.vector.x;
         double dy = deltaLocalPosition.vector.y;

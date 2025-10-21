@@ -51,6 +51,8 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
     private TrapezoidMotionProfile motionProfile = new TrapezoidMotionProfile(profileAccel.get(),profileMaxVel.get(),profilePos.get(),position.h,velocity.h);
     private final ElapsedTime timer = new ElapsedTime();
 
+    private int dir = 1;
+
     @Override
     public void update() {
         if(mode.get().equals("manual")) {
@@ -61,20 +63,30 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
                     new Pose(velH.get(), velX.get(), velY.get())));
         }else if(mode.get().equals("profile")){
 
-            if(timer.seconds()> (motionProfile.duration + 3) || Double.isNaN(motionProfile.duration) ){
-                motionProfile = new TrapezoidMotionProfile(profileAccel.get(), profileMaxVel.get(), profilePos.get(), position.h, velocity.h);
-                timer.reset();
+            if(axis.get().equals("h")) {
+                if (timer.seconds() > (motionProfile.duration + 3) || Double.isNaN(motionProfile.duration)) {
+                    motionProfile = new TrapezoidMotionProfile(profileAccel.get(), profileMaxVel.get(),
+                             profilePos.get()*dir + position.h, position.h, velocity.h);
+                    dir = -dir;
+                    timer.reset();
+                }
+            }else if(axis.get().equals("x")){
+                if (timer.seconds() > (motionProfile.duration + 3) || Double.isNaN(motionProfile.duration)) {
+                    motionProfile = new TrapezoidMotionProfile(profileAccel.get(), profileMaxVel.get(),
+                            dir*profilePos.get() + position.vector.x, position.vector.x, velocity.vector.x);
+                    dir = -dir;
+                    timer.reset();
+                }
             }
 
             double posTarget = motionProfile.getPos(timer.seconds());
             double velTarget = motionProfile.getVel(timer.seconds());
             double accTarget = motionProfile.getAccel(timer.seconds());
-            Telemetry.getInstance().add("posTarget", AngelUtil.normalize(posTarget));
+
             Telemetry.getInstance().add("velTarget", velTarget);
             Telemetry.getInstance().add("accTarget", accTarget);
-            Telemetry.getInstance().add("posValue", position.h);
-            Telemetry.getInstance().add("velValue", velocity.h);
             Telemetry.getInstance().add("t", timer.seconds());
+            Telemetry.getInstance().add("direction bdgd", dir);
 
             if(axis.get().equals("h")) {
                 feedbackObserver.notifyListeners(new FeedbackReference(new Pose(posTarget, 0, 0),
@@ -82,12 +94,19 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
 
                 feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(velTarget, 0, 0),
                         new Pose(accTarget, 0, 0)));
+                Telemetry.getInstance().add("posTarget", AngelUtil.normalize(posTarget));
+                Telemetry.getInstance().add("posValue", position.h);
+                Telemetry.getInstance().add("velValue", velocity.h);
+
             }else if(axis.get().equals("x")){
                 feedbackObserver.notifyListeners(new FeedbackReference(new Pose(0, posTarget, 0),
                         new Pose(0, velTarget, 0)));
-
-                feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(0, accTarget, 0),
+                feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(0, velTarget, 0),
                         new Pose(0, accTarget, 0)));
+                Telemetry.getInstance().add("posValue", position.vector.x);
+                Telemetry.getInstance().add("velValue", velocity.vector.x);
+                Telemetry.getInstance().add("posTarget", posTarget);
+
             }
 
         }

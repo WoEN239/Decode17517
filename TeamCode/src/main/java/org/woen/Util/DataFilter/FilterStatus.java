@@ -1,4 +1,4 @@
-package org.woen.Util.filter;
+package org.woen.Util.DataFilter;
 
 public class FilterStatus {
     public int medianSize;

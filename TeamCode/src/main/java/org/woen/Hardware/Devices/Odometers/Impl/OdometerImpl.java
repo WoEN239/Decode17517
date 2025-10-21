@@ -3,8 +3,9 @@ package org.woen.Hardware.Devices.Odometers.Impl;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
-import org.woen.Util.filter.Filter;
-import org.woen.Util.filter.FilterStatus;
+
+import org.woen.Util.DataFilter.Filter;
+import org.woen.Util.DataFilter.FilterStatus;
 
 public class OdometerImpl implements Odometer {
     private int dir = 1;
@@ -30,9 +31,9 @@ public class OdometerImpl implements Odometer {
 
     @Override
     public double getVel(){
-        filter.setPos(dcMotorEx.getCurrentPosition());
+        filter.setPos(dir*dcMotorEx.getCurrentPosition());
         filter.update();
-        return filter.getVelocity()*dir*SM_PER_TIK;
+        return filter.getVelocity()*SM_PER_TIK;
     }
 
     @Override

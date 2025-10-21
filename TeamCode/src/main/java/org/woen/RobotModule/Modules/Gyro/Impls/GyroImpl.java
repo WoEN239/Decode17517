@@ -30,8 +30,8 @@ public class GyroImpl implements Gyro {
     @Override
     public  void update() {
         if(timer.seconds()>0.1) {
-            double angle = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double velocity = imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
+            double angle = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double velocity = -imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
             angleObserver.notifyListeners(angle);
             velObserver.notifyListeners(velocity);
             timer.reset();

@@ -1,4 +1,4 @@
-package org.woen.Util.filter;
+package org.woen.Util.DataFilter;
 
 import static java.lang.Math.abs;
 

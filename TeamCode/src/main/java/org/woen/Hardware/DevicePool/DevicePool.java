@@ -47,11 +47,11 @@ public class DevicePool {
         gyro = factory.createIMU("imu");
 
         rightOd = factory.createOdometer("motorRB", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
-        rightOd.setDir(1);
+        rightOd.setDir(-1);
         rightOd.reset();
 
         leftOd = factory.createOdometer("motorLF", config.odometerConfig.leftOdPos, config.odometerConfig.leftOdVel);
-        leftOd.setDir(-1);
+        leftOd.setDir(1);
         leftOd.reset();
 
         sideOd = factory.createOdometer("sideOdometer", config.odometerConfig.sideOdPos, config.odometerConfig.sideOdVel);
@@ -65,10 +65,10 @@ public class DevicePool {
         motorRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorLB.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLF.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRB.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRF.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLB.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLF.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRB.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRF.setDirection(DcMotorSimple.Direction.REVERSE);
 
         motorLB.reset();
         motorLF.reset();
