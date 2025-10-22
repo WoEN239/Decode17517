@@ -4,6 +4,7 @@ import org.woen.RobotModule.Factory.ModuleFactories.DriveTrainFactory;
 import org.woen.RobotModule.Factory.ModuleFactories.LocalizerFactory;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +26,12 @@ public class RobotModuleFactory {
         }
     }
 
+    public <T extends IRobotModule> void replace(Class<T> type, T module){
+
+        modules.removeIf(i -> i.getClass().equals(type));
+        modules.add(module);
+
+    }
     private void setConfig(ModulesActivateConfig config){
         factories.forEach(i->i.setConfig(config));
     }

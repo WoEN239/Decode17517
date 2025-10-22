@@ -6,6 +6,10 @@ import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.Telemetry.Telemetry;
 
 public class Robot {
+    public RobotModuleFactory getFactory() {
+        return factory;
+    }
+
     private RobotModuleFactory factory;
 
     public void factoryInit(ModulesActivateConfig config){
