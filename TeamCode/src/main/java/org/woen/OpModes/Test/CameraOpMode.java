@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.woen.RobotModule.Camera.Camera;
-import org.woen.Robot.TEAM;
+import org.woen.Config.Team;
 
 @TeleOp(name = "camera_test")
 
@@ -16,14 +16,14 @@ import org.woen.Robot.TEAM;
 public class CameraOpMode extends LinearOpMode {
 
 
-    public static TEAM team = TEAM.RED;
+    public static Team team = Team.RED;
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         Camera camera = new Camera();
 
-        camera.initAprilTag(hardwareMap, TEAM.RED);
+        camera.initAprilTag(hardwareMap, Team.RED);
 
 
         waitForStart();

@@ -4,6 +4,7 @@ import com.qualcomm.hardware.adafruit.AdafruitI2cColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.woen.Hardware.Devices.ColorSensor.Impl.ColorSensorImpl;
 import org.woen.Hardware.Devices.ColorSensor.Impl.ColorSensorMok;
@@ -15,6 +16,8 @@ import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
 import org.woen.Hardware.Devices.Odometers.Impl.OdometerImpl;
 import org.woen.Hardware.Devices.Odometers.Impl.OdometerMoc;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Devices.Servo.Impls.ServoImpl;
+import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensorFake;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensorImpl;
@@ -37,6 +40,15 @@ public class HardwareFactory {
         }
         else{
             return new DcMotorMok(pos, vol);
+        }
+    }
+
+    public ServoMotor createServoMotor(String name){
+        if(config.servos.get()){
+            return new ServoImpl(hardwareMap.get(Servo.class, name));
+        }
+        else{
+            return pos -> {};
         }
     }
 
@@ -63,6 +75,7 @@ public class HardwareFactory {
         else
             return new ColorSensorMok(red, green, blue);
     }
+
     public IMU createIMU(String name){
         return hardwareMap.get(IMU.class,name );
     }

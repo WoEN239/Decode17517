@@ -13,10 +13,12 @@ public class DeviceActivationConfig {
 
     public final Provider<Boolean> odometers = new Provider<>(true);
     public final Provider<Boolean> motors    = new Provider<>(true);
+    public final Provider<Boolean> servos    = new Provider<>(true);
     public final Provider<Boolean> rev       = new Provider<>(true);
-    public final Provider<Boolean> colorSensor    = new Provider<>(true);
     public final MotorConfig motorConfig     = new MotorConfig();
     public final OdometerConf odometerConfig = new OdometerConf();
+
+    public final Provider<Boolean> colorSensor    = new Provider<>(true);
 
     public final ColorSensorConfig colorSensorConfig = new ColorSensorConfig();
 
@@ -24,8 +26,9 @@ public class DeviceActivationConfig {
     private void initConfigs(){
         FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "odometers", odometers);
         FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "motors",    motors);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "servos",    servos);
         FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "rev",       rev);
-        FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "colorSensor",       rev);;
+
         motorConfig.init();
         odometerConfig.init();
         colorSensorConfig.init();
@@ -39,6 +42,7 @@ public class DeviceActivationConfig {
     public static DeviceActivationConfig getAllOff(){
         DeviceActivationConfig config = new DeviceActivationConfig();
         config.motors     .set(false);
+        config.servos     .set(false);
         config.odometers  .set(false);
         config.rev        .set(false);
         config.colorSensor.set(false);

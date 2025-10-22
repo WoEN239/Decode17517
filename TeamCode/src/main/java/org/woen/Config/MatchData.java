@@ -1,7 +1,6 @@
 package org.woen.Config;
 
 import org.woen.Util.Vectors.Pose;
-import org.woen.Util.Vectors.DoubleCoordinate;
 import org.woen.Util.Vectors.Vector2d;
 
 public class MatchData {
@@ -10,4 +9,5 @@ public class MatchData {
             new Vector2d(0,
                          0)
     );
+    public static Team team = Team.BLUE;
 }

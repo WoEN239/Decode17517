@@ -1,6 +1,5 @@
 package org.woen.RobotModule.Camera;
 
-import android.icu.text.Transliterator;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -9,17 +8,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.opencv.core.Mat;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvPipeline;
-import org.woen.Robot.TEAM;
+import org.woen.Config.Team;
 
 import java.util.List;
 
@@ -51,7 +46,7 @@ public class Camera {
 
     public static int width = 800;
 
-    public static TEAM TEAM = null;
+    public static Team TEAM = null;
 
     Position position = null;
 
@@ -59,7 +54,7 @@ public class Camera {
 
     AprilTagPoseFtc pos = new AprilTagPoseFtc(0,0,0,0,0,0,0,0,0);
 
-    public void initAprilTag(HardwareMap hardwareMap, TEAM TEAM) {
+    public void initAprilTag(HardwareMap hardwareMap, Team TEAM) {
         aprilTag = new AprilTagProcessor.Builder()
                 .setCameraPose(cameraPosition, cameraOrient)
                 .build();
@@ -105,11 +100,11 @@ public class Camera {
                     id = tag.id;
                     break;
                 }
-                if (tag.id == 24 && TEAM == org.woen.Robot.TEAM.RED) {
+                if (tag.id == 24 && TEAM == Team.RED) {
                     pos = tag.ftcPose;
                     break;
                 }
-                if (tag.id == 20 && TEAM == org.woen.Robot.TEAM.BLUE) {
+                if (tag.id == 20 && TEAM == Team.BLUE) {
                     pos = tag.ftcPose;
                     break;
                 }
