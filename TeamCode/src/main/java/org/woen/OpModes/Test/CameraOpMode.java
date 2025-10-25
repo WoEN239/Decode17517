@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
-import org.woen.RobotModule.Camera.Camera;
+import org.woen.RobotModule.Modules.Camera.Camera;
 import org.woen.Config.Team;
 
 @TeleOp(name = "camera_test")

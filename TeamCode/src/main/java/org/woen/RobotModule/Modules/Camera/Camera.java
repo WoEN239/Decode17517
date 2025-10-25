@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Camera;
+package org.woen.RobotModule.Modules.Camera;
 
 import android.util.Size;
 
@@ -23,10 +23,10 @@ import java.util.List;
 public class Camera {
 
     //TODO static pos
-    private Position cameraPosition = new Position(DistanceUnit.METER,
+    private static Position cameraPosition = new Position(DistanceUnit.METER,
             0, 0, 0, 0);
 
-    private YawPitchRollAngles cameraOrient = new YawPitchRollAngles(AngleUnit.DEGREES,
+    private static YawPitchRollAngles cameraOrient = new YawPitchRollAngles(AngleUnit.DEGREES,
             0, -90, 0, 0);
 
     private AprilTagProcessor aprilTag;

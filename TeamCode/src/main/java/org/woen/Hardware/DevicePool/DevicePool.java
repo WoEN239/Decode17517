@@ -32,6 +32,8 @@ public class DevicePool {
 
     public RevVoltageSensor revVoltageSensor;
 
+    public ColorSensor colorSensor;
+
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
         return Instance;
@@ -84,6 +86,8 @@ public class DevicePool {
 
 
         revVoltageSensor = factory.createVoltageSensor();
+
+        colorSensor = factory.createColorSensor("sensor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
     }
 
 }

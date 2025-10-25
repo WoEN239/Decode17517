@@ -28,6 +28,7 @@ public class DeviceActivationConfig {
         FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "motors",    motors);
         FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "servos",    servos);
         FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "rev",       rev);
+        FtcDashboard.getInstance().addConfigVariable("DeviceActivation", "colorSensor", colorSensor);
 
         motorConfig.init();
         odometerConfig.init();
