@@ -18,6 +18,6 @@ public class MatchData {
     public static Pose redWall = new Pose(
             0,
             new Vector2d(0,0)
-    )
+    );
     public static Team team = Team.BLUE;
 }
