@@ -68,42 +68,4 @@ public class ColorDetection{
 
     }
 
-    public BALLS_COLOR defColorWithFilter(){
-
-        BALLS_COLOR[] balls = new BALLS_COLOR[5];
-
-
-
-        for(int i = 0; i < 4; i++){
-            BALLS_COLOR ball = def_color();
-
-            balls[i] = ball;
-
-        }
-
-        double counterGreen = 0;
-
-        double counterPurple = 0;
-
-        double counterVoid = 0;
-        for(int i = 0; i < 4; i++){
-            if(balls[i] == BALLS_COLOR.GREEN)
-                counterGreen += 1;
-            if(balls[i] == BALLS_COLOR.PURPLE)
-                counterPurple += 1;
-            if(balls[i] == BALLS_COLOR.VOID)
-                counterVoid += 1;
-        }
-
-        if(counterGreen > counterPurple && counterGreen > counterVoid)
-            return BALLS_COLOR.GREEN;
-        if(counterPurple > counterGreen && counterPurple > counterVoid)
-            return BALLS_COLOR.PURPLE;
-        if(counterVoid > counterGreen && counterVoid > counterPurple)
-            return BALLS_COLOR.VOID;
-        return BALLS_COLOR.VOID;
-
-    }
-
-
 }
