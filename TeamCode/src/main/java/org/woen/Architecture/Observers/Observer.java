@@ -17,5 +17,10 @@ public abstract class Observer <D,R extends IEvent<IListener<D>>>{
         }
     }
 
+    @Override
+    public String toString() {
+        return listeners.toString();
+    }
+
     public abstract void onEvent(R registration);
 }

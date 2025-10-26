@@ -18,8 +18,9 @@ public class ControlSystemConstant {
     public static Double staticVoltageOffset = 1d;
 
     //sm
-    public static double lx = 12.7;
-    public static double ly = 13.9;
+    public static double lx = 6.3;
+    public static double ly = 16.4375;
+
     public static double wheelR = 9.6;
 
 }

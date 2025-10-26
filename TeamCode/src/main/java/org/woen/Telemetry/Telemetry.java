@@ -14,12 +14,14 @@ import java.util.ArrayList;
 
 public class Telemetry {
     public Provider<Boolean> robotPose = new Provider<>(false);
+    public Provider<Boolean> targetVel = new Provider<>(false);
     public Provider<Boolean> gyro = new Provider<>(false);
     public Provider<Boolean> voltage = new Provider<>(false);
     public Provider<Boolean> localizeDevice = new Provider<>(false);
 
     public Telemetry() {
         FtcDashboard.getInstance().addConfigVariable("telemetry","pose",robotPose);
+        FtcDashboard.getInstance().addConfigVariable("telemetry","target vel",targetVel);
         FtcDashboard.getInstance().addConfigVariable("telemetry","gyro",gyro);
         FtcDashboard.getInstance().addConfigVariable("telemetry","voltage",voltage);
         FtcDashboard.getInstance().addConfigVariable("telemetry","localizeDevice",localizeDevice);
@@ -45,6 +47,10 @@ public class Telemetry {
             modulesTelemetry.addRobotPoseToPacket(telemetryPacket);
             updateField();
         }
+
+        if(targetVel.get()){
+            modulesTelemetry.addTargetVelToPacket(telemetryPacket);
+        }
         if(gyro.get()){
             modulesTelemetry.addGyroToPacket(telemetryPacket);
         }
@@ -52,7 +58,7 @@ public class Telemetry {
             modulesTelemetry.addVoltageToPacket(telemetryPacket);
         }
         if(localizeDevice.get()){
-            modulesTelemetry.addLocalizeDevicesTopacket(telemetryPacket);
+            modulesTelemetry.addLocalizeDevicesToPacket(telemetryPacket);
         }
         FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket);
         telemetryPacket = new TelemetryPacket();

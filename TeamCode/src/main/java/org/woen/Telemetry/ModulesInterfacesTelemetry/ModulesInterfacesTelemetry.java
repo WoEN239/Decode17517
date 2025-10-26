@@ -13,11 +13,15 @@ import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewL
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewLocalVelocityListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Vectors.Pose;
 
 public class ModulesInterfacesTelemetry {
     private Pose robotPos = new Pose(0,0,0);
     private Pose robotVel = new Pose(0,0,0);
+
+    private Pose targetVel = new Pose(-564,0,0);
 
     private Pose robotLocalPos = new Pose(0,0,0);
     private Pose robotLocalVel = new Pose(0,0,0);
@@ -45,7 +49,12 @@ public class ModulesInterfacesTelemetry {
         packet.put("wheels",voltage.toString());
     }
 
-    public void addLocalizeDevicesTopacket(TelemetryPacket packet){
+    public void addTargetVelToPacket(TelemetryPacket packet){
+        packet.put("feedforward reference",targetVel.toString());
+    }
+
+
+    public void addLocalizeDevicesToPacket(TelemetryPacket packet){
         packet.put("rightPos",localizeDeviceData.rightOdPos);
         packet.put("leftPos",localizeDeviceData.leftOdPos);
         packet.put("sidePos",localizeDeviceData.sideOdPos);
@@ -67,6 +76,8 @@ public class ModulesInterfacesTelemetry {
 
         EventBus.getListenersRegistration().invoke(new RegisterNewWheelsVoltageListener(this::setVoltage));
         EventBus.getListenersRegistration().invoke(new RegisterNewLocalizeDeviceListener(this::setLocalizeDeviceData));
+
+        EventBus.getListenersRegistration().invoke(new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
     }
 
     public void setRobotPos(Pose robotPos) {
@@ -94,6 +105,8 @@ public class ModulesInterfacesTelemetry {
     }
 
     public void setVoltage(WheelValueMap voltage) {this.voltage = voltage;}
+
+    public void setFeedforwardReference(FeedforwardReference reference) {this.targetVel = reference.now;}
 
     public void setLocalizeDeviceData(LocalizeDeviceData localizeDeviceData) {this.localizeDeviceData = localizeDeviceData;}
 }

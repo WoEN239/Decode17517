@@ -12,6 +12,7 @@ import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factories.HardwareFactory;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DevicePool {
 
@@ -24,6 +25,9 @@ public class DevicePool {
     public Motor motorLB;
     public Motor motorLF;
     public Motor motorRF;
+
+    public Motor gunR;
+    public Motor gunL;
 
     public ServoMotor right;
     public ServoMotor left;
@@ -50,6 +54,12 @@ public class DevicePool {
 
         motorRF = factory.createDcMotor("motorRF", config.motorConfig.rightFrontPos, config.motorConfig.rightFrontVol);
 
+        gunL = factory.createDcMotor("gunL", new Provider<>(0d), new Provider<>(0d));
+        gunR = factory.createDcMotor("gunR", new Provider<>(0d), new Provider<>(0d));
+
+        gunR.setDirection(DcMotorSimple.Direction.REVERSE);
+        gunL.setDirection(DcMotorSimple.Direction.REVERSE);
+
         gyro = factory.createIMU("imu");
 
         rightOd = factory.createOdometer("motorRB", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
@@ -74,10 +84,10 @@ public class DevicePool {
         motorRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorLB.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorLF.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRB.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRF.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLB.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorLF.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorRB.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorRF.setDirection(DcMotorSimple.Direction.FORWARD);
 
         motorLB.reset();
         motorLF.reset();

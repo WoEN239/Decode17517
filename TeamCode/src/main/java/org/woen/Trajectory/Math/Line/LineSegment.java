@@ -8,8 +8,8 @@ import org.woen.Util.Vectors.Vector2d;
 
 public class LineSegment {
 
-    private final Vector2d start;
-    private final Vector2d end;
+    public final Vector2d start;
+    public final Vector2d end;
     public  final double lineAngle;
     public  final Vector2d unitVector;
     private final double length;

@@ -8,9 +8,9 @@ import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
 public class FeedbackableServo {
     private final ElapsedTime timer = new ElapsedTime();
     private final ServoMotor servo;
-    private TrapezoidMotionProfile motionProfile;
-    private final static double accel = 10;
-    private final static double velocity = 10;
+    private TrapezoidMotionProfile motionProfile = new TrapezoidMotionProfile(accel,velocity,0,0,0);
+    private final static double accel = 12;
+    private final static double velocity = 20;
 
     public void setTarget(double pos){
         motionProfile = new TrapezoidMotionProfile(accel, velocity,pos,getPos(),getVel());

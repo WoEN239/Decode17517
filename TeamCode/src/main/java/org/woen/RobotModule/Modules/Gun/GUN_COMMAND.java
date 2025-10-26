@@ -4,8 +4,9 @@ import static org.woen.RobotModule.Modules.Gun.GunServoPositions.*;
 
 public enum GUN_COMMAND {
 
-    RAPIR_FIRE(shot,shot,shot,open),EAT(eat,eat,eat,close),
-    SHOT_LEFT(shot,eat,eat,open),SHOT_CENTER(eat,shot,eat,open),SHOT_RIGHT(eat,eat,shot,open);
+    RAPID_FIRE(shotL, shotC, shotR,open),FULL_FIRE(shotL, shotC, shotR,open),EAT(eatL, eatC, eatR,halfClose),
+    SHOT_LEFT(shotL, eatC, eatR,open),SHOT_CENTER(eatL, shotC, eatR,open),SHOT_RIGHT(eatL, eatC, shotR,open),
+    TARGET(eatL, eatC, eatR,close);
 
     public final double right ;
     public final double center;

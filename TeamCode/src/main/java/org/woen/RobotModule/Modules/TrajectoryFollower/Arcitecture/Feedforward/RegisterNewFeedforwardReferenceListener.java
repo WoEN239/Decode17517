@@ -3,11 +3,11 @@ package org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward;
 import org.woen.Architecture.EventBus.IEvent;
 import org.woen.Architecture.Observers.IListener;
 
-public class RegisterFeedforwardReferenceListener implements IEvent<IListener<FeedforwardReference>> {
+public class RegisterNewFeedforwardReferenceListener implements IEvent<IListener<FeedforwardReference>> {
 
     private final IListener<FeedforwardReference> data;
 
-    public RegisterFeedforwardReferenceListener(IListener<FeedforwardReference> data) {
+    public RegisterNewFeedforwardReferenceListener(IListener<FeedforwardReference> data) {
         this.data = data;
     }
 

@@ -13,14 +13,16 @@ import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.Wh
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterFeedbackReferenceListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterFeedforwardReferenceListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Vectors.Pose;
 
 public class DriveTrainImpl implements DriveTrain {
-    private FeedforwardReference feedforwardReference;
-    private FeedbackReference feedbackReference;
+    private FeedforwardReference feedforwardReference = new FeedforwardReference(new Pose(0,0,0),
+                                                                                 new Pose(0,0,0));
+    private FeedbackReference feedbackReference       = new FeedbackReference(new Pose(0,0,0),
+                                                                              new Pose(0,0,0));
 
     private Pose position = MatchData.startPosition;
     private Pose velocity = new Pose(0,0,0);
@@ -88,9 +90,9 @@ public class DriveTrainImpl implements DriveTrain {
     @Override
     public void init() {
         EventBus.getListenersRegistration().invoke(
-                new RegisterFeedbackReferenceListener(this::setFeedbackReference));
+                new RegisterNewFeedbackReferenceListener(this::setFeedbackReference));
         EventBus.getListenersRegistration().invoke(
-                new RegisterFeedforwardReferenceListener(this::setFeedforwardReference));
+                new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
 
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewPositionListener(this::setPosition));
