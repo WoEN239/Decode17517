@@ -8,6 +8,7 @@ import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.Battery.Battery;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainImpl;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainMoc;
+import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.TankDriveTrainImpl;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Impls.VoltageControllerImpl;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
@@ -31,7 +32,7 @@ public class DriveTrainFactory implements IRobotModuleFactory {
 
     public DriveTrain createDriveTrain(){
         if(config.driveTrain.driveTrain.get()){
-            return new DriveTrainImpl();
+            return new TankDriveTrainImpl();
         }else{
             return new DriveTrainMoc();
         }

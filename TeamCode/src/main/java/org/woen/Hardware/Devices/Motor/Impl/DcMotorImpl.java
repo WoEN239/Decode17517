@@ -8,7 +8,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 
 public class DcMotorImpl implements Motor {
-    protected DcMotorEx dcMotorEx;
+    private final DcMotorEx dcMotorEx;
+
+    private int dir = 1;
 
     public DcMotorImpl(DcMotorEx motor) {
         this.dcMotorEx = motor;
@@ -16,12 +18,17 @@ public class DcMotorImpl implements Motor {
 
     @Override
     public double getPosition() {
-        return dcMotorEx.getCurrentPosition();
+        return dir*dcMotorEx.getCurrentPosition();
     }
 
     @Override
     public void setPower(double power) {
-        dcMotorEx.setPower(power);
+        dcMotorEx.setPower(dir*power);
+    }
+
+    @Override
+    public void setDir(int dir) {
+        this.dir = dir;
     }
 
     @Override
@@ -31,7 +38,7 @@ public class DcMotorImpl implements Motor {
 
     @Override
     public double getVel() {
-        return dcMotorEx.getVelocity();
+        return dir*dcMotorEx.getVelocity();
     }
 
     @Override

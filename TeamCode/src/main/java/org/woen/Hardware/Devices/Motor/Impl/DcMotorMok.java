@@ -29,6 +29,11 @@ public class DcMotorMok implements Motor {
     }
 
     @Override
+    public void setDir(int dir) {
+
+    }
+
+    @Override
     public void setDirection(DcMotorSimple.Direction direction) {
 
     }

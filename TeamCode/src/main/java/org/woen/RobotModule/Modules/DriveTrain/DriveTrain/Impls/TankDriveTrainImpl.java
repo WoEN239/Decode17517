@@ -1,15 +1,19 @@
 package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls;
 
-import static org.woen.Config.ControlSystemConstant.*;
+import static org.woen.Config.ControlSystemConstant.B;
+import static org.woen.Config.ControlSystemConstant.hSlip;
+import static org.woen.Config.ControlSystemConstant.wheelR;
+import static org.woen.Config.ControlSystemConstant.xFeedforwardKA;
+import static org.woen.Config.ControlSystemConstant.xFeedforwardKV;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
-import org.woen.Config.MatchData;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.HolonomicFeedbackController;
+import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedforwardController.FeedforwardController;
+import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelsVoltageObserver;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
@@ -18,16 +22,16 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.F
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Vectors.Pose;
 
-public class DriveTrainImpl implements DriveTrain {
+public class TankDriveTrainImpl implements DriveTrain {
     private FeedforwardReference feedforwardReference = new FeedforwardReference(new Pose(0,0,0),
-                                                                                 new Pose(0,0,0));
+            new Pose(0,0,0));
     private FeedbackReference feedbackReference       = new FeedbackReference(new Pose(0,0,0),
-                                                                              new Pose(0,0,0));
+            new Pose(0,0,0));
 
-    private Pose position = MatchData.startPosition;
+    private Pose position = new Pose(0,0,0);
     private Pose velocity = new Pose(0,0,0);
 
-    public void setPosition(Pose position) {
+    public void setLocalPosition(Pose position) {
         this.position = position;
     }
 
@@ -35,9 +39,10 @@ public class DriveTrainImpl implements DriveTrain {
         this.velocity = velocity;
     }
 
-    private final HolonomicFeedbackController feedbackController = new HolonomicFeedbackController(
+    private final TankFeedbackController feedbackController = new TankFeedbackController(
             ControlSystemConstant.xPid,
             ControlSystemConstant.hPid);
+
     private FeedforwardController feedforwardController = new FeedforwardController(
             new WheelValueMap(xFeedforwardKV, xFeedforwardKV, xFeedforwardKV, xFeedforwardKV),
             new WheelValueMap(xFeedforwardKA, xFeedforwardKA, xFeedforwardKA, xFeedforwardKA));
@@ -56,34 +61,33 @@ public class DriveTrainImpl implements DriveTrain {
     public void lateUpdate() {
         WheelValueMap feedback = toWheelsFromRobotVoltage(
                 feedbackController.computeU(feedbackReference.pos,position,
-                                            feedbackReference.vel,velocity));
+                        feedbackReference.vel,velocity));
 
         feedforwardController = new FeedforwardController(
                 new WheelValueMap(xFeedforwardKV, xFeedforwardKV, xFeedforwardKV, xFeedforwardKV),
                 new WheelValueMap(xFeedforwardKA, xFeedforwardKA, xFeedforwardKA, xFeedforwardKA));
 
         WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(feedforwardReference.now),
-                                                                   toWheelsFromRobotVelocities(feedforwardReference.next));
+                toWheelsFromRobotVelocities(feedforwardReference.next));
 
         wheelsVoltageObserver.notifyListeners(feedforward.plus(feedback));
     }
 
     private WheelValueMap toWheelsFromRobotVoltage(Pose r){
         return new WheelValueMap(
-                r.vector.x-r.vector.y+r.h,
-                r.vector.x+r.vector.y-r.h,
-                r.vector.x-r.vector.y-r.h,
-                r.vector.x+r.vector.y+r.h
-
+                r.vector.x-r.h,
+                r.vector.x+r.h,
+                r.vector.x+r.h,
+                r.vector.x-r.h
         );
     }
 
     private WheelValueMap toWheelsFromRobotVelocities(Pose r){
         return new WheelValueMap(
-                (r.vector.x - r.vector.y - hSlip*(lx+ly)*r.h)/wheelR,
-                (r.vector.x + r.vector.y + hSlip*(lx+ly)*r.h)/wheelR,
-                (r.vector.x - r.vector.y + hSlip*(lx+ly)*r.h)/wheelR,
-                (r.vector.x + r.vector.y - hSlip*(lx+ly)*r.h)/wheelR
+                (r.vector.x - hSlip*r.h*B*0.5)/wheelR,
+                (r.vector.x + hSlip*r.h*B*0.5)/wheelR,
+                (r.vector.x + hSlip*r.h*B*0.5)/wheelR,
+                (r.vector.x - hSlip*r.h*B*0.5)/wheelR
         );
     }
 
@@ -95,10 +99,9 @@ public class DriveTrainImpl implements DriveTrain {
                 new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
 
         EventBus.getListenersRegistration().invoke(
-                new RegisterNewPositionListener(this::setPosition));
+                new RegisterNewLocalPositionListener(this::setLocalPosition));
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewVelocityListener(this::setVelocity));
     }
-
 
 }

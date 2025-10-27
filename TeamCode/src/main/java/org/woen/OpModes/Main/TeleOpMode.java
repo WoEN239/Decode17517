@@ -26,7 +26,10 @@ public class TeleOpMode extends BaseOpMode{
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
         modConfig.driveTrain.trajectoryFollower.set(false);
+        modConfig.gun.set(true);
+
         modulesActivationConfig = modConfig;
+
     }
 
     @Override
@@ -38,9 +41,8 @@ public class TeleOpMode extends BaseOpMode{
     protected void loopRun() {
 
         velocityObserver.notifyListeners(new FeedforwardReference(new Pose(
-                -gamepad1.right_stick_x*7,-gamepad1.left_stick_y*200, 0
+                gamepad1.left_stick_x*7,gamepad1.right_trigger*150-gamepad1.left_trigger*150, 100
         ),new Pose(0,0,0)));
-        //-gamepad1.left_stick_x*200
 
         Telemetry.getInstance().add("triangle",gamepad1.triangle);
 

@@ -10,7 +10,8 @@ public interface Motor {
 
     void setPower(double power);
 
-    void setDirection(DcMotorSimple.Direction direction);
+    void setDir(int dir);
+    default void setDirection(DcMotorSimple.Direction direction){}
 
     void reset();
     void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior sZPB);

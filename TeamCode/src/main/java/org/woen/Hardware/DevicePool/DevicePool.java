@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factories.HardwareFactory;
@@ -67,7 +66,7 @@ public class DevicePool {
         rightOd.reset();
 
         leftOd = factory.createOdometer("motorLF", config.odometerConfig.leftOdPos, config.odometerConfig.leftOdVel);
-        leftOd.setDir(1);
+        leftOd.setDir(-1);
         leftOd.reset();
 
         sideOd = factory.createOdometer("sideOdometer", config.odometerConfig.sideOdPos, config.odometerConfig.sideOdVel);
@@ -84,10 +83,10 @@ public class DevicePool {
         motorRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorLB.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLF.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorRB.setDirection(DcMotorSimple.Direction.FORWARD);
-        motorRF.setDirection(DcMotorSimple.Direction.FORWARD);
+        motorLB.setDir(-1);
+        motorLF.setDir(-1);
+        motorRB.setDir(1);
+        motorRF.setDir( 1);
 
         motorLB.reset();
         motorLF.reset();

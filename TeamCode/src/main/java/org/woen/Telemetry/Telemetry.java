@@ -14,14 +14,14 @@ import java.util.ArrayList;
 
 public class Telemetry {
     public Provider<Boolean> robotPose = new Provider<>(false);
-    public Provider<Boolean> targetVel = new Provider<>(false);
+    public Provider<Boolean> target = new Provider<>(false);
     public Provider<Boolean> gyro = new Provider<>(false);
     public Provider<Boolean> voltage = new Provider<>(false);
     public Provider<Boolean> localizeDevice = new Provider<>(false);
 
     public Telemetry() {
         FtcDashboard.getInstance().addConfigVariable("telemetry","pose",robotPose);
-        FtcDashboard.getInstance().addConfigVariable("telemetry","target vel",targetVel);
+        FtcDashboard.getInstance().addConfigVariable("telemetry","target vel", target);
         FtcDashboard.getInstance().addConfigVariable("telemetry","gyro",gyro);
         FtcDashboard.getInstance().addConfigVariable("telemetry","voltage",voltage);
         FtcDashboard.getInstance().addConfigVariable("telemetry","localizeDevice",localizeDevice);
@@ -48,8 +48,8 @@ public class Telemetry {
             updateField();
         }
 
-        if(targetVel.get()){
-            modulesTelemetry.addTargetVelToPacket(telemetryPacket);
+        if(target.get()){
+            modulesTelemetry.addTargetToPacket(telemetryPacket);
         }
         if(gyro.get()){
             modulesTelemetry.addGyroToPacket(telemetryPacket);

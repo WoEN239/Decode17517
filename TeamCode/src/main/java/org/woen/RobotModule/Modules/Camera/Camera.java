@@ -19,7 +19,6 @@ import org.woen.Config.Team;
 import java.util.List;
 
 
-@Config
 public class Camera {
 
     //TODO static pos

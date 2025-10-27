@@ -101,6 +101,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
                         new Pose(0, velTarget, 0)));
                 feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(0, velTarget, 0),
                         new Pose(0, accTarget, 0)));
+
                 Telemetry.getInstance().add("posValue", position.vector.x);
                 Telemetry.getInstance().add("velValue", velocity.vector.x);
                 Telemetry.getInstance().add("posTarget", posTarget);

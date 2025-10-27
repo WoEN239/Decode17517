@@ -10,9 +10,6 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.woen.RobotModule.Modules.Camera.Camera;
 import org.woen.Config.Team;
 
-@TeleOp(name = "camera_test")
-
-@Config
 public class CameraOpMode extends LinearOpMode {
 
 

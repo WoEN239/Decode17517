@@ -4,28 +4,28 @@ import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
 
-public class FeedbackController {
+public class HolonomicFeedbackController {
 
     private final Pid xPid;
     private final Pid yPid;
     private final Pid hPid;
 
-    public FeedbackController(PidStatus translation, PidStatus rotation) {
+    public HolonomicFeedbackController(PidStatus translation, PidStatus rotation) {
         xPid = new Pid(translation);
         xPid.isAngle = true;
-        xPid.isDAccessible = true;
+        xPid.isDAccessible = false;
 
         yPid = new Pid(translation);
         yPid.isAngle = true;
-        yPid.isDAccessible = true;
+        yPid.isDAccessible = false;
 
         hPid = new Pid(rotation);
         hPid.isAngle = true;
-        hPid.isDAccessible = true;
+        hPid.isDAccessible = false;
 
     }
 
-    public Pose computeU(Pose target, Pose position, Pose taregtVel, Pose vel){
+    public Pose computeU(Pose target, Pose position, Pose targetVel, Pose vel){
         xPid.setPos(position.vector.x);
         xPid.setPosD(vel.vector.x);
 
@@ -36,13 +36,13 @@ public class FeedbackController {
         hPid.setPosD(vel.h);
 
         xPid.setTarget(target.vector.x);
-        xPid.setTargetD(taregtVel.vector.x);
+        xPid.setTargetD(targetVel.vector.x);
 
         yPid.setTarget(target.vector.y);
-        yPid.setTargetD(taregtVel.vector.y);
+        yPid.setTargetD(targetVel.vector.y);
 
         hPid.setTarget(target.h);
-        hPid.setTargetD(taregtVel.h);
+        hPid.setTargetD(targetVel.h);
 
         xPid.update();
         yPid.update();

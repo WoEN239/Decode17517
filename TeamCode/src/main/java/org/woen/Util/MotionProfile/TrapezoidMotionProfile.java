@@ -11,7 +11,7 @@ public class TrapezoidMotionProfile {
     private final double t1;
     private final double t2;
     public  final double duration;
-    private final double accelLength;
+    private double accelLength;
 
     public TrapezoidMotionProfile(double accel, double maxVel,double targetPos,double pos, double vel) {
         this.targetPos = targetPos;
@@ -38,7 +38,8 @@ public class TrapezoidMotionProfile {
             }
         }else{
             t1 = Math.abs((-vel+Math.sqrt(vel*vel+2d*this.accel*targetDisp *0.5))/this.accel);
-            this.maxVel = vel+this.accel*t1;
+            this.maxVel = startVel + this.accel*t1;
+            accelLength = startVel*t1 + this.accel*t1*t1*0.5;
             t2 = t1;
             duration = 2d*t1;
         }

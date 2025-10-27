@@ -16,6 +16,9 @@ public class Vector2d  {
                             y1);
     }
 
+    public double dot(Vector2d b){
+        return x*b.x + y*b.y;
+    }
 
     public Vector2d plus(Vector2d b) {
         return new Vector2d(x+b.x,
