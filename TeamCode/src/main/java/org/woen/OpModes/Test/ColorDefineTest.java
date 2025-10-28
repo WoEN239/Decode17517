@@ -22,12 +22,12 @@ public class ColorDefineTest extends LinearOpMode {
         AdafruitI2cColorSensor sensor = hardwareMap.get(AdafruitI2cColorSensor.class, "sensor");
 
 
-        ColorDetection colorDetection = new ColorDetection(sensor);
+      //  ColorDetection colorDetection = new ColorDetection(sensor);
 
         waitForStart();
 
         while(opModeIsActive()){
-            FtcDashboard.getInstance().getTelemetry().addData("BALLS COLOR", colorDetection.def_color_easy());
+   //         FtcDashboard.getInstance().getTelemetry().addData("BALLS COLOR", colorDetection.def_color_easy());
             FtcDashboard.getInstance().getTelemetry().addData("red", sensor.red());
             FtcDashboard.getInstance().getTelemetry().addData("green", sensor.green());
             FtcDashboard.getInstance().getTelemetry().addData("blue", sensor.blue());

@@ -22,8 +22,8 @@ public class ColorDetection{
 
     ColorSensor sensor;
 
-    public ColorDetection(AdafruitI2cColorSensor sensor){
-        this.sensor = new ColorSensorImpl(sensor);
+    public ColorDetection(ColorSensor sensor){
+        this.sensor = sensor;
     }
 
     private boolean calcLenght(long r, long g, long b){

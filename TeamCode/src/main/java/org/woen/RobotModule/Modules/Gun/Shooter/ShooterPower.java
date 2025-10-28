@@ -17,7 +17,8 @@ import org.woen.Config.MatchData;
 import org.woen.Config.Team;
 import org.woen.RobotModule.Modules.Gun.GunServoPositions;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterFeedbackReferenceListener;
+
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
@@ -69,7 +70,7 @@ public class ShooterPower implements Shooter{
 
     @Override
     public void init(){
-        EventBus.getListenersRegistration().invoke(new RegisterFeedbackReferenceListener(this::setFeedbackReference));
+        EventBus.getListenersRegistration().invoke(new RegisterNewFeedbackReferenceListener(this::setFeedbackReference));
 
         if(MatchData.team == Team.RED)
             wall = MatchData.redWall;

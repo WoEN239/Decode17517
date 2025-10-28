@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factories.HardwareFactory;
@@ -35,7 +36,10 @@ public class DevicePool {
 
     public RevVoltageSensor revVoltageSensor;
 
-    public ColorSensor colorSensor;
+    public ColorSensor rightColor;
+
+    public ColorSensor leftColor;
+    public ColorSensor centerColor;
 
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
@@ -96,7 +100,11 @@ public class DevicePool {
 
         revVoltageSensor = factory.createVoltageSensor();
 
-        colorSensor = factory.createColorSensor("sensor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+        leftColor = factory.createColorSensor("lColor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+        centerColor = factory.createColorSensor("cColor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+        rightColor = factory.createColorSensor("rColor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+
+
     }
 
 }
