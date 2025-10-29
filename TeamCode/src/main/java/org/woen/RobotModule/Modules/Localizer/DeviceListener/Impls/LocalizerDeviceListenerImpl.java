@@ -18,12 +18,12 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
     public void deviceReadUpdate() {
         LocalizeDeviceData data = new LocalizeDeviceData(
                 rightOd.getPos(),
-                leftOd.getPos(),
-                sideOd.getPos(),
+                0,//leftOd.getPos(),
+                0,//sideOd.getPos(),
 
                 rightOd.getVel(),
-                leftOd.getVel(),
-                sideOd.getVel()
+                0,//leftOd.getVel(),
+                0//sideOd.getVel()
         );
 
         observer.notifyListeners(data);
@@ -31,9 +31,7 @@ public class LocalizerDeviceListenerImpl implements LocalizerDeviceListener {
 
     @Override
     public void init() {
-        sideOd = DevicePool.getInstance().sideOd;
-        leftOd = DevicePool.getInstance().leftOd;
-        rightOd = DevicePool.getInstance().rightOd;
+        rightOd = DevicePool.getInstance().rightOdometer;
     }
 
 }

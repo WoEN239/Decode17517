@@ -6,8 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
-import org.woen.RobotModule.Modules.IntakeAndShoot.Impls.ColorDetection;
+import org.woen.Util.Color.ColorDetect.Impls.ColorDetection;
 
 
 @TeleOp

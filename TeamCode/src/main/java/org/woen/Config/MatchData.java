@@ -10,16 +10,6 @@ public class MatchData {
                          0)
     );
 
-    public static Pose blueWall = new Pose(
-            0,
-             new Vector2d(0,
-                     0)
-    );
-    public static Pose redWall = new Pose(
-            0,
-            new Vector2d(0,0)
-    );
     public static Team team = Team.BLUE;
 
-    public static PATTERN pattern = PATTERN.PGP;
 }

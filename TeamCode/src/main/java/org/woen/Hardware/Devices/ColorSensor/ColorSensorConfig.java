@@ -6,7 +6,6 @@ import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class ColorSensorConfig {
 
-
     public final Provider<Integer> green = new Provider<>(0);
     public final Provider<Integer> blue = new Provider<>(0);
     public final Provider<Integer> red = new Provider<>(0);

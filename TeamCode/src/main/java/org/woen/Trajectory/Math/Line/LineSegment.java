@@ -18,7 +18,7 @@ public class LineSegment {
     private final double kY;
     private final double c;
 
-    public static LineSegment makeFromTwoPoint(Vector2d start, Vector2d end) {
+    public static LineSegment lineFromTwoPoint(Vector2d start, Vector2d end) {
         return new LineSegment(start.x, start.y, end.x, end.y);
     }
 
@@ -49,7 +49,7 @@ public class LineSegment {
     public static LineSegment createFromOnePoint(Vector2d s, double h, double length){
         Vector2d dispVector = new Vector2d(sin(h), cos(h));
         Vector2d e = s.plus(dispVector).multiply(length);
-        return makeFromTwoPoint(s,e);
+        return lineFromTwoPoint(s,e);
     }
 
     public Vector2d findProjection(Vector2d p){

@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.IntakeAndShoot.ColorDetection;
+package org.woen.Util.Color.ColorDetect.ColorDetection;
 
 import com.acmerobotics.dashboard.config.Config;
 

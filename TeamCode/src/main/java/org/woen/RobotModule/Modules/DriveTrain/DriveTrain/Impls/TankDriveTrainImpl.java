@@ -8,13 +8,13 @@ import static org.woen.Config.ControlSystemConstant.xFeedforwardKV;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
+import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedforwardController.FeedforwardController;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelsVoltageObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
@@ -39,9 +39,14 @@ public class TankDriveTrainImpl implements DriveTrain {
         this.velocity = velocity;
     }
 
-    private final TankFeedbackController feedbackController = new TankFeedbackController(
+    private TankFeedbackController feedbackController = new TankFeedbackController(
             ControlSystemConstant.xPid,
             ControlSystemConstant.hPid);
+
+    private void replaceFeedbackController(ReplaceFeedbackControllerEvent event){
+        feedbackController = event.getData();
+    }
+
 
     private FeedforwardController feedforwardController = new FeedforwardController(
             new WheelValueMap(xFeedforwardKV, xFeedforwardKV, xFeedforwardKV, xFeedforwardKV),
@@ -102,6 +107,9 @@ public class TankDriveTrainImpl implements DriveTrain {
                 new RegisterNewLocalPositionListener(this::setLocalPosition));
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewVelocityListener(this::setVelocity));
+
+        EventBus.getInstance().subscribe(ReplaceFeedbackControllerEvent.class,this::replaceFeedbackController);
+
     }
 
 }

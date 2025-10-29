@@ -16,9 +16,8 @@ import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DevicePool {
 
-    public Odometer rightOd;
-    public Odometer leftOd;
-    public Odometer sideOd;
+    public Odometer rightOdometer;
+
     public IMU gyro;
 
     public Motor motorRB;
@@ -29,17 +28,23 @@ public class DevicePool {
     public Motor gunR;
     public Motor gunL;
 
-    public ServoMotor right;
-    public ServoMotor left;
-    public ServoMotor center;
+    public ServoMotor shotR;
+    public ServoMotor shotL;
+    public ServoMotor shotC;
     public ServoMotor wall;
+
+    public ServoMotor aimR;
+    public ServoMotor aimC;
+    public ServoMotor aimL;
+
+    public ServoMotor borderR;
+    public ServoMotor borderL;
 
     public RevVoltageSensor revVoltageSensor;
 
-    public ColorSensor rightColor;
-
-    public ColorSensor leftColor;
-    public ColorSensor centerColor;
+    public ColorSensor sensorR;
+    public ColorSensor sensorC;
+    public ColorSensor sensorL;
 
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
@@ -65,22 +70,21 @@ public class DevicePool {
 
         gyro = factory.createIMU("imu");
 
-        rightOd = factory.createOdometer("motorRB", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
-        rightOd.setDir(-1);
-        rightOd.reset();
+        rightOdometer = factory.createOdometer("motorRB", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
+        rightOdometer.setDir(-1);
+        rightOdometer.reset();
 
-        leftOd = factory.createOdometer("motorLF", config.odometerConfig.leftOdPos, config.odometerConfig.leftOdVel);
-        leftOd.setDir(-1);
-        leftOd.reset();
+        shotL = factory.createServoMotor("shotL");
+        shotR = factory.createServoMotor("shotR");
+        shotC = factory.createServoMotor("shotC");
+        wall  = factory.createServoMotor("wall") ;
 
-        sideOd = factory.createOdometer("sideOdometer", config.odometerConfig.sideOdPos, config.odometerConfig.sideOdVel);
-        sideOd.setDir(-1);
-        sideOd.reset();
+        aimR   = factory.createServoMotor("aimR");
+        aimC   = factory.createServoMotor("aimC");
+        aimL   = factory.createServoMotor("aimL");
 
-        left   = factory.createServoMotor("left");
-        right  = factory.createServoMotor("right");
-        center = factory.createServoMotor("center");
-        wall   = factory.createServoMotor("wall");
+        borderL = factory.createServoMotor("borderL");
+        borderR = factory.createServoMotor("borderR");
 
         motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -88,9 +92,9 @@ public class DevicePool {
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         motorLB.setDir(-1);
-        motorLF.setDir(-1);
-        motorRB.setDir(1);
-        motorRF.setDir( 1);
+        motorLF.setDir(1);
+        motorRB.setDir(-1);
+        motorRF.setDir( -1);
 
         motorLB.reset();
         motorLF.reset();
@@ -100,11 +104,9 @@ public class DevicePool {
 
         revVoltageSensor = factory.createVoltageSensor();
 
-        leftColor = factory.createColorSensor("lColor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
-        centerColor = factory.createColorSensor("cColor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
-        rightColor = factory.createColorSensor("rColor", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
-
-
+        sensorR = factory.createColorSensor("sensorR", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+        sensorL = factory.createColorSensor("sensorL", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
+        sensorC = factory.createColorSensor("sensorC", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
     }
 
 }

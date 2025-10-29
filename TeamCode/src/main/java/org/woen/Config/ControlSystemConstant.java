@@ -17,6 +17,12 @@ public class ControlSystemConstant {
     public static Double hSlip = 1.6d;
     public static Double staticVoltageOffset = 1d;
 
+    public static Double transAccel = 15d;
+    public static Double angleAccel = 2d;
+
+    public static Double transVel = 15d;
+    public static Double angleVel = 2d;
+
     //sm
     public static double lx = 6.3;
     public static double ly = 16.4375;
