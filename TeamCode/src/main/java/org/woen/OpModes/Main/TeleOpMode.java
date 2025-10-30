@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
@@ -25,12 +26,12 @@ public class TeleOpMode extends BaseOpMode{
     protected void initConfig(){
         DeviceActivationConfig devConfig =  DeviceActivationConfig.getAllOn();
         devConfig.servos.set(true);
-        devConfig.colorSensor.set(false);
+        devConfig.colorSensor.set(true);
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
         modConfig.driveTrain.trajectoryFollower.set(false);
-        modConfig.gun.set(true);
+        modConfig.gun.set(false);
         modConfig.autonomTaskManager.set(false);
 
         modulesActivationConfig = modConfig;
@@ -54,7 +55,11 @@ public class TeleOpMode extends BaseOpMode{
 
         Telemetry.getInstance().add("triangle",gamepad1.triangle);
 
-        Telemetry.getInstance().add("modules",robot.getFactory().getModules().toString());
+        Telemetry.getInstance().add("r", DevicePool.getInstance().sensorC.getRed());
+        Telemetry.getInstance().add("g",DevicePool.getInstance().sensorC.getGreen());
+        Telemetry.getInstance().add("b",DevicePool.getInstance().sensorC.getBlue());
+
+       // Telemetry.getInstance().add("modules",robot.getFactory().getModules().toString());
 
         if(gamepad1.triangle){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));

@@ -25,6 +25,6 @@ public class GunServoPositions {
     public static double aimLLow = 0;
 
     public static double borderOpen = 1;
-    public static double borderClose = 0.15;
+    public static double borderClose = 0.2;
 
 }

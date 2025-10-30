@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Hardware.Devices.ColorSensor.ColorSensorFix;
 import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
+import org.woen.Util.Color.RgbColorVector;
 
 public class ColorSensorImpl implements ColorSensor {
 
@@ -46,5 +47,10 @@ public class ColorSensorImpl implements ColorSensor {
         }
         return green;
     }
-    
+
+    @Override
+    public RgbColorVector getVector(){
+        return new RgbColorVector(getRed(),getGreen(),getBlue());
+    }
+
 }

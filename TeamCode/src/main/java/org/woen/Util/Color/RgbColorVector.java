@@ -11,7 +11,7 @@ public class RgbColorVector {
         this.b = b;
     }
 
-    public static RgbColorVector findNearest(RgbColorVector in, RgbColorVector... maps){
+    private static RgbColorVector findNearest(RgbColorVector in, RgbColorVector... maps){
         RgbColorVector min = maps[0];
         int errMin = findErr(in,min);
         for (RgbColorVector i: maps) {
@@ -22,6 +22,10 @@ public class RgbColorVector {
             }
         }
         return min;
+    }
+
+    public RgbColorVector findNearest(RgbColorVector... maps){
+        return RgbColorVector.findNearest(this,maps);
     }
 
     private static int findErr(RgbColorVector i, RgbColorVector in){
