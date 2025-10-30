@@ -9,7 +9,8 @@ import org.woen.Telemetry.ConfigurableVariables.Provider;
 public class ModulesActivateConfig {
     public LocalizerActivationConfig localizer = LocalizerActivationConfig.getAllOn();
     public DriveTrainActivationConfig driveTrain = DriveTrainActivationConfig.getAllOn();
-    public Provider<Boolean> gun = new Provider<>(true);
+    public Provider<Boolean> gun                = new Provider<>(true);
+    public Provider<Boolean> autonomTaskManager = new Provider<>(true);
 
     public static ModulesActivateConfig getAllOn(){
         return new ModulesActivateConfig();
@@ -20,6 +21,7 @@ public class ModulesActivateConfig {
         config.localizer = LocalizerActivationConfig.getAllOff();
         config.driveTrain = DriveTrainActivationConfig.getAllOff();
         config.gun.set(false);
+        config.autonomTaskManager.set(false);
         return config;
     }
 
@@ -27,7 +29,8 @@ public class ModulesActivateConfig {
         ModulesActivateConfig config = new ModulesActivateConfig();
         config.localizer = LocalizerActivationConfig.getManual();
         config.driveTrain = DriveTrainActivationConfig.getManual();
-        FtcDashboard.getInstance().addConfigVariable("Gun activation","gun",config.gun);
+        FtcDashboard.getInstance().addConfigVariable("gun activation","gun",config.gun);
+        FtcDashboard.getInstance().addConfigVariable("task manager activation","task manager",config.autonomTaskManager);
         return config;
     }
 

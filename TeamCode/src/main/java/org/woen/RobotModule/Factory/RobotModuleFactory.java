@@ -1,18 +1,17 @@
 package org.woen.RobotModule.Factory;
 
 import org.woen.RobotModule.Factory.ModuleFactories.DriveTrainFactory;
-import org.woen.RobotModule.Factory.ModuleFactories.GunFactory;
+import org.woen.RobotModule.Factory.ModuleFactories.ModulesFactory;
 import org.woen.RobotModule.Factory.ModuleFactories.LocalizerFactory;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RobotModuleFactory {
     private final ArrayList<IRobotModuleFactory> factories = new ArrayList<>(Arrays.asList(
-            new LocalizerFactory(), new DriveTrainFactory(), new GunFactory()
+            new LocalizerFactory(), new DriveTrainFactory(), new ModulesFactory()
     ));
 
     public ArrayList<IRobotModule> getModules() {

@@ -7,8 +7,9 @@ import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
-import org.woen.RobotModule.Modules.Gun.GUN_COMMAND;
+import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
@@ -20,22 +21,21 @@ import org.woen.Util.Vectors.Pose;
 public class TeleOpMode extends BaseOpMode{
     private final FeedforwardReferenceObserver velocityObserver = new FeedforwardReferenceObserver();
 
-
     @Override
     protected void initConfig(){
         DeviceActivationConfig devConfig =  DeviceActivationConfig.getAllOn();
-        devConfig.servos.set(false);
+        devConfig.servos.set(true);
         devConfig.colorSensor.set(false);
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
         modConfig.driveTrain.trajectoryFollower.set(false);
-        modConfig.gun.set(false);
+        modConfig.gun.set(true);
+        modConfig.autonomTaskManager.set(false);
 
         modulesActivationConfig = modConfig;
 
     }
-
 
     @Override
     protected void modulesReplace(){
@@ -43,11 +43,13 @@ public class TeleOpMode extends BaseOpMode{
         EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new StubTankFeedback()));
     }
 
+    BorderButton isHiAimButt = new BorderButton();
+    boolean isHiAim = true;
     @Override
     protected void loopRun() {
 
         velocityObserver.notifyListeners(new FeedforwardReference(new Pose(
-                gamepad1.right_stick_x*7,-gamepad1.left_stick_y*150, 0
+                -gamepad1.right_stick_x*7,-gamepad1.left_stick_y*150, 0
         ),new Pose(0,0,0)));
 
         Telemetry.getInstance().add("triangle",gamepad1.triangle);
@@ -56,6 +58,10 @@ public class TeleOpMode extends BaseOpMode{
 
         if(gamepad1.triangle){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
+        }
+        if(isHiAimButt.get(gamepad1.square)){
+            isHiAim = !isHiAim;
+            EventBus.getInstance().invoke(new NewAimCommandAvaliable(isHiAim));
         }
 
         if(gamepad1.dpad_up){
@@ -85,5 +91,16 @@ public class TeleOpMode extends BaseOpMode{
         {
             return new Pose(0,0,0);
         }
+    }
+
+    private static class BorderButton{
+        private boolean old = false;
+
+        public boolean get(boolean button) {
+            boolean indicator = (button != old) && button;
+            old = button;
+            return indicator;
+        }
+
     }
 }

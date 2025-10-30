@@ -1,4 +1,4 @@
-package org.woen.Autonom.Architecture;
+package org.woen.Autonom;
 
 import java.util.function.BooleanSupplier;
 
@@ -17,7 +17,7 @@ public class AutonomTask {
     }
 
     public boolean isDone(){
-        return isDone.getAsBoolean();
+        return isDone.getAsBoolean()&&isRunOnce;
     }
 
     public boolean isRunOnce(){
@@ -29,5 +29,5 @@ public class AutonomTask {
         this.isDone = isDone;
     }
 
-    public static final AutonomTask Stub = new AutonomTask(()->false,new Runnable[]{});
+    public static final AutonomTask Stub = new AutonomTask(()->true,new Runnable[]{});
 }

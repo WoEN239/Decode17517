@@ -11,7 +11,6 @@ import org.woen.Util.Vectors.Vector2d;
 import java.io.IOException;
 
 
-@TeleOp
 public class TrajectoryBuilderTest extends LinearOpMode {
     private Trajectory trajectory = new Trajectory();
     @Override

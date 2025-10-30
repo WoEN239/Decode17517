@@ -1,6 +1,6 @@
-package org.woen.RobotModule.Modules.Gun;
+package org.woen.RobotModule.Modules.Gun.Config;
 
-import static org.woen.RobotModule.Modules.Gun.GunServoPositions.*;
+import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 public enum GUN_COMMAND {
 
