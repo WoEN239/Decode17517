@@ -3,11 +3,11 @@ package org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward;
 import org.woen.Util.Vectors.Pose;
 
 public class FeedforwardReference {
-    public FeedforwardReference(Pose now, Pose next) {
+    public FeedforwardReference(Pose now, Pose accel) {
         this.now = now;
-        this.next = next;
+        this.accel = accel;
     }
 
     public final Pose now;
-    public final Pose next;
+    public final Pose accel;
 }

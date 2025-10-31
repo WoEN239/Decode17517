@@ -63,7 +63,7 @@ public class DriveTrainImpl implements DriveTrain {
                 new WheelValueMap(xFeedforwardKA, xFeedforwardKA, xFeedforwardKA, xFeedforwardKA));
 
         WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(feedforwardReference.now),
-                                                                   toWheelsFromRobotVelocities(feedforwardReference.next));
+                                                                   toWheelsFromRobotVelocities(feedforwardReference.accel));
 
         wheelsVoltageObserver.notifyListeners(feedforward.plus(feedback));
     }

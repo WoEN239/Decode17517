@@ -44,7 +44,7 @@ public class TeleOpMode extends BaseOpMode{
         EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new StubTankFeedback()));
     }
 
-    BorderButton isHiAimButt = new BorderButton();
+    private BorderButton isHiAimButt = new BorderButton();
     boolean isHiAim = true;
     @Override
     protected void loopRun() {
