@@ -40,7 +40,7 @@ public class GunImpl implements Gun {
     private ColorSensor sensorC;
     private ColorSensor sensorL;
 
-    private PidStatus status = new PidStatus(10, 0, 0, 0.57, 0, 0, 0);
+    private PidStatus status = new PidStatus(20, 0, 0, 0.6, 0, 0, 0);
     private Pid pid = new Pid(status);
 
     public void setCommand(NewGunCommandAvailable event) {
@@ -49,7 +49,7 @@ public class GunImpl implements Gun {
     }
 
     private GUN_COMMAND command = EAT;
-    private boolean isAimHi = false;
+    private boolean isAimHi = true;
     private void setAimCommand(NewAimCommandAvaliable event){
         isAimHi = event.getData();
     }
@@ -93,8 +93,12 @@ public class GunImpl implements Gun {
     private ElapsedTime timer = new ElapsedTime();
 
     public void lateUpdate() {
-        colorDetect();
+      //      colorDetect();
         Telemetry.getInstance().add("gun state",command.toString());
+        Telemetry.getInstance().add("in right  gun",colorR.toString());
+        Telemetry.getInstance().add("in center gun",colorC.toString());
+        Telemetry.getInstance().add("in left   gun",colorL.toString());
+
         switch (command) {
             case RAPID_FIRE:
                 wall.setPos(command.wall);
@@ -126,7 +130,7 @@ public class GunImpl implements Gun {
                 }
                 break;
             case TARGET:
-                gunVel = 1100;
+                gunVel = 1200;
                 right.setPos(command.right);
                 left.setPos(command.left);
                 center.setPos(command.center);
@@ -134,7 +138,7 @@ public class GunImpl implements Gun {
                 timer.reset();
                 break;
             case EAT:
-                gunVel = 800;
+                gunVel = 1100;
                 timer.reset();
                 right.setPos(command.right);
                 left.setPos(command.left);
@@ -142,7 +146,7 @@ public class GunImpl implements Gun {
                 wall.setPos(command.wall);
 
                 if(colorL != BallColor.NONE && colorC != BallColor.NONE && colorR != BallColor.NONE ){
-                    command = TARGET;
+                    //          command = TARGET;
                 }
         }
 

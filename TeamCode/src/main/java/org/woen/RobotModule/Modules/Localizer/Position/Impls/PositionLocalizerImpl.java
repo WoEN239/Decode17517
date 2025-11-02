@@ -65,19 +65,21 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         yLoc += hOd*Y_ODOMETER_RADIUS;
 
         hOd = AngelUtil.normalize(hOd);
+//
+//        double d1 = hOd       - s1Old;
+//        double d2 = gyroAngle - xH2Old;
+//
+//        d1 = AngelUtil.normalize(d1);
+//        d2 = AngelUtil.normalize(d2);
+//
+//        filter.update(d1,d2);
+//
+//        s1Old = hOd;
+//        xH2Old = filter.getX();
 
-        double d1 = hOd       - s1Old;
-        double d2 = gyroAngle - xH2Old;
+//        double h = filter.getX() + MatchData.startPosition.h;
 
-        d1 = AngelUtil.normalize(d1);
-        d2 = AngelUtil.normalize(d2);
-
-        filter.update(d1,d2);
-
-        s1Old = hOd;
-        xH2Old = filter.getX();
-
-        double h = filter.getX() + MatchData.startPosition.h;
+        double h = gyroAngle + MatchData.startPosition.h;
         h = AngelUtil.normalize(h);
 
         Pose deltaLocalPosition = localPosition.minus(

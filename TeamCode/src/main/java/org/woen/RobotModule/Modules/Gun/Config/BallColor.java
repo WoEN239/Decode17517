@@ -3,9 +3,9 @@ package org.woen.RobotModule.Modules.Gun.Config;
 import org.woen.Util.Color.RgbColorVector;
 
 public enum BallColor {
-    GREEN (new RgbColorVector(23,40,30)),
-    PURPLE(new RgbColorVector(23,41,39)),
-    NONE  (new RgbColorVector(28,48,40));
+    GREEN (new RgbColorVector(3,8,5)),
+    PURPLE(new RgbColorVector(3,6,6)),
+    NONE  (new RgbColorVector(3,7,6 ));
 
     public final RgbColorVector color;
 

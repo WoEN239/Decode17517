@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Hardware.Devices.ColorSensor.ColorSensorFix;
 import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
+import org.woen.Util.Arrays.ArrayExtra;
 import org.woen.Util.Color.RgbColorVector;
 
 public class ColorSensorImpl implements ColorSensor {
@@ -13,39 +14,45 @@ public class ColorSensorImpl implements ColorSensor {
 
     public ColorSensorImpl(AdafruitI2cColorSensor sensor){
         this.sensor = ColorSensorFix.fix(sensor);
+        sensor.setGain(0.1f);
     }
 
+    private int[] redReads = new int[21];
     private int red = 0;
     private final ElapsedTime redTime = new ElapsedTime();
     @Override
     public int getRed(){
         if(redTime.seconds()>0.1){
            redTime.reset();
-           red = sensor.red();
+           ArrayExtra.updateLikeBuffer(sensor.red(),redReads);
         }
-        return red;
+        return ArrayExtra.findMedian(redReads);
     }
-    
+
+
+    private int[] blueReads = new int[21];
     private int blue = 0;
     private final ElapsedTime blueTime = new ElapsedTime();
     @Override
     public int getBlue(){
         if(blueTime.seconds()>0.1){
             blueTime.reset();
-            blue = sensor.blue();
+            ArrayExtra.updateLikeBuffer(sensor.blue(),blueReads);
         }
-        return blue;
-    }  
-    
+        return ArrayExtra.findMedian(blueReads);
+    }
+
+
+    private int[] greenReads = new int[21];
     private int green = 0;
     private final ElapsedTime greenTime = new ElapsedTime();
     @Override
     public int getGreen(){
         if(greenTime.seconds()>0.1){
             greenTime.reset();
-            green = sensor.green();
+            ArrayExtra.updateLikeBuffer(sensor.green(),greenReads);
         }
-        return green;
+        return ArrayExtra.findMedian(greenReads);
     }
 
     @Override

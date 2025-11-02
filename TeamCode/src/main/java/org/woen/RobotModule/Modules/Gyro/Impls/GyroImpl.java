@@ -19,7 +19,7 @@ public class GyroImpl implements Gyro {
     public void init() {
         imu = DevicePool.getInstance().gyro;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot
-                (RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
+                (RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP);
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         reset();
     }

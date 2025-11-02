@@ -31,9 +31,9 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
         this.velocity = velocity;
     }
 
-    private final Provider<Double> profileAccel   = new Provider<>(5d);
-    private final Provider<Double> profileMaxVel  = new Provider<>(3d);
-    private final Provider<Double> profilePos     = new Provider<>(15d);
+    private final Provider<Double> profileAccel   = new Provider<>(25d);
+    private final Provider<Double> profileMaxVel  = new Provider<>(35d);
+    private final Provider<Double> profilePos     = new Provider<>(55d);
 
     private final Provider<Double> velH = new Provider<>(0d);
     private final Provider<Double> velY = new Provider<>(0d);

@@ -8,14 +8,14 @@ import org.woen.Util.Pid.PidStatus;
 public class ControlSystemConstant {
     public static double T = 0.020; //sec
 
-    public static PidStatus xPid = new PidStatus(0,0,0,0,0,0,0);
-    public static PidStatus hPid = new PidStatus(10,10,0,0,0,5 ,0);
+    public static PidStatus xPid = new PidStatus(0.2,0,0,0,0,0,0);
+    public static PidStatus hPid = new PidStatus(0.2,0,0,0,0,0 ,0);
 
-    public static Double xFeedforwardKV = 0.8d;
-    public static Double xFeedforwardKA = 0.125d;
+    public static Double xFeedforwardKV = 3.5d;
+    public static Double xFeedforwardKA = 1.d;
 
-    public static Double hSlip = 1.6d;
-    public static Double staticVoltageOffset = 1d;
+    public static Double hSlip = 2.45d;
+    public static Double staticVoltageOffset = 2.63d;
 
     public static Double transAccel = 15d;
     public static Double angleAccel = 2d;
@@ -29,6 +29,6 @@ public class ControlSystemConstant {
 
     public static double B = ly*2;
 
-    public static double wheelR = 9.6;
+    public static double wheelR = 75;
 
 }

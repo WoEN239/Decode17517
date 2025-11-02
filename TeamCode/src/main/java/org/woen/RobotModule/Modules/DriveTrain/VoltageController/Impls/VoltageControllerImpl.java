@@ -30,14 +30,9 @@ public class VoltageControllerImpl implements VoltageController {
 
     @Override
     public void deviceSetUpdate() {
-        double maxV = Math.max(
-                Math.max(Math.abs(target.lf),Math.abs(target.rf)),
-                Math.max(Math.abs(target.rb),Math.abs(target.lb)));
+
         WheelValueMap power = target;
-        if(maxV>voltage){
-            double k = voltage/maxV;
-            power = power.multiply(k);
-        }
+
         power = new WheelValueMap(
                 power.lf+ControlSystemConstant.staticVoltageOffset*Math.signum(power.lf),
                 power.rf+ControlSystemConstant.staticVoltageOffset*Math.signum(power.rf),
@@ -50,6 +45,15 @@ public class VoltageControllerImpl implements VoltageController {
                 ControlSystemConstant.staticVoltageOffset+0.1,ControlSystemConstant.staticVoltageOffset+0.1));
 
         power = power.multiply(1d/voltage);
+
+        double maxV = Math.max(
+                Math.max(Math.abs(power.lf),Math.abs(power.rf)),
+                Math.max(Math.abs(power.rb),Math.abs(power.lb)));
+
+        if(maxV>voltage){
+            double k = voltage/maxV;
+            power = power.multiply(k);
+        }
 
         lf.setPower(power.lf);
         rf.setPower(power.rf);

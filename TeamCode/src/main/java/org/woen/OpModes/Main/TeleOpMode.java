@@ -31,7 +31,7 @@ public class TeleOpMode extends BaseOpMode{
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
         modConfig.driveTrain.trajectoryFollower.set(false);
-        modConfig.gun.set(false);
+        modConfig.gun.set(true);
         modConfig.autonomTaskManager.set(false);
 
         modulesActivationConfig = modConfig;
@@ -50,7 +50,7 @@ public class TeleOpMode extends BaseOpMode{
     protected void loopRun() {
 
         velocityObserver.notifyListeners(new FeedforwardReference(new Pose(
-                -gamepad1.right_stick_x*7,-gamepad1.left_stick_y*150, 0
+                -gamepad1.right_stick_x*5,-gamepad1.left_stick_y*150, 0
         ),new Pose(0,0,0)));
 
         Telemetry.getInstance().add("triangle",gamepad1.triangle);
@@ -59,9 +59,10 @@ public class TeleOpMode extends BaseOpMode{
         Telemetry.getInstance().add("g",DevicePool.getInstance().sensorC.getGreen());
         Telemetry.getInstance().add("b",DevicePool.getInstance().sensorC.getBlue());
 
-       // Telemetry.getInstance().add("modules",robot.getFactory().getModules().toString());
+        telemetry.addData("gun vel",DevicePool.getInstance().gunR.getVel());
+        telemetry.update();
 
-        if(gamepad1.triangle){
+        if(gamepad1.right_bumper){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
         }
         if(isHiAimButt.get(gamepad1.square)){
@@ -69,7 +70,7 @@ public class TeleOpMode extends BaseOpMode{
             EventBus.getInstance().invoke(new NewAimCommandAvaliable(isHiAim));
         }
 
-        if(gamepad1.dpad_up){
+        if(gamepad1.right_trigger>0.1){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
         }
         if(gamepad1.dpad_left){
@@ -78,7 +79,7 @@ public class TeleOpMode extends BaseOpMode{
         if(gamepad1.dpad_right){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_RIGHT));
         }
-        if(gamepad1.dpad_down){
+        if(gamepad1.dpad_up){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_CENTER));
         }
 
