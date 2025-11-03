@@ -65,6 +65,9 @@ public class TeleOpMode extends BaseOpMode{
         if(gamepad1.right_bumper){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
         }
+        if(gamepad1.left_bumper){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.REVERSE));
+        }
         if(isHiAimButt.get(gamepad1.square)){
             isHiAim = !isHiAim;
             EventBus.getInstance().invoke(new NewAimCommandAvaliable(isHiAim));

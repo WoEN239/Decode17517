@@ -144,10 +144,14 @@ public class GunImpl implements Gun {
                 left.setPos(command.left);
                 center.setPos(command.center);
                 wall.setPos(command.wall);
-
-                if(colorL != BallColor.NONE && colorC != BallColor.NONE && colorR != BallColor.NONE ){
-                    //          command = TARGET;
-                }
+                break;
+            case REVERSE:
+                gunVel = 0;
+                right.setPos(command.right);
+                left.setPos(command.left);
+                center.setPos(command.center);
+                wall.setPos(command.wall);
+                break;
         }
 
         if(command == EAT){

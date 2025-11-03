@@ -50,7 +50,7 @@ public class AutoOpMode extends BaseOpMode{
     ElapsedTime timer = new ElapsedTime();
     boolean isRunOnce = false;
     boolean isShotOnce = false;
-    TrapezoidMotionProfile x = new TrapezoidMotionProfile(25,35,-60,0,0);
+    TrapezoidMotionProfile x = new TrapezoidMotionProfile(25,35,-75,0,0);
     TrapezoidMotionProfile h = new TrapezoidMotionProfile(5,3,-2.5,0,0);
     @Override
     protected void loopRun() {
