@@ -14,5 +14,10 @@ public class TrajectoryPoint {
         this.acceleration = acceleration;
     }
 
+    public TrajectoryPoint(Vector2d position) {
+        this.position = position;
+        this.velocity = new Vector2d();
+        this.acceleration = new Vector2d();
+    }
 
 }

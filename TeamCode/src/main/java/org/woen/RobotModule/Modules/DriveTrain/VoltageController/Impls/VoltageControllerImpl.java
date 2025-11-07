@@ -34,15 +34,15 @@ public class VoltageControllerImpl implements VoltageController {
         WheelValueMap power = target;
 
         power = new WheelValueMap(
-                power.lf+ControlSystemConstant.staticVoltageOffset*Math.signum(power.lf),
-                power.rf+ControlSystemConstant.staticVoltageOffset*Math.signum(power.rf),
-                power.rb+ControlSystemConstant.staticVoltageOffset*Math.signum(power.rb),
-                power.lb+ControlSystemConstant.staticVoltageOffset*Math.signum(power.lb)
+                power.lf+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.lf),
+                power.rf+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.rf),
+                power.rb+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.rb),
+                power.lb+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.lb)
         );
 
         power = power.border(new WheelValueMap(
-                ControlSystemConstant.staticVoltageOffset+0.1,ControlSystemConstant.staticVoltageOffset+0.1,
-                ControlSystemConstant.staticVoltageOffset+0.1,ControlSystemConstant.staticVoltageOffset+0.1));
+                ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1, ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1,
+                ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1, ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1));
 
         power = power.multiply(1d/voltage);
 

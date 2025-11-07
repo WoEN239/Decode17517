@@ -3,7 +3,6 @@ package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
-import org.woen.Util.Vectors.Vector2d;
 
 public class TankFeedbackController {
     private final Pid xPid;

@@ -65,12 +65,10 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         yLoc += hOd*Y_ODOMETER_RADIUS;
 
         hOd = AngelUtil.normalize(hOd);
-//
+
 //        double d1 = hOd       - s1Old;
 //        double d2 = gyroAngle - xH2Old;
 //
-//        d1 = AngelUtil.normalize(d1);
-//        d2 = AngelUtil.normalize(d2);
 //
 //        filter.update(d1,d2);
 //
@@ -107,7 +105,7 @@ public class PositionLocalizerImpl implements PositionLocalizer {
             );
         }
 
-        Telemetry.getInstance().add("filtered h",h);
+
         position = new Pose(
                 h,
                 position.vector.plus(dpCorrected.rotate(h))

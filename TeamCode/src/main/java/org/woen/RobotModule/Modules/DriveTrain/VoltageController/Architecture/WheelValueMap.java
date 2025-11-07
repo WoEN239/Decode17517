@@ -1,6 +1,5 @@
 package org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture;
 
-import static java.lang.Double.min;
 import static java.lang.Math.abs;
 
 import android.annotation.SuppressLint;
@@ -53,6 +52,6 @@ public class WheelValueMap {
     @NonNull
     @Override
     public String toString() {
-        return String.format("lf %.3f rf %.3f rb %.3f lb %.3f", lf,rf,rb,lb);
+        return String.format("lf %.3f rf %.3f rb %.3f lb %.3f",lf,rf,rb,lb);
     }
 }

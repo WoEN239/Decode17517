@@ -1,14 +1,11 @@
 package org.woen.RobotModule.Modules.TrajectoryFollower.Impls;
 
-import static org.woen.Config.ControlSystemConstant.T;
-
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
-import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 import org.woen.Trajectory.Trajectory;
 import org.woen.Util.Vectors.Pose;
@@ -23,7 +20,7 @@ public class TrajectoryFollowerImpl implements TrajectoryFollower {
     public void update() {
         double time = timer.seconds();
         Pose vel = new Pose(trajectory.getAngularVelocity(time), trajectory.getVelocity(time));
-        Pose nextVel = new Pose(trajectory.getAngularVelocity(time + T), trajectory.getVelocity(time + T));
+        Pose nextVel = new Pose(trajectory.getAngularVelocity(time), trajectory.getVelocity(time));
         Pose pose = new Pose(trajectory.getVelocity(time).getAngle(), trajectory.getPosition(time));
 
         feedbackObserver.notifyListeners(new FeedbackReference(pose, vel));
