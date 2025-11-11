@@ -1,10 +1,6 @@
 package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls;
 
-import static org.woen.Config.ControlSystemConstant.RobotSizeConfig.B;
-import static org.woen.Config.ControlSystemConstant.FeedforwardConfig.hSlip;
-import static org.woen.Config.ControlSystemConstant.RobotSizeConfig.wheelR;
-import static org.woen.Config.ControlSystemConstant.FeedforwardConfig.xFeedforwardKA;
-import static org.woen.Config.ControlSystemConstant.FeedforwardConfig.xFeedforwardKV;
+import static org.woen.Config.ControlSystemConstant.*;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
@@ -31,8 +27,10 @@ public class TankDriveTrainImpl implements DriveTrain {
                         feedbackReference.vel,velocity));
 
         FeedforwardController feedforwardController = new FeedforwardController(
-                new WheelValueMap(xFeedforwardKV, xFeedforwardKV, xFeedforwardKV, xFeedforwardKV),
-                new WheelValueMap(xFeedforwardKA, xFeedforwardKA, xFeedforwardKA, xFeedforwardKA));
+                new WheelValueMap(feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV,
+                        feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV),
+                new WheelValueMap(feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA,
+                        feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA));
 
         WheelValueMap feedforward = feedforwardController.computeU(toWheelsVelocities(feedforwardReference.now),
                 toWheelsVelocities(feedforwardReference.accel));
@@ -51,10 +49,10 @@ public class TankDriveTrainImpl implements DriveTrain {
 
     private WheelValueMap toWheelsVelocities(Pose r){
         return new WheelValueMap(
-                (r.vector.x - hSlip*r.h*B*0.5)/wheelR,
-                (r.vector.x + hSlip*r.h*B*0.5)/wheelR,
-                (r.vector.x + hSlip*r.h*B*0.5)/wheelR,
-                (r.vector.x - hSlip*r.h*B*0.5)/wheelR
+                (r.vector.x - feedforwardConfig.hSlip*r.h*robotSizeConfig.B*0.5)/robotSizeConfig.wheelR,
+                (r.vector.x + feedforwardConfig.hSlip*r.h*robotSizeConfig.B*0.5)/robotSizeConfig.wheelR,
+                (r.vector.x + feedforwardConfig.hSlip*r.h*robotSizeConfig.B*0.5)/robotSizeConfig.wheelR,
+                (r.vector.x - feedforwardConfig.hSlip*r.h*robotSizeConfig.B*0.5)/robotSizeConfig.wheelR
         );
     }
 
@@ -76,8 +74,8 @@ public class TankDriveTrainImpl implements DriveTrain {
     }
 
     private TankFeedbackController feedbackController = new TankFeedbackController(
-            ControlSystemConstant.FeedbackConfig.xPid,
-            ControlSystemConstant.FeedbackConfig.hPid);
+            ControlSystemConstant.feedbackConfig.xPid,
+            ControlSystemConstant.feedbackConfig.hPid);
 
     private void replaceFeedbackController(ReplaceFeedbackControllerEvent event){
         feedbackController = event.getData();

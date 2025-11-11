@@ -1,11 +1,9 @@
 package org.woen.RobotModule.Modules.Localizer.Position.Impls;
 
-import static org.woen.Config.OdometerConstant.METER_PER_ANGLE;
-import static org.woen.Config.OdometerConstant.Y_ODOMETER_RADIUS;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
+import static org.woen.Config.ControlSystemConstant.*;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
@@ -58,11 +56,11 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         Telemetry.getInstance().add("leftOd",deviceData.leftOdPos);
         Telemetry.getInstance().add("rightOd",deviceData.rightOdPos);
         hOd *= 0.5;
-        hOd *= METER_PER_ANGLE;
+        hOd *= odometerConstantConfig.meterPerAngle;
         Telemetry.getInstance().add("hOd",hOd);
 
         double yLoc = deviceData.sideOdPos;
-        yLoc += hOd*Y_ODOMETER_RADIUS;
+        yLoc += hOd* odometerConstantConfig.y_odometer_radius;
 
         hOd = AngelUtil.normalize(hOd);
 

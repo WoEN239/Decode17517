@@ -71,21 +71,11 @@ public class AutoOpMode extends BaseOpMode{
                     new Pose(0, x.getAccel(timer.seconds()), 0)
             ));
         }else{
-//            positionObserver.notifyListeners(new FeedbackReference(
-//                    new Pose(h.getPos(timer.seconds()-x.duration-3),0, 0),
-//                    new Pose(h.getVel(timer.seconds()-x.duration-3),0, 0)
-//            ));
-//
-//            velocityObserver.notifyListeners(new FeedforwardReference(
-//                    new Pose(h.getVel(  timer.seconds()-x.duration-3),0, 0),
-//                    new Pose(h.getAccel(timer.seconds()-x.duration-3),0, 0)
-//            ));
-//            if(timer.seconds()>x.duration+3+h.duration+2){
-                if(!isShotOnce) {
-                    EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
-                    isShotOnce = true;
-                }
+            if(!isShotOnce) {
+                EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
+                isShotOnce = true;
             }
+        }
 
         Telemetry.getInstance().add("x target",x.getPos(timer.seconds()));
         Telemetry.getInstance().add("h target",h.getPos(timer.seconds()-x.duration-3));

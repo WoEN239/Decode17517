@@ -1,5 +1,7 @@
 package org.woen.RobotModule.Modules.DriveTrain.VoltageController.Impls;
 
+import static java.lang.Math.abs;
+
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.Hardware.DevicePool.DevicePool;
@@ -33,22 +35,27 @@ public class VoltageControllerImpl implements VoltageController {
 
         WheelValueMap power = target;
 
+        double offset = ControlSystemConstant.feedforwardConfig.staticVoltageOffsetX;
+        if(abs((power.lf+power.lb)+(power.rf+power.rb)) < 0.1){
+            offset = ControlSystemConstant.feedforwardConfig.staticVoltageOffsetH;
+        }
+
         power = new WheelValueMap(
-                power.lf+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.lf),
-                power.rf+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.rf),
-                power.rb+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.rb),
-                power.lb+ ControlSystemConstant.FeedforwardConfig.staticVoltageOffset*Math.signum(power.lb)
+                power.lf+ offset *Math.signum(power.lf),
+                power.rf+ offset *Math.signum(power.rf),
+                power.rb+ offset *Math.signum(power.rb),
+                power.lb+ offset *Math.signum(power.lb)
         );
 
         power = power.border(new WheelValueMap(
-                ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1, ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1,
-                ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1, ControlSystemConstant.FeedforwardConfig.staticVoltageOffset+0.1));
+                offset +0.05, offset +0.05,
+                offset +0.05, offset +0.05));
 
         power = power.multiply(1d/voltage);
 
         double maxV = Math.max(
-                Math.max(Math.abs(power.lf),Math.abs(power.rf)),
-                Math.max(Math.abs(power.rb),Math.abs(power.lb)));
+                Math.max(abs(power.lf), abs(power.rf)),
+                Math.max(abs(power.rb), abs(power.lb)));
 
         if(maxV>voltage){
             double k = voltage/maxV;
@@ -59,7 +66,6 @@ public class VoltageControllerImpl implements VoltageController {
         rf.setPower(power.rf);
         rb.setPower(power.rb);
         lb.setPower(power.lb);
-        Telemetry.getInstance().add("lf volt",power.lf);
     }
 
     @Override

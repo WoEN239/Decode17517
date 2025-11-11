@@ -1,7 +1,6 @@
 package org.woen.RobotModule.Modules.Localizer.Velocity.Impls;
 
-import static org.woen.Config.OdometerConstant.METER_PER_ANGLE;
-import static org.woen.Config.OdometerConstant.Y_ODOMETER_RADIUS;
+import static org.woen.Config.ControlSystemConstant.*;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
@@ -50,10 +49,10 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
 
         double h = -deviceData.leftOdVel + deviceData.rightOdVel;
         h *= 0.5;
-        h *= METER_PER_ANGLE;
+        h *= odometerConstantConfig.meterPerAngle;
 
         double yLoc = deviceData.sideOdVel;
-        yLoc += h*Y_ODOMETER_RADIUS;
+        yLoc += h* odometerConstantConfig.y_odometer_radius;
 
         localVelocity = new Pose(
                 h,

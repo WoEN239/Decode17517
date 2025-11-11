@@ -39,11 +39,11 @@ public class WayPoint {
 
         if(isEndNear && onWay.isDone()) {
             onPoint.run();
-        }else{
-            onWay.run();
-            if(onWay.isDone()){
+            if(onPoint.isDone()){
                 isDone = true;
             }
+        }else{
+            onWay.run();
         }
 
     }

@@ -18,12 +18,13 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Regi
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Vectors.Pose;
+import org.woen.Util.Vectors.Vector2d;
 
 public class ModulesInterfacesTelemetry {
     private Pose robotPos = new Pose(0,0,0);
     private Pose robotVel = new Pose(0,0,0);
 
-    private Pose targetVel = new Pose(-564,0,0);
+    private Pose targetVel = new Pose(0,0,0);
     private Pose targetPos = new Pose(-564,0,0);
 
     private Pose robotLocalPos = new Pose(0,0,0);
@@ -54,7 +55,9 @@ public class ModulesInterfacesTelemetry {
 
     public void addTargetToPacket(TelemetryPacket packet){
         packet.put("feedforward reference",targetVel.toString());
-        packet.fieldOverlay().fillCircle(targetPos.vector.x,targetPos.vector.y,10);
+        packet.put("feedback reference",targetPos.toString());
+        Vector2d circle = targetPos.vector;
+        packet.fieldOverlay().fillCircle(circle.x,-circle.y,10);
     }
 
 
@@ -82,7 +85,7 @@ public class ModulesInterfacesTelemetry {
         EventBus.getListenersRegistration().invoke(new RegisterNewLocalizeDeviceListener(this::setLocalizeDeviceData));
 
         EventBus.getListenersRegistration().invoke(new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
-        EventBus.getListenersRegistration().invoke(new RegisterNewFeedbackReferenceListener(this::setFeedbackeference));
+        EventBus.getListenersRegistration().invoke(new RegisterNewFeedbackReferenceListener(this::setFeedbackReference));
     }
 
     public void setRobotPos(Pose robotPos) {
@@ -112,7 +115,7 @@ public class ModulesInterfacesTelemetry {
     public void setVoltage(WheelValueMap voltage) {this.voltage = voltage;}
 
     public void setFeedforwardReference(FeedforwardReference reference) {this.targetVel = reference.now;}
-    public void setFeedbackeference(FeedbackReference reference) {this.targetPos = reference.pos;}
+    public void setFeedbackReference(FeedbackReference reference) {this.targetPos = reference.pos;}
 
     public void setLocalizeDeviceData(LocalizeDeviceData localizeDeviceData) {this.localizeDeviceData = localizeDeviceData;}
 }

@@ -4,7 +4,7 @@ import java.util.function.BooleanSupplier;
 
 public class AutonomTask {
     private final Runnable[] runnable;
-    private final BooleanSupplier isDone;
+    private BooleanSupplier isDone;
     private boolean isRunOnce = false;
 
     public void run(){
@@ -13,6 +13,9 @@ public class AutonomTask {
                 i.run();
             }
             isRunOnce = true;
+            if(isDone.getAsBoolean()){
+                isDone = ()->true;
+            }
         }
     }
 

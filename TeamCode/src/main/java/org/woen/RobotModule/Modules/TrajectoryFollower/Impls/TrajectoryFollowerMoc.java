@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
@@ -22,7 +23,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
     private final FeedforwardReferenceObserver feedforwardObserver = new FeedforwardReferenceObserver();
     private final FeedbackReferenceObserver feedbackObserver = new FeedbackReferenceObserver();
 
-    private Pose position = MatchData.startPosition;
+    private Pose position = new Pose(0,0,0);
     private Pose velocity = new Pose(0,0,0);
     public void setPosition(Pose position) {
         this.position = position;
@@ -59,6 +60,13 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
 
             feedbackObserver.notifyListeners(new FeedbackReference(new Pose(posH.get(), posX.get(), posY.get()),
                     new Pose(velH.get(), velX.get(), velY.get())));
+
+            Telemetry.getInstance().add("x target",posX.get());
+            Telemetry.getInstance().add("h target",AngelUtil.normalize(posH.get()));
+
+            Telemetry.getInstance().add("h pos",position.h);
+            Telemetry.getInstance().add("x pos",position.x);
+
         }else if(mode.get().equals("profile")){
 
             if(axis.get().equals("h")) {
@@ -129,7 +137,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
         FtcDashboard.getInstance().addConfigVariable("manual_trajectory_follow_profile","pos",profilePos);
 
         EventBus.getListenersRegistration().invoke(
-                new RegisterNewPositionListener(this::setPosition));
+                new RegisterNewLocalPositionListener(this::setPosition));
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewVelocityListener(this::setVelocity));
 

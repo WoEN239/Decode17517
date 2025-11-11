@@ -10,7 +10,7 @@ public class TankFeedbackController {
 
     public TankFeedbackController(PidStatus translation, PidStatus rotation) {
         xPid = new Pid(translation);
-        xPid.isAngle = true;
+        xPid.isAngle = false;
         xPid.isDAccessible = false;
 
         hPid = new Pid(rotation);
@@ -20,8 +20,8 @@ public class TankFeedbackController {
     }
 
     public Pose computeU(Pose target, Pose localPosition, Pose targetVel, Pose localVel){
-        xPid.setPos(localPosition.vector.x);
-        xPid.setTarget(target.vector.x);
+        xPid.setPos(localPosition.x);
+        xPid.setTarget(target.x);
 
         hPid.setPos(localPosition.h);
         hPid.setTarget(target.h);

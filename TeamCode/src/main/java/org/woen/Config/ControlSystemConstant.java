@@ -4,35 +4,46 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.woen.Util.Pid.PidStatus;
 
+@Config
 public class ControlSystemConstant {
 
-    @Config
     public static class FeedbackConfig {
-        public static double PPLocalR = 10;
-        public static PidStatus xPid = new PidStatus(0.2,0,0,0,0,0,0);
-        public static PidStatus hPid = new PidStatus(0.2,0,0,0,0,0 ,0);
-    }
+        public double PPLocalR = 10;
 
-    @Config
+        public PidStatus xPid = new PidStatus(0.1,0,0.01,0,0,0,0);
+        public PidStatus hPid = new PidStatus(2.4,0,0.5,0,0,0.0,0);
+    }
+    public static FeedbackConfig feedbackConfig = new FeedbackConfig();
+
     public static class RobotSizeConfig{ //sm
-        public static double lx = 6.3;
-        public static double ly = 16.4375;
-        public static double B = ly*2;
-        public static double wheelR = 75;
+        public double lx = 6.3;
+        public double ly = 16.4375;
+        public double B = 35.925;
+        public double wheelR = 75;
     }
+    public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
-    @Config
     public static class FeedforwardConfig{
-        public static Double xFeedforwardKV = 3.5d;
-        public static Double xFeedforwardKA = 1.d;
-        public static Double hSlip = 2.45d;
-        public static Double staticVoltageOffset = 2.63d;
+        public Double xFeedforwardKV = 8d;
+        public Double xFeedforwardKA = 2d;
+        public Double hSlip = 1d;
+        public Double staticVoltageOffsetX = 1.4d;
+        public Double staticVoltageOffsetH = 3.3d;
     }
+    public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
 
     public static class KinematicConstrainConfig {
-        public static Double transAccel = 15d;
-        public static Double angleAccel = 2d;
-        public static Double transVel = 15d;
-        public static Double angleVel = 2d;
+        public Double transAccel = 15d;
+        public Double angleAccel = 2d;
+        public Double transVel = 15d;
+        public Double angleVel = 2d;
     }
+    public static KinematicConstrainConfig kinematicConstrainConfig = new KinematicConstrainConfig();
+
+    public static class OdometerConstantConfig {
+        public double meterPerAngle = 0.29;
+        public double y_odometer_radius = 0;
+    }
+    public static OdometerConstantConfig odometerConstantConfig = new OdometerConstantConfig();
+
 }

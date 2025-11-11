@@ -93,11 +93,7 @@ public class GunImpl implements Gun {
     private ElapsedTime timer = new ElapsedTime();
 
     public void lateUpdate() {
-      //      colorDetect();
-        Telemetry.getInstance().add("gun state",command.toString());
-        Telemetry.getInstance().add("in right  gun",colorR.toString());
-        Telemetry.getInstance().add("in center gun",colorC.toString());
-        Telemetry.getInstance().add("in left   gun",colorL.toString());
+        //      colorDetect();
 
         switch (command) {
             case RAPID_FIRE:
@@ -130,7 +126,7 @@ public class GunImpl implements Gun {
                 }
                 break;
             case TARGET:
-                gunVel = 1200;
+                gunVel = 0;
                 right.setPos(command.right);
                 left.setPos(command.left);
                 center.setPos(command.center);
@@ -138,7 +134,7 @@ public class GunImpl implements Gun {
                 timer.reset();
                 break;
             case EAT:
-                gunVel = 1100;
+                gunVel = 0;
                 timer.reset();
                 right.setPos(command.right);
                 left.setPos(command.left);

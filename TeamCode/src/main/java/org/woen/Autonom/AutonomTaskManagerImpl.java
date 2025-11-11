@@ -19,15 +19,15 @@ public class AutonomTaskManagerImpl implements AutonomTaskManager {
     }
 
     public void update(){
-        if(wayPoints.isEmpty()) return;
+        if(wayPoints.size()<2) return;
 
-        wayPoints.get(0).update();
+        wayPoints.get(1).update();
 
-
-        if(wayPoints.get(0).isDone()){
+        if(wayPoints.get(1).isDone()){
             wayPoints.remove(0);
+            if(wayPoints.size()<2) return;
             EventBus.getInstance().invoke(new NewTargetTrajectoryPointEvent(
-                    new TrajectoryPoint(wayPoints.get(0).target.vector)));
+                    new TrajectoryPoint(wayPoints.get(1).target.vector)));
         }
 
     }

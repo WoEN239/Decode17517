@@ -7,6 +7,7 @@ import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Telemetry.ModulesInterfacesTelemetry.ModulesInterfacesTelemetry;
+import org.woen.Trajectory.Math.Line.LineSegment;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
@@ -21,7 +22,7 @@ public class Telemetry {
 
     public Telemetry() {
         FtcDashboard.getInstance().addConfigVariable("telemetry","pose",robotPose);
-        FtcDashboard.getInstance().addConfigVariable("telemetry","target vel", target);
+        FtcDashboard.getInstance().addConfigVariable("telemetry","target", target);
         FtcDashboard.getInstance().addConfigVariable("telemetry","gyro",gyro);
         FtcDashboard.getInstance().addConfigVariable("telemetry","voltage",voltage);
         FtcDashboard.getInstance().addConfigVariable("telemetry","localizeDevice",localizeDevice);
@@ -43,14 +44,16 @@ public class Telemetry {
 
     public void loopAnd() {
         configUpdates.forEach(Runnable::run);
+
+        if(target.get()){
+            modulesTelemetry.addTargetToPacket(telemetryPacket);
+        }
+
         if(robotPose.get()){
             modulesTelemetry.addRobotPoseToPacket(telemetryPacket);
             updateField();
         }
 
-        if(target.get()){
-            modulesTelemetry.addTargetToPacket(telemetryPacket);
-        }
         if(gyro.get()){
             modulesTelemetry.addGyroToPacket(telemetryPacket);
         }
@@ -68,6 +71,7 @@ public class Telemetry {
         telemetryPacket.put(name, data);
     }
 
+    public TelemetryPacket getTelemetryPacket(){return telemetryPacket;}
     public void add(Runnable update) {
         configUpdates.add(update);
     }
@@ -90,17 +94,17 @@ public class Telemetry {
     }
 
     private Pose rectPos = new Pose(0, 0, 0);
+    private LineSegment lineSegment = new LineSegment(0,0, 0,0);
 
     private final double smPerInch = 1.0 / 2.54;
-    private final double height = 40.24 / 2.0;
-    private final double width = 39. / 2.0;
+    private final double height = 45/ 2.0;
+    private final double width =  20/ 2.0;
 
     public void updateField() {
         double[] xPoints;
         double[] yPoints;
 
-        Vector2d rect = new Vector2d(height, width);
-        rect.rotate(rectPos.h);
+        Vector2d rectAngle = new Vector2d(height, width).rotate(rectPos.h);
 
         xPoints = new double[]{
                 +height,
@@ -120,10 +124,20 @@ public class Telemetry {
 
         telemetryPacket.fieldOverlay().setFill("blue");
         telemetryPacket.fieldOverlay().fillPolygon(xPoints, yPoints);
+
+        telemetryPacket.fieldOverlay().strokeLine(rectPos.x,rectPos.y,rectPos.x+rectAngle.x,rectPos.y+rectAngle.y);
+
+        telemetryPacket.fieldOverlay().strokeLine(lineSegment.start.x,-lineSegment.start.y,
+                                                  lineSegment.end.x,-lineSegment.end.y);
+        Telemetry.getInstance().add("line end", "x: " + lineSegment.end.x+ " y: " + lineSegment.end.y);
+        Telemetry.getInstance().add("line start", "x: " + lineSegment.start.x+ " y: " + lineSegment.start.y);
     }
 
     public void setRectPos(Pose rectPos) {
-        this.rectPos = rectPos;
+        this.rectPos =  new Pose(-rectPos.h,rectPos.x,-rectPos.y);
     }
 
+    public void setLineSegment(LineSegment lineSegment) {
+        this.lineSegment = lineSegment;
+    }
 }

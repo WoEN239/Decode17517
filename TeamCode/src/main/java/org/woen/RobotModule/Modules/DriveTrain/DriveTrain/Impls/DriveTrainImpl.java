@@ -35,11 +35,13 @@ public class DriveTrainImpl implements DriveTrain {
     }
 
     private final HolonomicFeedbackController feedbackController = new HolonomicFeedbackController(
-            FeedbackConfig.xPid,
-            FeedbackConfig.hPid);
+            feedbackConfig.xPid,
+            feedbackConfig.hPid);
     private FeedforwardController feedforwardController = new FeedforwardController(
-            new WheelValueMap(FeedforwardConfig.xFeedforwardKV, FeedforwardConfig.xFeedforwardKV, FeedforwardConfig.xFeedforwardKV, FeedforwardConfig.xFeedforwardKV),
-            new WheelValueMap(FeedforwardConfig.xFeedforwardKA, FeedforwardConfig.xFeedforwardKA, FeedforwardConfig.xFeedforwardKA, FeedforwardConfig.xFeedforwardKA));
+            new WheelValueMap(feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV,
+                    feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV),
+            new WheelValueMap(feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA,
+                    feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA));
 
     public void setFeedforwardReference(FeedforwardReference feedforwardReference) {
         this.feedforwardReference = feedforwardReference;
@@ -58,8 +60,10 @@ public class DriveTrainImpl implements DriveTrain {
                                             feedbackReference.vel,velocity));
 
         feedforwardController = new FeedforwardController(
-                new WheelValueMap(FeedforwardConfig.xFeedforwardKV, FeedforwardConfig.xFeedforwardKV, FeedforwardConfig.xFeedforwardKV, FeedforwardConfig.xFeedforwardKV),
-                new WheelValueMap(FeedforwardConfig.xFeedforwardKA, FeedforwardConfig.xFeedforwardKA, FeedforwardConfig.xFeedforwardKA, FeedforwardConfig.xFeedforwardKA));
+                new WheelValueMap(feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV,
+                        feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV),
+                new WheelValueMap(feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA,
+                        feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA));
 
         WheelValueMap feedforward = feedforwardController.computeU(toWheelsFromRobotVelocities(feedforwardReference.now),
                                                                    toWheelsFromRobotVelocities(feedforwardReference.accel));
@@ -79,10 +83,10 @@ public class DriveTrainImpl implements DriveTrain {
 
     private WheelValueMap toWheelsFromRobotVelocities(Pose r){
         return new WheelValueMap(
-                (r.vector.x - r.vector.y - FeedforwardConfig.hSlip*(RobotSizeConfig.lx+ RobotSizeConfig.ly)*r.h)/ RobotSizeConfig.wheelR,
-                (r.vector.x + r.vector.y + FeedforwardConfig.hSlip*(RobotSizeConfig.lx+ RobotSizeConfig.ly)*r.h)/ RobotSizeConfig.wheelR,
-                (r.vector.x - r.vector.y + FeedforwardConfig.hSlip*(RobotSizeConfig.lx+ RobotSizeConfig.ly)*r.h)/ RobotSizeConfig.wheelR,
-                (r.vector.x + r.vector.y - FeedforwardConfig.hSlip*(RobotSizeConfig.lx+ RobotSizeConfig.ly)*r.h)/ RobotSizeConfig.wheelR
+                (r.vector.x - r.vector.y - feedforwardConfig.hSlip*(robotSizeConfig.lx+ robotSizeConfig.ly)*r.h)/ robotSizeConfig.wheelR,
+                (r.vector.x + r.vector.y + feedforwardConfig.hSlip*(robotSizeConfig.lx+ robotSizeConfig.ly)*r.h)/ robotSizeConfig.wheelR,
+                (r.vector.x - r.vector.y + feedforwardConfig.hSlip*(robotSizeConfig.lx+ robotSizeConfig.ly)*r.h)/ robotSizeConfig.wheelR,
+                (r.vector.x + r.vector.y - feedforwardConfig.hSlip*(robotSizeConfig.lx+ robotSizeConfig.ly)*r.h)/ robotSizeConfig.wheelR
         );
     }
 
