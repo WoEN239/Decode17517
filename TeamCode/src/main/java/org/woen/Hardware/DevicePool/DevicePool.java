@@ -69,7 +69,7 @@ public class DevicePool {
 
         gyro = factory.createIMU("imu");
 
-        rightOdometer = factory.createOdometer("motorRB", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
+        rightOdometer = factory.createOdometer("motorR", config.odometerConfig.rightOdPos, config.odometerConfig.rightOdVel);
         rightOdometer.setDir(-1);
         rightOdometer.reset();
 
@@ -86,23 +86,16 @@ public class DevicePool {
         borderR = factory.createServoMotor("borderR");
 
         motorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         gunR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        motorL.setDir(-1);
-        motorLF.setDir(1);
+        motorL.setDir(1);
         motorR.setDir(-1);
-        motorRF.setDir( -1);
 
         motorL.reset();
-        motorLF.reset();
         motorR.reset();
-        motorRF.reset();
-
 
         revVoltageSensor = factory.createVoltageSensor();
 

@@ -126,7 +126,7 @@ public class GunImpl implements Gun {
                 }
                 break;
             case TARGET:
-                gunVel = 0;
+                gunVel = 1200;
                 right.setPos(command.right);
                 left.setPos(command.left);
                 center.setPos(command.center);
@@ -134,7 +134,7 @@ public class GunImpl implements Gun {
                 timer.reset();
                 break;
             case EAT:
-                gunVel = 0;
+                gunVel = 1000;
                 timer.reset();
                 right.setPos(command.right);
                 left.setPos(command.left);
