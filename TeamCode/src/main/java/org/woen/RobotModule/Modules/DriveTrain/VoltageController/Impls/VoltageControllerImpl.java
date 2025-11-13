@@ -62,18 +62,14 @@ public class VoltageControllerImpl implements VoltageController {
             power = power.multiply(k);
         }
 
-        lf.setPower(power.lf);
-        rf.setPower(power.rf);
         rb.setPower(power.rb);
         lb.setPower(power.lb);
     }
 
     @Override
     public void init() {
-        lf = DevicePool.getInstance().motorLF;
-        rf = DevicePool.getInstance().motorRF;
-        rb = DevicePool.getInstance().motorRB;
-        lb = DevicePool.getInstance().motorLB;
+        rb = DevicePool.getInstance().motorR;
+        lb = DevicePool.getInstance().motorL;
         EventBus.getListenersRegistration().invoke(new RegisterNewWheelsVoltageListener(this::setTarget));
     }
 

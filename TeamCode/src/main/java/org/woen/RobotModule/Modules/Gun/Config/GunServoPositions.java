@@ -2,13 +2,13 @@ package org.woen.RobotModule.Modules.Gun.Config;
 
 public class GunServoPositions {
 
-    public static double eatR  = 1;
-    public static double shotR = 0.9;
+    public static double eatR  = 0.62;
+    public static double shotR = 0.425;
 
-    public static double eatC  = 0.367;
-    public static double shotC = 0.5  ;
+    public static double eatC  = 0.25;
+    public static double shotC = 0.425  ;
 
-    public static double eatL  = 0.31;
+    public static double eatL  = 0.2;
     public static double shotL = 0.45;
 
     public static double open  = 0.2;

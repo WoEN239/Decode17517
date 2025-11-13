@@ -5,6 +5,8 @@ import org.woen.Autonom.AutonomTaskManagerImpl;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
+import org.woen.RobotModule.Modules.Camera.Camera;
+import org.woen.RobotModule.Modules.Camera.CameraImpl;
 import org.woen.RobotModule.Modules.Gun.Impls.GunImpl;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 
@@ -19,7 +21,7 @@ public class ModulesFactory implements IRobotModuleFactory {
     @Override
     public IRobotModule[] create() {
         return new IRobotModule[]{
-                createGun(),createAutonomTaskManager()
+                createGun(),createAutonomTaskManager(),createCamera()
         };
     }
 
@@ -28,6 +30,14 @@ public class ModulesFactory implements IRobotModuleFactory {
             return new GunImpl();
         }else{
             return new Gun() {};
+        }
+    }
+
+    private Camera createCamera(){
+        if(config.camera.get()){
+            return new CameraImpl();
+        }else{
+            return new Camera() {};
         }
     }
 

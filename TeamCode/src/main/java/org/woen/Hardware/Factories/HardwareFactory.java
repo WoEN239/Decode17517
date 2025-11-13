@@ -21,6 +21,8 @@ import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensorFake;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensorImpl;
+import org.woen.RobotModule.Modules.Camera.Camera;
+import org.woen.RobotModule.Modules.Camera.CameraImpl;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class HardwareFactory {

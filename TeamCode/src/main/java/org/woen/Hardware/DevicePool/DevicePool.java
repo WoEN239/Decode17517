@@ -20,8 +20,8 @@ public class DevicePool {
 
     public IMU gyro;
 
-    public Motor motorRB;
-    public Motor motorLB;
+    public Motor motorR;
+    public Motor motorL;
     public Motor motorLF;
     public Motor motorRF;
 
@@ -46,6 +46,8 @@ public class DevicePool {
     public ColorSensor sensorC;
     public ColorSensor sensorL;
 
+    public HardwareMap hardwareMap;
+
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
         return Instance;
@@ -53,14 +55,11 @@ public class DevicePool {
 
     public void init(HardwareMap map, DeviceActivationConfig config){
         HardwareFactory factory = new HardwareFactory(map,config);
+        hardwareMap = map;
 
-        motorLB = factory.createDcMotor("motorLB", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
+        motorL = factory.createDcMotor("motorL", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
 
-        motorRB = factory.createDcMotor("motorRB", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
-
-        motorLF = factory.createDcMotor("motorLF", config.motorConfig.leftFrontPos, config.motorConfig.leftFrontVol);
-
-        motorRF = factory.createDcMotor("motorRF", config.motorConfig.rightFrontPos, config.motorConfig.rightFrontVol);
+        motorR = factory.createDcMotor("motorR", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
 
         gunL = factory.createDcMotor("gunL", new Provider<>(0d), new Provider<>(0d));
         gunR = factory.createDcMotor("gunR", new Provider<>(0d), new Provider<>(0d));
@@ -86,19 +85,22 @@ public class DevicePool {
         borderL = factory.createServoMotor("borderL");
         borderR = factory.createServoMotor("borderR");
 
-        motorLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motorLB.setDir(-1);
+        gunR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        motorL.setDir(-1);
         motorLF.setDir(1);
-        motorRB.setDir(-1);
+        motorR.setDir(-1);
         motorRF.setDir( -1);
 
-        motorLB.reset();
+        motorL.reset();
         motorLF.reset();
-        motorRB.reset();
+        motorR.reset();
         motorRF.reset();
 
 

@@ -58,7 +58,4 @@ public class DeviceActivationConfig {
         config.colorSensorConfig.init();
         return config;
     }
-
-    public DeviceActivationConfig() {
-    }
 }
