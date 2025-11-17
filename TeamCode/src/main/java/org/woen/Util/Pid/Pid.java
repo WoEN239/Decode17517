@@ -96,6 +96,10 @@ public class Pid {
         }
         F = status.kf*target+status.offset*signum(err);
 
+        if(abs(err) < status.errorBorder){
+            P=0;
+        }
+
         if (abs(I) > status.maxI) {
             I = status.maxI * signum(I);
         }

@@ -10,6 +10,8 @@ import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
+import org.woen.RobotModule.Modules.Camera.MOTIF;
+import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.BallColor;
@@ -40,8 +42,8 @@ public class GunImpl implements Gun {
     private ColorSensor sensorC;
     private ColorSensor sensorL;
 
-    private PidStatus status = new PidStatus(20, 0, 0, 0.6, 0, 0, 0);
-    private Pid pid = new Pid(status);
+    private PidStatus status = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
+    private final Pid pid = new Pid(status);
 
     public void setCommand(NewGunCommandAvailable event) {
         timer.reset();
@@ -52,6 +54,11 @@ public class GunImpl implements Gun {
     private boolean isAimHi = true;
     private void setAimCommand(NewAimCommandAvaliable event){
         isAimHi = event.getData();
+    }
+    private MOTIF motif = MOTIF.PGP;
+
+    public void setMotif(NewMotifEvent e) {
+        this.motif = e.getData();
     }
 
     private double gunVel = 0;
@@ -87,9 +94,10 @@ public class GunImpl implements Gun {
     public void subscribeInit() {
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class, this::setCommand);
         EventBus.getInstance().subscribe(NewAimCommandAvaliable.class, this::setAimCommand);
+        EventBus.getInstance().subscribe(NewMotifEvent.class, this::setMotif);
     }
 
-    private double delay = 0.5;
+    private double delay = 1.5;
     private ElapsedTime timer = new ElapsedTime();
 
     public void lateUpdate() {
@@ -106,7 +114,7 @@ public class GunImpl implements Gun {
                     left.setPos(command.left);
                 }
                 if (timer.seconds() > 3 * delay) {
-                    command = EAT;
+                    EventBus.getInstance().invoke(new NewGunCommandAvailable(EAT));
                 }
                 break;
             case SHOT_CENTER:
@@ -115,18 +123,18 @@ public class GunImpl implements Gun {
             case FULL_FIRE:
                 wall.setPos(command.wall);
 
-                if(timer.seconds()>delay) {
+                if(timer.seconds()>delay/6.0) {
                     right.setPos(command.right);
                     left.setPos(command.left);
                     center.setPos(command.center);
                 }
 
-                if (timer.seconds() > 3 * delay) {
-                    command = EAT;
+                if (timer.seconds() > 3 * delay/6.0) {
+                    EventBus.getInstance().invoke(new NewGunCommandAvailable(EAT));;
                 }
                 break;
             case TARGET:
-                gunVel = 1200;
+                gunVel = 1300;
                 right.setPos(command.right);
                 left.setPos(command.left);
                 center.setPos(command.center);
@@ -142,11 +150,56 @@ public class GunImpl implements Gun {
                 wall.setPos(command.wall);
                 break;
             case REVERSE:
-                gunVel = 0;
+                gunVel = -200;
                 right.setPos(command.right);
                 left.setPos(command.left);
                 center.setPos(command.center);
                 wall.setPos(command.wall);
+                break;
+            case PATTERN_FIRE:
+                gunVel = 1100;
+                wall.setPos(command.wall);
+
+                switch (motif){
+                    case GPP:
+                        if(timer.seconds() > delay) {
+                            right.setPos(command.right);
+                        }
+                        if(timer.seconds() > 2*delay){
+                            left.setPos(command.left);
+                        }
+                        if(timer.seconds()>3*delay){
+                            center.setPos(command.center);
+                        }
+                        break;
+                    case PGP:
+                        if(timer.seconds()>delay){
+                            center.setPos(command.center);
+                        }
+                        if(timer.seconds() > 2*delay){
+                            right.setPos(command.right);
+                        }
+                        if(timer.seconds()>3*delay){
+                            left.setPos(command.left);
+                        }
+                        break;
+                    case PPG:
+                        if(timer.seconds()>delay){
+                            center.setPos(command.center);
+                        }
+                        if(timer.seconds() > 2*delay){
+                            left.setPos(command.left);
+                        }
+                        if(timer.seconds()>3*delay){
+                            right.setPos(command.right);
+                        }
+                        break;
+
+                }
+
+                if (timer.seconds() > 4 * delay) {
+                    EventBus.getInstance().invoke(new NewGunCommandAvailable(EAT));;
+                }
                 break;
         }
 

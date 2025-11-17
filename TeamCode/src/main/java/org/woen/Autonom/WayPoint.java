@@ -12,7 +12,16 @@ public class WayPoint {
     public final Pose target;
     private void setPosition(Pose position){this.position = position;}
 
-    private double endDetect = 10;
+    public final boolean isReverse;
+
+    private double endDetect = 3;
+
+    public double getVel() {
+        return vel;
+    }
+
+    private double vel = 20;
+    public double getEndDetect() {return endDetect;}
 
     private boolean isRunOnce = false;
     private boolean isEndNear = false;
@@ -48,22 +57,35 @@ public class WayPoint {
 
     }
 
-    public WayPoint(AutonomTask onWay, AutonomTask onPoint, Pose target){
+    public WayPoint(AutonomTask onPoint, Pose target,boolean isReverse){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
+        this.onPoint = onPoint;
+        this.onWay = AutonomTask.Stub;
+        this.target = target;
+        this.isReverse = isReverse;
+    }
+
+    public WayPoint(AutonomTask onWay, AutonomTask onPoint, Pose target, boolean isReverse){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
         this.onWay = onWay;
         this.onPoint = onPoint;
         this.target = target;
+        this.isReverse = isReverse;
     }
-
     public WayPoint(AutonomTask onPoint, Pose target){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
         this.onPoint = onPoint;
         this.onWay = AutonomTask.Stub;
         this.target = target;
+        this.isReverse = false;
     }
 
     public WayPoint setEndDetect(double endDetect){
         this.endDetect = endDetect;
+        return this;
+    }
+    public WayPoint setVel(double vel){
+        this.vel = vel;
         return this;
     }
 

@@ -26,7 +26,7 @@ public class TeleOpMode extends BaseOpMode{
     protected void initConfig(){
         DeviceActivationConfig devConfig =  DeviceActivationConfig.getAllOn();
         devConfig.servos.set(true);
-        devConfig.colorSensor.set(true);
+        devConfig.colorSensor.set(false);
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
@@ -50,7 +50,8 @@ public class TeleOpMode extends BaseOpMode{
     protected void loopRun() {
 
         velocityObserver.notifyListeners(new FeedforwardReference(new Pose(
-                -gamepad1.right_stick_x*5,-gamepad1.left_stick_y*150, 0
+                -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x))*8,
+                -(gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)*90), 0
         ),new Pose(0,0,0)));
 
         Telemetry.getInstance().add("triangle",gamepad1.triangle);
@@ -76,14 +77,17 @@ public class TeleOpMode extends BaseOpMode{
         if(gamepad1.right_trigger>0.1){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
         }
-        if(gamepad1.dpad_left){
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_LEFT));
+        if(gamepad1.left_trigger>0.1){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
         if(gamepad1.dpad_right){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_RIGHT));
         }
         if(gamepad1.dpad_up){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_CENTER));
+        }
+        if(gamepad1.dpad_left){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_LEFT));
         }
 
     }

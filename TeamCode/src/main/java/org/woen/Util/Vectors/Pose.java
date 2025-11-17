@@ -32,8 +32,13 @@ public class Pose {
         return new Pose(h-b.h,
                 vector.minus(b.vector));
     }
+
     public Pose unaryMinus(){
         return new Pose(-h,new Vector2d(-vector.x, -vector.y));
+    }
+
+    public Pose teamReverse(){
+        return new Pose(-h,x,-y);
     }
 
     @SuppressLint("DefaultLocale")

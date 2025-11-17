@@ -65,7 +65,7 @@ public class Vector2d  {
     }
 
     public double getAngle(){
-        return Math.atan2(x,y);
+        return -Math.PI*0.5 + Math.atan2(x,y);
     }
 
 }

@@ -51,18 +51,24 @@ public class CameraImpl implements Camera{
         visionPortal = builder.build();
     }
 
+    private MOTIF latterMotif = null;
     public void update() {
         List<AprilTagDetection> currentDetectionList = aprilTagProcessor.getDetections();
 
         if (!currentDetectionList.isEmpty()) {
             double id = currentDetectionList.get(0).id;
-            MOTIF motif = MOTIF.GPP;
+            MOTIF motif = latterMotif;
             if(id == 22){
                 motif = MOTIF.PGP;
             }else if (id == 23){
                 motif = MOTIF.PPG;
+            }else if(id == 21){
+                motif = MOTIF.GPP;
             }
-            EventBus.getInstance().invoke(new NewMotifEvent(motif));
+            if(latterMotif!=motif){
+                EventBus.getInstance().invoke(new NewMotifEvent(motif));
+            }
+            latterMotif = motif;
         }
     }
 }

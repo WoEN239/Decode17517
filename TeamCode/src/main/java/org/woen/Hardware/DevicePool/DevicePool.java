@@ -1,5 +1,6 @@
 package org.woen.Hardware.DevicePool;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -56,6 +57,10 @@ public class DevicePool {
     public void init(HardwareMap map, DeviceActivationConfig config){
         HardwareFactory factory = new HardwareFactory(map,config);
         hardwareMap = map;
+
+        for (LynxModule i : hardwareMap.getAll(LynxModule.class)) {
+            i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
 
         motorL = factory.createDcMotor("motorL", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
 

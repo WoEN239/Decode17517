@@ -9,6 +9,7 @@ public class PidStatus {
 
     public double maxI;
     public double zeroBorder;
+    public double errorBorder;
     public boolean isTelemetry = false;
 
     public void setTelemetry(boolean telemetry) {
@@ -23,6 +24,16 @@ public class PidStatus {
         this.kf = kf;
         this.maxI = maxI;
         this.zeroBorder = zeroBorder;
+    }
+    public PidStatus(double kp, double ki, double kd, double kf, double offset, double maxI, double zeroBorder, double errorBorder) {
+        this.kp = kp;
+        this.ki = ki;
+        this.kd = kd;
+        this.offset = offset;
+        this.kf = kf;
+        this.maxI = maxI;
+        this.zeroBorder = zeroBorder;
+        this.errorBorder = errorBorder;
     }
 
     public void copyFrom(PidStatus status) {

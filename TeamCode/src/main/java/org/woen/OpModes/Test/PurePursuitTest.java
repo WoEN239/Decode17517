@@ -34,8 +34,8 @@ public class PurePursuitTest extends BaseOpMode {
     public void firstRun(){
         EventBus.getInstance().invoke(new SetNewTrajectoryEvent(
                 new WayPoint(AutonomTask.Stub,new Pose(0,0,0)),
-                new WayPoint(AutonomTask.Stub,new Pose(0,100,0)),
-                new WayPoint(new AutonomTask(()->false),new Pose(0,100,50))
+                new WayPoint(AutonomTask.Stub,new Pose(0,50,0)),
+                new WayPoint(new AutonomTask(()->false),new Pose(0,50,50))
         ));
     }
 
