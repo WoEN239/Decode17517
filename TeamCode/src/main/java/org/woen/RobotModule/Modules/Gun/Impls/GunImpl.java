@@ -1,5 +1,6 @@
 package org.woen.RobotModule.Modules.Gun.Impls;
 
+import static org.woen.Config.ControlSystemConstant.gunConfig;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
@@ -7,18 +8,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
-import org.woen.RobotModule.Modules.Gun.Config.BallColor;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.Telemetry.Telemetry;
-import org.woen.Util.Color.RgbColorVector;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 
@@ -37,10 +35,6 @@ public class GunImpl implements Gun {
 
     private Motor gunL;
     private Motor gunR;
-
-    private ColorSensor sensorR;
-    private ColorSensor sensorC;
-    private ColorSensor sensorL;
 
     private PidStatus status = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
     private final Pid pid = new Pid(status);
@@ -63,10 +57,6 @@ public class GunImpl implements Gun {
 
     private double gunVel = 0;
 
-    private BallColor colorR = BallColor.NONE;
-    private BallColor colorC = BallColor.NONE;
-    private BallColor colorL = BallColor.NONE;
-
     @Override
     public void init() {
         right  = DevicePool.getInstance().shotR;
@@ -84,10 +74,6 @@ public class GunImpl implements Gun {
         aimC = DevicePool.getInstance().aimC;
         aimL = DevicePool.getInstance().aimL;
 
-        sensorL = DevicePool.getInstance().sensorL;
-        sensorC = DevicePool.getInstance().sensorC;
-        sensorR = DevicePool.getInstance().sensorR;
-
     }
 
     @Override
@@ -97,11 +83,10 @@ public class GunImpl implements Gun {
         EventBus.getInstance().subscribe(NewMotifEvent.class, this::setMotif);
     }
 
-    private double delay = 1.5;
+    private double delay = gunConfig.delay;
     private ElapsedTime timer = new ElapsedTime();
 
     public void lateUpdate() {
-        //      colorDetect();
 
         switch (command) {
             case RAPID_FIRE:
@@ -134,7 +119,7 @@ public class GunImpl implements Gun {
                 }
                 break;
             case TARGET:
-                gunVel = 1300;
+                gunVel = gunConfig.shootVel;
                 right.setPos(command.right);
                 left.setPos(command.left);
                 center.setPos(command.center);
@@ -142,7 +127,7 @@ public class GunImpl implements Gun {
                 timer.reset();
                 break;
             case EAT:
-                gunVel = 1000;
+                gunVel = gunConfig.eatVel;
                 timer.reset();
                 right.setPos(command.right);
                 left.setPos(command.left);
@@ -157,7 +142,7 @@ public class GunImpl implements Gun {
                 wall.setPos(command.wall);
                 break;
             case PATTERN_FIRE:
-                gunVel = 1100;
+                gunVel = gunConfig.patternShootVel;
                 wall.setPos(command.wall);
 
                 switch (motif){
@@ -221,37 +206,6 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("gunVel",gunR.getVel());
         gunL.setPower(pid.getU());
         gunR.setPower(pid.getU());
-
-    }
-
-    private void colorDetect(){
-        RgbColorVector l = sensorL.getVector().findNearest(BallColor.PURPLE.color,BallColor.GREEN.color,BallColor.NONE.color);
-        RgbColorVector c = sensorC.getVector().findNearest(BallColor.PURPLE.color,BallColor.GREEN.color,BallColor.NONE.color);
-        RgbColorVector r = sensorR.getVector().findNearest(BallColor.PURPLE.color,BallColor.GREEN.color,BallColor.NONE.color);
-
-        if(l == BallColor.GREEN.color){
-            colorL = BallColor.GREEN;
-        }else if(l == BallColor.PURPLE.color){
-            colorL = BallColor.PURPLE;
-        }else{
-            colorL = BallColor.NONE;
-        }
-
-        if(c == BallColor.GREEN.color){
-            colorC = BallColor.GREEN;
-        }else if(c == BallColor.PURPLE.color){
-            colorC = BallColor.PURPLE;
-        }else{
-            colorC = BallColor.NONE;
-        }
-
-        if(r == BallColor.GREEN.color){
-            colorR = BallColor.GREEN;
-        }else if(r == BallColor.PURPLE.color){
-            colorR = BallColor.PURPLE;
-        }else{
-            colorR = BallColor.NONE;
-        }
 
     }
 

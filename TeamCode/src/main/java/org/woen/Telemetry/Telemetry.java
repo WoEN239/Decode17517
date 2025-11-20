@@ -34,7 +34,7 @@ public class Telemetry {
     }
     public void subscribeInit(){
         modulesTelemetry.init();
-        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setRectPos));
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(field::robot));
     }
     private TelemetryPacket telemetryPacket = new TelemetryPacket();
 
@@ -51,7 +51,6 @@ public class Telemetry {
 
         if(robotPose.get()){
             modulesTelemetry.addRobotPoseToPacket(telemetryPacket);
-            updateField();
         }
 
         if(gyro.get()){
@@ -63,81 +62,22 @@ public class Telemetry {
         if(localizeDevice.get()){
             modulesTelemetry.addLocalizeDevicesToPacket(telemetryPacket);
         }
+
         FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket);
         telemetryPacket = new TelemetryPacket();
+        field.setTelemetryPacket(telemetryPacket);
+
     }
 
     public <T> void add(String name, T data) {
         telemetryPacket.put(name, data);
     }
-
-    public TelemetryPacket getTelemetryPacket(){return telemetryPacket;}
     public void add(Runnable update) {
         configUpdates.add(update);
     }
 
-    private void rotatePoints(double[] xPoints, double[] yPoints, double angle) {
-        for (int i = 0; i < xPoints.length; i++) {
-            double x = xPoints[i];
-            double y = yPoints[i];
-            Vector2d p = new Vector2d(x, y).rotate(angle);
-            xPoints[i] = p.x;
-            yPoints[i] = p.y;
-        }
-    }
-
-    private void plusVector(double[] x, double[] y, Vector2d p) {
-        for (int j = 0; j < x.length; j++) {
-            x[j] += p.x;
-            y[j] += p.y;
-        }
-    }
-
-    private Pose rectPos = new Pose(0, 0, 0);
-    private LineSegment lineSegment = new LineSegment(0,0, 0,0);
-
-    private final double smPerInch = 1.0 / 2.54;
-    private final double height = 45/ 2.0;
-    private final double width =  20/ 2.0;
-
-    public void updateField() {
-        double[] xPoints;
-        double[] yPoints;
-
-        Vector2d rectAngle = new Vector2d(height, width).rotate(rectPos.h);
-
-        xPoints = new double[]{
-                +height,
-                +height,
-                -height,
-                -height};
-        yPoints = new double[]{
-                (+width),
-                (-width),
-                (-width),
-                (+width)};
-
-        rotatePoints(xPoints, yPoints, rectPos.h);
-        plusVector(xPoints, yPoints, rectPos.vector);
-
-        telemetryPacket.fieldOverlay().setScale(smPerInch, smPerInch);
-
-        telemetryPacket.fieldOverlay().setFill("blue");
-        telemetryPacket.fieldOverlay().fillPolygon(xPoints, yPoints);
-
-        telemetryPacket.fieldOverlay().strokeLine(rectPos.x,rectPos.y,rectPos.x+rectAngle.x,rectPos.y+rectAngle.y);
-
-        telemetryPacket.fieldOverlay().strokeLine(lineSegment.start.x,-lineSegment.start.y,
-                                                  lineSegment.end.x,-lineSegment.end.y);
-        Telemetry.getInstance().add("line end", "x: " + lineSegment.end.x+ " y: " + lineSegment.end.y);
-        Telemetry.getInstance().add("line start", "x: " + lineSegment.start.x+ " y: " + lineSegment.start.y);
-    }
-
-    public void setRectPos(Pose rectPos) {
-        this.rectPos =  new Pose(-rectPos.h,rectPos.x,-rectPos.y);
-    }
-
-    public void setLineSegment(LineSegment lineSegment) {
-        this.lineSegment = lineSegment;
+    private final Field field = new Field();
+    public Field getField() {
+        return field;
     }
 }

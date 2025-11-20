@@ -1,4 +1,14 @@
 package org.woen.Autonom;
 
+import static java.lang.Math.PI;
+
+import org.woen.Util.Vectors.Pose;
+
 public class PositionPool {
+    public Pose goal = new Pose(-2.35,-57,-57);
+    public Pose eatStart = new Pose(0,-58,-58);
+    public Pose eatEnd = new Pose(0,0,-58);
+    public Pose firstEat = new Pose(-PI/2.0,-10,-40);
+    public Pose shoot = new Pose(-2.35,-10,-10);
+
 }

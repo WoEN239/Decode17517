@@ -126,6 +126,6 @@ public class PositionLocalizerImpl implements PositionLocalizer {
                 new RegisterNewLocalizeDeviceListener(this::setDeviceData));
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewAngleListener(this::setGyroAngle));
-
+        position = MatchData.startPosition;
     }
 }

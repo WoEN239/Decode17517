@@ -56,8 +56,6 @@ public class ModulesInterfacesTelemetry {
     public void addTargetToPacket(TelemetryPacket packet){
         packet.put("feedforward reference",targetVel.toString());
         packet.put("feedback reference",targetPos.toString());
-        Vector2d circle = targetPos.vector;
-        packet.fieldOverlay().fillCircle(circle.x,-circle.y,10);
     }
 
 

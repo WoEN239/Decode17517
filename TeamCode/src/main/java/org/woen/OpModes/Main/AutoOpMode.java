@@ -1,36 +1,26 @@
 package org.woen.OpModes.Main;
 
-import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.AutonomTask;
+import org.woen.Autonom.PositionPool;
 import org.woen.Autonom.SetNewTrajectoryEvent;
 import org.woen.Autonom.WayPoint;
 import org.woen.Config.MatchData;
-import org.woen.Config.Team;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
-import org.woen.Telemetry.Telemetry;
-import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
-import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
-import org.woen.Util.Vectors.Vector2d;
 
 @Autonomous
 public class AutoOpMode extends BaseOpMode{
@@ -55,13 +45,7 @@ public class AutoOpMode extends BaseOpMode{
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class,this::setGunStatus);
         EventBus.getInstance().subscribe(NewMotifEvent.class,this::setMotif);
     }
-    double firstAngle = 0.715*PI;
-
-    Pose shoot = new Pose(0,-60,0);
-    Pose startEat = new Pose(firstAngle,-10,0);
-    Pose endEat   =  new Pose(firstAngle,
-            new Vector2d(-10,0).plus(new Vector2d(40,0).rotate(PI*0.25)));
-
+    PositionPool pool = new PositionPool();
     @Override
     protected void firstRun(){
         EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
@@ -69,51 +53,23 @@ public class AutoOpMode extends BaseOpMode{
         EventBus.getInstance().invoke(new NewAimCommandAvaliable(true));
 
         EventBus.getInstance().invoke(new SetNewTrajectoryEvent(
-                new WayPoint(AutonomTask.Stub,new Pose(0,0,0)),
+                new WayPoint(AutonomTask.Stub,pool.goal),
                 new WayPoint(
                         new AutonomTask(
                                 ()->gunStatus==GUN_COMMAND.EAT,()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
                         ),
-                        shoot,true
-                ),
-                new WayPoint(
-                        new AutonomTask(()->Math.abs(pose.h-firstAngle)<0.015),
-                        new Pose(0,0,40)
-                )
-
-        ));
-
-        if(MatchData.team == Team.RED){
-        EventBus.getInstance().invoke(new SetNewTrajectoryEvent(
-                new WayPoint(AutonomTask.Stub,new Pose(0,0,0)),
-                new WayPoint(
-                        new AutonomTask(
-                                ()->gunStatus==GUN_COMMAND.EAT,()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
-                        ),
-                        shoot.teamReverse(),true
-                ),
-                new WayPoint(
-                        new AutonomTask(()->Math.abs(pose.h-firstAngle)<0.015),
-                        startEat.teamReverse()
+                        true,pool.shoot
                 ),
                 new WayPoint(
                         new AutonomTask(()->true,()->setGunCommand(GUN_COMMAND.TARGET)),
-                        endEat.teamReverse()
-                ).setVel(40) ,
-                new WayPoint(
-                        new AutonomTask(()->Math.abs(pose.h)<0.015),
-                        startEat.teamReverse(),
-                        true
+                        pool.firstEat
                 ),
                 new WayPoint(
                         new AutonomTask(
                                 ()->gunStatus==GUN_COMMAND.EAT,()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
                         ),
-                        shoot.teamReverse(),true
-                )
-        ));
-
-        }
+                        true,pool.shoot
+                )));
     }
 
     MOTIF motif = MOTIF.PGP;

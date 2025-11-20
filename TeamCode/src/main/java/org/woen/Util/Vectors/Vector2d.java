@@ -3,6 +3,12 @@ package org.woen.Util.Vectors;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
+/*
+    x
+    |
+y---|---
+    |
+*/
 
 public class Vector2d  {
 
@@ -10,8 +16,8 @@ public class Vector2d  {
     public final double x;
 
     public Vector2d rotate(double rad){
-        double y1 = y * cos(rad) - x * sin(rad);
-        double x1 = y * sin(rad) + x * cos(rad);
+        double x1 = x * cos(rad) - y * sin(rad);
+        double y1 = x * sin(rad) + y * cos(rad);
         return new Vector2d(x1,
                             y1);
     }
@@ -65,7 +71,7 @@ public class Vector2d  {
     }
 
     public double getAngle(){
-        return -Math.PI*0.5 + Math.atan2(x,y);
+        return Math.atan2(x,y);
     }
 
 }

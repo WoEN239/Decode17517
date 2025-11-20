@@ -8,7 +8,7 @@ import org.woen.Util.Pid.PidStatus;
 public class ControlSystemConstant {
 
     public static class FeedbackConfig {
-        public double PPLocalR   = 20;
+        public double PPLocalR   = 15;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.15,0,0.001,0,0,0,0);
         public PidStatus hPid = new PidStatus(1.5,0,0.5,0,0,0.0,0);
@@ -37,6 +37,7 @@ public class ControlSystemConstant {
         public Double angleAccel = 2d;
         public Double transVel = 15d;
         public Double angleVel = 2d;
+
     }
     public static KinematicConstrainConfig kinematicConstrainConfig = new KinematicConstrainConfig();
 
@@ -45,5 +46,13 @@ public class ControlSystemConstant {
         public double y_odometer_radius = 0;
     }
     public static OdometerConstantConfig odometerConstantConfig = new OdometerConstantConfig();
+
+    public static class GunConfig {
+        public double delay = 1.5;
+        public double shootVel = 1300;
+        public double eatVel = 1000;
+        public double patternShootVel = 1100;
+    }
+    public static GunConfig gunConfig = new GunConfig();
 
 }

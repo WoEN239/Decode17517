@@ -9,7 +9,7 @@ public class WayPoint {
     public final AutonomTask onPoint;
 
     private Pose position;
-    public final Pose target;
+    public final Pose[] target;
     private void setPosition(Pose position){this.position = position;}
 
     public final boolean isReverse;
@@ -42,7 +42,7 @@ public class WayPoint {
     public void update(){
         isRunOnce = true;
 
-        if(target.vector.minus(position.vector).length() < endDetect){
+        if(target[target.length-1].vector.minus(position.vector).length() < endDetect){
             isEndNear = true;
         }
 
@@ -57,7 +57,7 @@ public class WayPoint {
 
     }
 
-    public WayPoint(AutonomTask onPoint, Pose target,boolean isReverse){
+    public WayPoint(AutonomTask onPoint, boolean isReverse, Pose... target){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
         this.onPoint = onPoint;
         this.onWay = AutonomTask.Stub;
@@ -65,14 +65,14 @@ public class WayPoint {
         this.isReverse = isReverse;
     }
 
-    public WayPoint(AutonomTask onWay, AutonomTask onPoint, Pose target, boolean isReverse){
+    public WayPoint(AutonomTask onWay, AutonomTask onPoint, boolean isReverse, Pose... target){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
         this.onWay = onWay;
         this.onPoint = onPoint;
         this.target = target;
         this.isReverse = isReverse;
     }
-    public WayPoint(AutonomTask onPoint, Pose target){
+    public WayPoint(AutonomTask onPoint, Pose... target){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
         this.onPoint = onPoint;
         this.onWay = AutonomTask.Stub;
