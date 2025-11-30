@@ -2,16 +2,15 @@ package org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegmen
 
 import org.woen.Architecture.EventBus.IEvent;
 import org.woen.Autonom.WayPoint;
-import org.woen.Trajectory.TrajectoryPoint;
 
-public class NewTargetTrajectoryPointEvent implements IEvent<WayPoint> {
+public class NewTargetTrajectorySegmentEvent implements IEvent<WayPoint> {
     private final WayPoint data;
 
     public WayPoint getData() {
         return data;
     }
 
-    public NewTargetTrajectoryPointEvent(WayPoint data) {
+    public NewTargetTrajectorySegmentEvent(WayPoint data) {
         this.data = data;
     }
 }

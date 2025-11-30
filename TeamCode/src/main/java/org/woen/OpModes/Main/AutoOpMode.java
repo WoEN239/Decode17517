@@ -83,15 +83,6 @@ public class AutoOpMode extends BaseOpMode{
         telemetry.update();
     }
 
-
-
-
-
-
-
-
-
-
     private Pose pose = MatchData.startPosition;
     private void setPose(Pose pose) {this.pose = pose;}
 

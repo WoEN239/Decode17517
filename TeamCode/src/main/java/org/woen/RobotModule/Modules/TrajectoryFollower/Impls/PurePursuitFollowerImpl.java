@@ -15,7 +15,7 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Feed
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.NewTargetTrajectoryPointEvent;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.NewTargetTrajectorySegmentEvent;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Trajectory.Math.Line.LineSegment;
@@ -33,7 +33,6 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
     private double endDetect = 5;
     private boolean isReverse = false;
     private boolean isEndNear = false;
-
 
     private Pose position =  MatchData.startPosition;
     private Pose localPosition = new Pose(0,0,0);
@@ -120,11 +119,11 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
 
     @Override
     public void subscribeInit() {
-        EventBus.getInstance().subscribe(NewTargetTrajectoryPointEvent.class,this::setNewTrajectoryPoint);
+        EventBus.getInstance().subscribe(NewTargetTrajectorySegmentEvent.class,this::setNewTrajectoryEvent);
     }
 
     private Vector2d laterPoint;
-    private void setNewTrajectoryPoint(NewTargetTrajectoryPointEvent e){
+    private void setNewTrajectoryEvent(NewTargetTrajectorySegmentEvent e){
 
         ArrayList<LineSegment> targetBuild = new ArrayList<>();
         targetBuild.add(lineFromTwoPoint(laterPoint,e.getData().target[0].vector));
