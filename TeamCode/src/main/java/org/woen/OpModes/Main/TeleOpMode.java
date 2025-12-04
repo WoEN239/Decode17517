@@ -32,6 +32,7 @@ public class TeleOpMode extends BaseOpMode{
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
         modConfig.driveTrain.trajectoryFollower.set(false);
         modConfig.gun.set(true);
+        modConfig.camera.set(false);
         modConfig.autonomTaskManager.set(false);
 
         modulesActivationConfig = modConfig;
@@ -56,11 +57,7 @@ public class TeleOpMode extends BaseOpMode{
 
         Telemetry.getInstance().add("triangle",gamepad1.triangle);
 
-        Telemetry.getInstance().add("r", DevicePool.getInstance().sensorC.getRed());
-        Telemetry.getInstance().add("g",DevicePool.getInstance().sensorC.getGreen());
-        Telemetry.getInstance().add("b",DevicePool.getInstance().sensorC.getBlue());
-
-        telemetry.addData("gun vel",DevicePool.getInstance().gunR.getVel());
+        telemetry.addData("gun vel",DevicePool.getInstance().gun.getVel());
         telemetry.update();
 
         if(gamepad1.right_bumper){
@@ -90,6 +87,7 @@ public class TeleOpMode extends BaseOpMode{
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_LEFT));
         }
 
+        DevicePool.getInstance().brush.setPower(-1);
     }
 
 

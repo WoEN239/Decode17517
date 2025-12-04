@@ -8,7 +8,7 @@ import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Util.Color.ColorDetect.Impls.ColorDetection;
 
-@TeleOp
+
 public class ColorDefineTest extends LinearOpMode {
 
 
@@ -27,19 +27,6 @@ public class ColorDefineTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            ColorDetection colorDetectionR = new ColorDetection(DevicePool.getInstance().sensorR);
-
-
-            ColorDetection colorDetectionC = new ColorDetection(DevicePool.getInstance().sensorC);
-
-
-            ColorDetection colorDetectionL = new ColorDetection(DevicePool.getInstance().sensorL);
-
-            FtcDashboard.getInstance().getTelemetry().addData("r color", colorDetectionR);
-
-            FtcDashboard.getInstance().getTelemetry().addData("c color", colorDetectionC);
-
-            FtcDashboard.getInstance().getTelemetry().addData("l color", colorDetectionL);
 
             FtcDashboard.getInstance().getTelemetry().update();
         }

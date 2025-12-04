@@ -12,7 +12,7 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 @TeleOp(name = "upd_test")
-public class TestUPD extends LinearOpMode {
+public class UPDTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         DatagramSocket socket = null;

@@ -24,7 +24,7 @@ public class ControlSystemConstant {
     public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
     public static class FeedforwardConfig{
-        public Double xFeedforwardKV = 6.3d;
+        public Double xFeedforwardKV = 10.8d;
         public Double xFeedforwardKA = 1.7d;
         public Double hSlip = 1.065d;
         public Double staticVoltageOffsetX = 1.1d;

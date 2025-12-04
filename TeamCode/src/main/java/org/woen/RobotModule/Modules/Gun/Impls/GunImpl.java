@@ -21,20 +21,16 @@ import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 
 public class GunImpl implements Gun {
-    private ServoMotor right;
-    private ServoMotor center;
-    private ServoMotor left;
-    private ServoMotor wall;
-
-    private ServoMotor borderR;
-    private ServoMotor borderL;
+    private ServoMotor shotR;
+    private ServoMotor shotC;
+    private ServoMotor shotL;
 
     private ServoMotor aimR;
     private ServoMotor aimC;
     private ServoMotor aimL;
 
-    private Motor gunL;
-    private Motor gunR;
+    private Motor gun;
+    private Motor brush;
 
     private PidStatus status = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
     private final Pid pid = new Pid(status);
@@ -55,20 +51,15 @@ public class GunImpl implements Gun {
         this.motif = e.getData();
     }
 
-    private double gunVel = 0;
+    private double brushVel = 0;
 
     @Override
     public void init() {
-        right  = DevicePool.getInstance().shotR;
-        center = DevicePool.getInstance().shotC;
-        left   = DevicePool.getInstance().shotL;
-        wall   = DevicePool.getInstance().wall;
+        shotR = DevicePool.getInstance().shotR;
+        shotC = DevicePool.getInstance().shotC;
+        shotL = DevicePool.getInstance().shotL;
 
-        gunL = DevicePool.getInstance().gunL;
-        gunR = DevicePool.getInstance().gunR;
-
-        borderR = DevicePool.getInstance().borderR;
-        borderL = DevicePool.getInstance().borderL;
+        gun = DevicePool.getInstance().gun;
 
         aimR = DevicePool.getInstance().aimR;
         aimC = DevicePool.getInstance().aimC;
@@ -90,13 +81,12 @@ public class GunImpl implements Gun {
 
         switch (command) {
             case RAPID_FIRE:
-                wall.setPos(command.wall);
-                right.setPos(command.right);
+                shotR.setPos(command.right);
                 if (timer.seconds() > delay) {
-                    center.setPos(command.center);
+                    shotC.setPos(command.center);
                 }
                 if (timer.seconds() > 2 * delay) {
-                    left.setPos(command.left);
+                    shotL.setPos(command.left);
                 }
                 if (timer.seconds() > 3 * delay) {
                     EventBus.getInstance().invoke(new NewGunCommandAvailable(EAT));
@@ -106,12 +96,11 @@ public class GunImpl implements Gun {
             case SHOT_LEFT:
             case SHOT_RIGHT:
             case FULL_FIRE:
-                wall.setPos(command.wall);
 
                 if(timer.seconds()>delay/6.0) {
-                    right.setPos(command.right);
-                    left.setPos(command.left);
-                    center.setPos(command.center);
+                    shotR.setPos(command.right);
+                    shotL.setPos(command.left);
+                    shotC.setPos(command.center);
                 }
 
                 if (timer.seconds() > 3 * delay/6.0) {
@@ -119,64 +108,60 @@ public class GunImpl implements Gun {
                 }
                 break;
             case TARGET:
-                gunVel = gunConfig.shootVel;
-                right.setPos(command.right);
-                left.setPos(command.left);
-                center.setPos(command.center);
-                wall.setPos(command.wall);
+                brushVel = gunConfig.shootVel;
+                shotR.setPos(command.right);
+                shotL.setPos(command.left);
+                shotC.setPos(command.center);
                 timer.reset();
                 break;
             case EAT:
-                gunVel = gunConfig.eatVel;
+                brushVel = gunConfig.eatVel;
                 timer.reset();
-                right.setPos(command.right);
-                left.setPos(command.left);
-                center.setPos(command.center);
-                wall.setPos(command.wall);
+                shotR.setPos(command.right);
+                shotL.setPos(command.left);
+                shotC.setPos(command.center);
                 break;
             case REVERSE:
-                gunVel = -200;
-                right.setPos(command.right);
-                left.setPos(command.left);
-                center.setPos(command.center);
-                wall.setPos(command.wall);
+                brushVel = -200;
+                shotR.setPos(command.right);
+                shotL.setPos(command.left);
+                shotC.setPos(command.center);
                 break;
             case PATTERN_FIRE:
-                gunVel = gunConfig.patternShootVel;
-                wall.setPos(command.wall);
+                brushVel = gunConfig.patternShootVel;
 
                 switch (motif){
                     case GPP:
                         if(timer.seconds() > delay) {
-                            right.setPos(command.right);
+                            shotR.setPos(command.right);
                         }
                         if(timer.seconds() > 2*delay){
-                            left.setPos(command.left);
+                            shotL.setPos(command.left);
                         }
                         if(timer.seconds()>3*delay){
-                            center.setPos(command.center);
+                            shotC.setPos(command.center);
                         }
                         break;
                     case PGP:
                         if(timer.seconds()>delay){
-                            center.setPos(command.center);
+                            shotC.setPos(command.center);
                         }
                         if(timer.seconds() > 2*delay){
-                            right.setPos(command.right);
+                            shotR.setPos(command.right);
                         }
                         if(timer.seconds()>3*delay){
-                            left.setPos(command.left);
+                            shotL.setPos(command.left);
                         }
                         break;
                     case PPG:
                         if(timer.seconds()>delay){
-                            center.setPos(command.center);
+                            shotC.setPos(command.center);
                         }
                         if(timer.seconds() > 2*delay){
-                            left.setPos(command.left);
+                            shotL.setPos(command.left);
                         }
                         if(timer.seconds()>3*delay){
-                            right.setPos(command.right);
+                            shotR.setPos(command.right);
                         }
                         break;
 
@@ -188,24 +173,17 @@ public class GunImpl implements Gun {
                 break;
         }
 
-        if(command == EAT){
-            borderOpen();
-        }else{
-            borderClose();
-        }
-
         if(isAimHi){
             hiAim();
         }else{
             lowAim();
         }
 
-        pid.setTarget(gunVel);
-        pid.setPos(gunR.getVel());
+        pid.setTarget(brushVel);
+        pid.setPos(gun.getVel());
         pid.update();
-        Telemetry.getInstance().add("gunVel",gunR.getVel());
-        gunL.setPower(pid.getU());
-        gunR.setPower(pid.getU());
+        Telemetry.getInstance().add("gunVel", gun.getVel());
+        gun.setPower(pid.getU());
 
     }
 
@@ -217,22 +195,9 @@ public class GunImpl implements Gun {
         aim(aimLLow,aimCLow,aimRLow);
     }
 
-    private void borderOpen(){
-        border(borderOpen);
-    }
-
-    private void borderClose(){
-        border(borderClose);
-    }
-
     private void aim(double l, double c, double r){
         aimR.setPos(r);
         aimC.setPos(c);
         aimL.setPos(l);
-    }
-
-    private void border(double r){
-        borderR.setPos(r);
-        borderL.setPos(1-r);
     }
 }

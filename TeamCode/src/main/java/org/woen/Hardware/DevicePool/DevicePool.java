@@ -23,29 +23,19 @@ public class DevicePool {
 
     public Motor motorR;
     public Motor motorL;
-    public Motor motorLF;
-    public Motor motorRF;
 
-    public Motor gunR;
-    public Motor gunL;
+    public Motor gun;
+    public Motor brush;
 
     public ServoMotor shotR;
     public ServoMotor shotL;
     public ServoMotor shotC;
-    public ServoMotor wall;
 
     public ServoMotor aimR;
     public ServoMotor aimC;
     public ServoMotor aimL;
 
-    public ServoMotor borderR;
-    public ServoMotor borderL;
-
     public RevVoltageSensor revVoltageSensor;
-
-    public ColorSensor sensorR;
-    public ColorSensor sensorC;
-    public ColorSensor sensorL;
 
     public HardwareMap hardwareMap;
 
@@ -66,11 +56,11 @@ public class DevicePool {
 
         motorR = factory.createDcMotor("motorR", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
 
-        gunL = factory.createDcMotor("gunL", new Provider<>(0d), new Provider<>(0d));
-        gunR = factory.createDcMotor("gunR", new Provider<>(0d), new Provider<>(0d));
+        gun = factory.createDcMotor("gun", new Provider<>(0d), new Provider<>(0d));
+        gun.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        gunR.setDirection(DcMotorSimple.Direction.REVERSE);
-        gunL.setDirection(DcMotorSimple.Direction.REVERSE);
+        brush = factory.createDcMotor("brush", new Provider<>(0d), new Provider<>(0d));
+        brush.setDirection(DcMotorSimple.Direction.REVERSE);
 
         gyro = factory.createIMU("imu");
 
@@ -81,32 +71,24 @@ public class DevicePool {
         shotL = factory.createServoMotor("shotL");
         shotR = factory.createServoMotor("shotR");
         shotC = factory.createServoMotor("shotC");
-        wall  = factory.createServoMotor("wall") ;
 
         aimR   = factory.createServoMotor("aimR");
         aimC   = factory.createServoMotor("aimC");
         aimL   = factory.createServoMotor("aimL");
 
-        borderL = factory.createServoMotor("borderL");
-        borderR = factory.createServoMotor("borderR");
-
         motorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        gunR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        gun.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        brush.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        motorL.setDir(1);
-        motorR.setDir(-1);
+        motorL.setDir(-1);
+        motorR.setDir(1);
 
         motorL.reset();
         motorR.reset();
 
         revVoltageSensor = factory.createVoltageSensor();
-
-        sensorR = factory.createColorSensor("sensorR", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
-        sensorL = factory.createColorSensor("sensorL", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
-        sensorC = factory.createColorSensor("sensorC", config.colorSensorConfig.red, config.colorSensorConfig.green, config.colorSensorConfig.blue);
     }
 
 }

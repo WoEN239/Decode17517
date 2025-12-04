@@ -14,6 +14,7 @@ public class FeedbackableServo {
 
     public void setTarget(double pos){
         motionProfile = new TrapezoidMotionProfile(accel, velocity,pos,getPos(),getVel());
+        timer.reset();
     }
 
     public void update(){
