@@ -60,9 +60,6 @@ public class TeleOpMode extends BaseOpMode{
         telemetry.addData("gun vel",DevicePool.getInstance().gun.getVel());
         telemetry.update();
 
-        if(gamepad1.right_bumper){
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
-        }
         if(gamepad1.left_bumper){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.REVERSE));
         }
@@ -87,7 +84,6 @@ public class TeleOpMode extends BaseOpMode{
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.SHOT_LEFT));
         }
 
-        DevicePool.getInstance().brush.setPower(-1);
     }
 
 

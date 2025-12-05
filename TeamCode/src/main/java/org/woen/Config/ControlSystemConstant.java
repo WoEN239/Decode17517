@@ -49,7 +49,7 @@ public class ControlSystemConstant {
 
     public static class GunConfig {
         public double delay = 1.5;
-        public double shootVel = 1300;
+        public double shootVel = 1420;
         public double eatVel = 1000;
         public double patternShootVel = 1100;
     }

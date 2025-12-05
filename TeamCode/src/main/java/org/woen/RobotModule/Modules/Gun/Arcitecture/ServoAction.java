@@ -1,0 +1,31 @@
+package org.woen.RobotModule.Modules.Gun.Arcitecture;
+
+import org.woen.Telemetry.Telemetry;
+
+public class ServoAction {
+    public ServoActionUnit [] action;
+    private int i = 0;
+    private boolean firstRun = true;
+    public boolean isDone() {return isDone;}
+    private boolean isDone = false;
+    public void update(){
+        Telemetry.getInstance().add("i",i);
+        if(i >= action.length){
+            isDone = true;
+            return;
+        }
+
+        if(firstRun){
+            action[i].run();
+            firstRun = false;
+        }
+        if(action[i].isAtTarget()){
+            firstRun = true;
+            i++;
+        }
+    }
+
+    public ServoAction(ServoActionUnit ... action) {
+        this.action = action;
+    }
+}

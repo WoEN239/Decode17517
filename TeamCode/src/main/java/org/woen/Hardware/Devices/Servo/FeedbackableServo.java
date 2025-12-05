@@ -36,5 +36,11 @@ public class FeedbackableServo {
     public FeedbackableServo(ServoMotor servo) {
         this.servo = servo;
     }
+    public FeedbackableServo(ServoMotor servo,double pos) {
+        this.servo = servo;
+        servo.setPos(pos);
+
+        motionProfile = new TrapezoidMotionProfile(accel,velocity,pos,pos,0);
+    }
 
 }

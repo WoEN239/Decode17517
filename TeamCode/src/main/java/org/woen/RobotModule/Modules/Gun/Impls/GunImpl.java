@@ -4,16 +4,21 @@ import static org.woen.Config.ControlSystemConstant.gunConfig;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
+import org.woen.Hardware.Devices.Servo.FeedbackableServo;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.Telemetry.Telemetry;
@@ -21,9 +26,9 @@ import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 
 public class GunImpl implements Gun {
-    private ServoMotor shotR;
-    private ServoMotor shotC;
-    private ServoMotor shotL;
+    private FeedbackableServo shotR;
+    private FeedbackableServo shotC;
+    private FeedbackableServo shotL;
 
     private ServoMotor aimR;
     private ServoMotor aimC;
@@ -37,10 +42,12 @@ public class GunImpl implements Gun {
 
     public void setCommand(NewGunCommandAvailable event) {
         timer.reset();
+        firstRun = true;
         this.command = event.getData();
     }
 
     private GUN_COMMAND command = EAT;
+
     private boolean isAimHi = true;
     private void setAimCommand(NewAimCommandAvaliable event){
         isAimHi = event.getData();
@@ -51,15 +58,17 @@ public class GunImpl implements Gun {
         this.motif = e.getData();
     }
 
-    private double brushVel = 0;
+    private double gunVel = gunConfig.shootVel;
+    private double brushPower = -1;
 
     @Override
     public void init() {
-        shotR = DevicePool.getInstance().shotR;
-        shotC = DevicePool.getInstance().shotC;
-        shotL = DevicePool.getInstance().shotL;
+        shotR = new FeedbackableServo(DevicePool.getInstance().shotR,command.right);
+        shotC = new FeedbackableServo(DevicePool.getInstance().shotC,command.center);
+        shotL = new FeedbackableServo(DevicePool.getInstance().shotL,command.left);
 
         gun = DevicePool.getInstance().gun;
+        brush = DevicePool.getInstance().brush;
 
         aimR = DevicePool.getInstance().aimR;
         aimC = DevicePool.getInstance().aimC;
@@ -76,93 +85,78 @@ public class GunImpl implements Gun {
 
     private double delay = gunConfig.delay;
     private ElapsedTime timer = new ElapsedTime();
-
+    private boolean firstRun = true;
     public void lateUpdate() {
 
         switch (command) {
             case RAPID_FIRE:
-                shotR.setPos(command.right);
-                if (timer.seconds() > delay) {
-                    shotC.setPos(command.center);
-                }
-                if (timer.seconds() > 2 * delay) {
-                    shotL.setPos(command.left);
-                }
-                if (timer.seconds() > 3 * delay) {
-                    EventBus.getInstance().invoke(new NewGunCommandAvailable(EAT));
-                }
                 break;
             case SHOT_CENTER:
             case SHOT_LEFT:
             case SHOT_RIGHT:
             case FULL_FIRE:
-
-                if(timer.seconds()>delay/6.0) {
-                    shotR.setPos(command.right);
-                    shotL.setPos(command.left);
-                    shotC.setPos(command.center);
+                gunVel = gunConfig.shootVel;
+                if(firstRun){
+                    servoAction = new ServoAction(
+                            new ServoActionUnit() {
+                                @Override
+                                public boolean isAtTarget() {
+                                    return shotR.isAtTarget();
+                                }
+                                @Override
+                                public void run() {
+                                    shotR.setTarget(command.right);
+                                    shotL.setTarget(command.left);
+                                }
+                            },
+                            new ServoActionUnit() {
+                                @Override
+                                public boolean isAtTarget() {
+                                    return shotC.isAtTarget();
+                                }
+                                @Override
+                                public void run() {
+                                    shotC.setTarget(command.center);
+                                }
+                            }
+                    );
+                    firstRun = false;
                 }
-
-                if (timer.seconds() > 3 * delay/6.0) {
+                if (servoAction.isDone()) {
                     EventBus.getInstance().invoke(new NewGunCommandAvailable(EAT));;
                 }
                 break;
-            case TARGET:
-                brushVel = gunConfig.shootVel;
-                shotR.setPos(command.right);
-                shotL.setPos(command.left);
-                shotC.setPos(command.center);
-                timer.reset();
-                break;
             case EAT:
-                brushVel = gunConfig.eatVel;
-                timer.reset();
-                shotR.setPos(command.right);
-                shotL.setPos(command.left);
-                shotC.setPos(command.center);
+                if(firstRun){
+                    servoAction = new ServoAction(
+                            new ServoActionUnit() {
+                                @Override
+                                public boolean isAtTarget() {
+                                    return true;
+                                }
+                                @Override
+                                public void run() {
+                                    shotR.setTarget(command.right);
+                                    shotL.setTarget(command.left);
+                                    shotC.setTarget(command.center);
+                                }
+                            }
+                    );
+                    firstRun = false;
+                }
                 break;
             case REVERSE:
-                brushVel = -200;
-                shotR.setPos(command.right);
-                shotL.setPos(command.left);
-                shotC.setPos(command.center);
+                shotR.setTarget(command.right);
+                shotL.setTarget(command.left);
+                shotC.setTarget(command.center);
                 break;
             case PATTERN_FIRE:
-                brushVel = gunConfig.patternShootVel;
-
                 switch (motif){
                     case GPP:
-                        if(timer.seconds() > delay) {
-                            shotR.setPos(command.right);
-                        }
-                        if(timer.seconds() > 2*delay){
-                            shotL.setPos(command.left);
-                        }
-                        if(timer.seconds()>3*delay){
-                            shotC.setPos(command.center);
-                        }
                         break;
                     case PGP:
-                        if(timer.seconds()>delay){
-                            shotC.setPos(command.center);
-                        }
-                        if(timer.seconds() > 2*delay){
-                            shotR.setPos(command.right);
-                        }
-                        if(timer.seconds()>3*delay){
-                            shotL.setPos(command.left);
-                        }
                         break;
                     case PPG:
-                        if(timer.seconds()>delay){
-                            shotC.setPos(command.center);
-                        }
-                        if(timer.seconds() > 2*delay){
-                            shotL.setPos(command.left);
-                        }
-                        if(timer.seconds()>3*delay){
-                            shotR.setPos(command.right);
-                        }
                         break;
 
                 }
@@ -179,12 +173,18 @@ public class GunImpl implements Gun {
             lowAim();
         }
 
-        pid.setTarget(brushVel);
+        pid.setTarget(gunVel);
         pid.setPos(gun.getVel());
         pid.update();
-        Telemetry.getInstance().add("gunVel", gun.getVel());
+        Telemetry.getInstance().add("gunVel",gun.getVel());
+        Telemetry.getInstance().add("case",command.toString());
         gun.setPower(pid.getU());
+        brush.setPower(brushPower);
+        servoAction.update();
 
+        shotL.update();
+        shotR.update();
+        shotC.update();
     }
 
     private void hiAim(){
@@ -200,4 +200,17 @@ public class GunImpl implements Gun {
         aimC.setPos(c);
         aimL.setPos(l);
     }
+    private ServoAction servoAction = new ServoAction(
+                                  new ServoActionUnit() {
+                                        @Override
+                                        public boolean isAtTarget() {
+                                            return true;
+                                        }
+                                        @Override
+                                        public void run() {
+                                            shotR.setTarget(command.right);
+                                            shotL.setTarget(command.left);
+                                            shotC.setTarget(command.center);
+                                        }
+                                  });
 }
