@@ -7,7 +7,7 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Feed
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
-import org.woen.Trajectory.Trajectory;
+import org.woen.Util.Trajectory.Trajectory;
 import org.woen.Util.Vectors.Pose;
 
 public class TrajectoryFollowerImpl implements TrajectoryFollower {

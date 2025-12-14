@@ -6,7 +6,6 @@ import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Robot.Robot;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
-import org.woen.Telemetry.Telemetry;
 
 public abstract class BaseOpMode extends LinearOpMode {
     protected Robot robot;
@@ -19,7 +18,8 @@ public abstract class BaseOpMode extends LinearOpMode {
 
     protected void initConfig(){}
     protected void modulesReplace(){}
-    protected void firstRun(){}
+    protected void initRun(){}
+    protected void lastRun(){}
 
     private void robotInit(){
         robot = new Robot();
@@ -35,11 +35,12 @@ public abstract class BaseOpMode extends LinearOpMode {
         initOpMode();
         robotInit();
         modulesReplace();
-        firstRun();
+        initRun();
         waitForStart();
         while (opModeIsActive()) {
             loopRun();
             robot.update();
         }
+        lastRun();
     }
 }

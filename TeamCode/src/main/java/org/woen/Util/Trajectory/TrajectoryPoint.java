@@ -1,4 +1,4 @@
-package org.woen.Trajectory;
+package org.woen.Util.Trajectory;
 
 
 import org.woen.Util.Vectors.Vector2d;

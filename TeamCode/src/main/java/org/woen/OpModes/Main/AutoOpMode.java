@@ -1,13 +1,12 @@
 package org.woen.OpModes.Main;
 
-import static java.lang.Math.abs;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.AutonomTask;
 import org.woen.Autonom.PositionPool;
-import org.woen.Autonom.SetNewTrajectoryEvent;
+import org.woen.Autonom.SetNewWaypointsSequenceEvent;
 import org.woen.Autonom.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
@@ -16,16 +15,17 @@ import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
+import org.woen.Telemetry.Telemetry;
+import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.Vectors.Pose;
 
 @Autonomous
 public class AutoOpMode extends BaseOpMode{
-    private final FeedforwardReferenceObserver velocityObserver = new FeedforwardReferenceObserver();
-    private final FeedbackReferenceObserver positionObserver = new FeedbackReferenceObserver();
 
     @Override
     protected void initConfig(){
@@ -45,31 +45,35 @@ public class AutoOpMode extends BaseOpMode{
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class,this::setGunStatus);
         EventBus.getInstance().subscribe(NewMotifEvent.class,this::setMotif);
     }
+
     PositionPool pool = new PositionPool();
+    ElapsedTime timer = new ElapsedTime();
     @Override
-    protected void firstRun(){
+    protected void initRun(){
+        timer.reset();
         EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
         EventBus.getListenersRegistration().invoke(new RegisterNewLocalPositionListener(this::setPose));
         EventBus.getInstance().invoke(new NewAimCommandAvaliable(true));
 
-        EventBus.getInstance().invoke(new SetNewTrajectoryEvent(
+
+        EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 new WayPoint(AutonomTask.Stub,pool.goal),
+                new WayPoint(new AutonomTask(
+                        //()->abs(AngleUtil.normalize(pose.h - pool.shoot.h)) < 0.1 )
+                        ()->true)
+                        ,pool.shoot),
                 new WayPoint(
                         new AutonomTask(
-                                ()->gunStatus==GUN_COMMAND.EAT,()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
+                                ()->gunStatus==GUN_COMMAND.EAT,
+                                ()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
                         ),
-                        true,pool.shoot
-                ),
-                new WayPoint(
-                        new AutonomTask(()->true,()->setGunCommand(GUN_COMMAND.TARGET)),
-                        pool.firstEat
-                ),
-                new WayPoint(
-                        new AutonomTask(
-                                ()->gunStatus==GUN_COMMAND.EAT,()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
-                        ),
-                        true,pool.shoot
-                )));
+                        pool.shoot),
+                new WayPoint(new AutonomTask(()->true)
+                        ,pool.goal).setVel(40),
+                new WayPoint(new AutonomTask(()->false)
+                        ,pool.goal)));
+
+
     }
 
     MOTIF motif = MOTIF.PGP;
@@ -78,9 +82,15 @@ public class AutoOpMode extends BaseOpMode{
         this.motif = e.getData();
     }
 
+    boolean firstRun = true;
     protected void loopRun() {
+        if(firstRun) {timer.reset();}
+        firstRun = false;
         telemetry.addData("motif",motif.toString());
         telemetry.update();
+        Telemetry.getInstance().add("angle err", AngleUtil.normalize(pose.h - pool.shoot.h));
+        Telemetry.getInstance().add("auto time", timer.seconds());
+
     }
 
     private Pose pose = MatchData.startPosition;
@@ -95,4 +105,5 @@ public class AutoOpMode extends BaseOpMode{
     private void setGunCommand(GUN_COMMAND command){
         EventBus.getInstance().invoke(new NewGunCommandAvailable(command));
     }
+
 }

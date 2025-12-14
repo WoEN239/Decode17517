@@ -10,8 +10,8 @@ public class ControlSystemConstant {
     public static class FeedbackConfig {
         public double PPLocalR   = 15;
         public double PPTransVel = 30;
-        public PidStatus xPid = new PidStatus(0.15,0,0.001,0,0,0,0);
-        public PidStatus hPid = new PidStatus(1.5,0,0.5,0,0,0.0,0);
+        public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
+        public PidStatus hPid = new PidStatus(1,0,0.,0,0,0.0,0);
     }
     public static FeedbackConfig feedbackConfig = new FeedbackConfig();
 
@@ -19,16 +19,16 @@ public class ControlSystemConstant {
         public double lx = 6.3;
         public double ly = 16.4375;
         public double B = 35.925;
-        public double wheelR = 75;
+        public double wheelR = 55;
     }
     public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
     public static class FeedforwardConfig{
-        public Double xFeedforwardKV = 10.8d;
-        public Double xFeedforwardKA = 1.7d;
-        public Double hSlip = 1.065d;
-        public Double staticVoltageOffsetX = 1.1d;
-        public Double staticVoltageOffsetH = 3d;
+        public Double xFeedforwardKV = 2.2d;
+        public Double xFeedforwardKA = 0.2d;
+        public Double hSlip = 1.5d;
+        public Double staticVoltageOffsetX = 1.5d;
+        public Double staticVoltageOffsetH = 2.1d;
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
 
@@ -49,9 +49,13 @@ public class ControlSystemConstant {
 
     public static class GunConfig {
         public double delay = 1.5;
-        public double shootVel = 1420;
+        public double velTol = 30;
+        public double shootVel = 1450;
         public double eatVel = 1000;
-        public double patternShootVel = 1100;
+        public double patternShootVel = 1300;
+        public PidStatus rightPidStatus = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
+        public PidStatus leftPidStatus = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
+        public PidStatus centerPidStatus = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
     }
     public static GunConfig gunConfig = new GunConfig();
 

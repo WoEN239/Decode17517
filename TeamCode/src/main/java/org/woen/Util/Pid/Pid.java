@@ -6,7 +6,7 @@ import static java.lang.Math.signum;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Telemetry.Telemetry;
-import org.woen.Util.Angel.AngelUtil;
+import org.woen.Util.Angel.AngleUtil;
 
 public class Pid {
     private final PidStatus status;
@@ -77,7 +77,7 @@ public class Pid {
         err = target - pos;
 
         if(isAngle){
-            err = AngelUtil.normalize(err);
+            err = AngleUtil.normalize(err);
         }
 
         double dErr = err - errLast;

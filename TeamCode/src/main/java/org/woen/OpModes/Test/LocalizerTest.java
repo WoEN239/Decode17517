@@ -30,6 +30,7 @@ public class LocalizerTest extends BaseOpMode {
     protected void initConfig(){
         DeviceActivationConfig deviceConfig = new DeviceActivationConfig();
         deviceConfig.motors.set(false);
+        deviceConfig.servos.set(false);
         deviceConfig.odometers.set(true);
         deviceConfig.colorSensor.set(false);
         deviceActivationConfig = deviceConfig;
@@ -37,6 +38,9 @@ public class LocalizerTest extends BaseOpMode {
         ModulesActivateConfig moduleConfig = new ModulesActivateConfig();
         moduleConfig.localizer = LocalizerActivationConfig.getAllOn();
         moduleConfig.driveTrain = DriveTrainActivationConfig.getAllOff();
+        moduleConfig.camera.set(false);
+        moduleConfig.gun.set(false);
+        moduleConfig.autonomTaskManager.set(false);
         modulesActivationConfig = moduleConfig;
     }
 
@@ -45,7 +49,7 @@ public class LocalizerTest extends BaseOpMode {
     int port = 5005;
 
     @Override
-    public void firstRun(){
+    public void initRun(){
         try {
             socket = new DatagramSocket();
             address = InetAddress.getByName("192.168.43.170");

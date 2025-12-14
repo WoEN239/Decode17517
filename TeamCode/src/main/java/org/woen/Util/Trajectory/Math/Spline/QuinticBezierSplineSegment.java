@@ -1,6 +1,6 @@
-package org.woen.Trajectory.Math.Spline;
+package org.woen.Util.Trajectory.Math.Spline;
 
-import org.woen.Trajectory.TrajectoryPoint;
+import org.woen.Util.Trajectory.TrajectoryPoint;
 import org.woen.Util.Vectors.Vector2d;
 
 public class QuinticBezierSplineSegment {

@@ -2,6 +2,10 @@ package org.woen.Util.Vectors;
 
 import android.annotation.SuppressLint;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 public class Pose {
     public final double h;
     public final double x;
@@ -41,6 +45,9 @@ public class Pose {
         return new Pose(-h,x,-y);
     }
 
+    public static Pose fromRR(Pose2D pose2D){
+        return new Pose(pose2D.getHeading(AngleUnit.RADIANS),pose2D.getX(DistanceUnit.CM),pose2D.getY(DistanceUnit.CM));
+    }
     @SuppressLint("DefaultLocale")
     @Override
     public String toString() {

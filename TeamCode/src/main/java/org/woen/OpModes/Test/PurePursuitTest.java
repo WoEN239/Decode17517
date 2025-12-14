@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.AutonomTask;
 import org.woen.Autonom.PositionPool;
-import org.woen.Autonom.SetNewTrajectoryEvent;
+import org.woen.Autonom.SetNewWaypointsSequenceEvent;
 import org.woen.Autonom.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
@@ -35,8 +35,8 @@ public class PurePursuitTest extends BaseOpMode {
 
     PositionPool pool = new PositionPool();
     @Override
-    public void firstRun(){
-        EventBus.getInstance().invoke(new SetNewTrajectoryEvent(
+    public void initRun(){
+        EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 new WayPoint(AutonomTask.Stub,new Pose(0,0,0)),
                 new WayPoint(AutonomTask.Stub,new Pose(0,100,0),new Pose(0,100,100)).setVel(20)
         ));

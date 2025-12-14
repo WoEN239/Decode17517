@@ -4,9 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
@@ -15,7 +13,7 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.F
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Telemetry.Telemetry;
-import org.woen.Util.Angel.AngelUtil;
+import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
 import org.woen.Util.Vectors.Pose;
 
@@ -62,7 +60,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
                     new Pose(velH.get(), velX.get(), velY.get())));
 
             Telemetry.getInstance().add("x target",posX.get());
-            Telemetry.getInstance().add("h target",AngelUtil.normalize(posH.get()));
+            Telemetry.getInstance().add("h target", AngleUtil.normalize(posH.get()));
 
             Telemetry.getInstance().add("h pos",position.h);
             Telemetry.getInstance().add("x pos",position.x);
@@ -100,7 +98,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
 
                 feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(velTarget, 0, 0),
                         new Pose(accTarget, 0, 0)));
-                Telemetry.getInstance().add("posTarget", AngelUtil.normalize(posTarget));
+                Telemetry.getInstance().add("posTarget", AngleUtil.normalize(posTarget));
                 Telemetry.getInstance().add("posValue", position.h);
                 Telemetry.getInstance().add("velValue", velocity.h);
 

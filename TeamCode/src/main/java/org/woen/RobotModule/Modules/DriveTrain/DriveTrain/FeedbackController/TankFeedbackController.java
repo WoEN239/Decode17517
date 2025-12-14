@@ -30,8 +30,7 @@ public class TankFeedbackController {
         hPid.update();
 
         return new Pose(
-                hPid.getU(), xPid.getU(), 0
+                hPid.getU(), 0, 0
         );
-
     }
 }

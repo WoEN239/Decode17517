@@ -1,11 +1,10 @@
 package org.woen.OpModes.Test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.woen.Trajectory.Trajectory;
-import org.woen.Trajectory.TrajectoryPoint;
+import org.woen.Util.Trajectory.Trajectory;
+import org.woen.Util.Trajectory.TrajectoryPoint;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.io.IOException;

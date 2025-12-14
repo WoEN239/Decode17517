@@ -2,10 +2,10 @@ package org.woen.Autonom;
 
 import org.woen.Architecture.EventBus.IEvent;
 
-public class SetNewTrajectoryEvent implements IEvent<WayPoint[]> {
+public class SetNewWaypointsSequenceEvent implements IEvent<WayPoint[]> {
     private final WayPoint[] data;
 
-    public SetNewTrajectoryEvent(WayPoint... data) {
+    public SetNewWaypointsSequenceEvent(WayPoint... data) {
         this.data = data;
     }
 

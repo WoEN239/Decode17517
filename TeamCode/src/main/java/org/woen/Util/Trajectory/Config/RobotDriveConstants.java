@@ -1,4 +1,4 @@
-package org.woen.Trajectory.Config;
+package org.woen.Util.Trajectory.Config;
 
 public class RobotDriveConstants {
     public final double maxVel ;

@@ -36,7 +36,7 @@ public class ServoProfileTest extends BaseOpMode {
 
     FeedbackableServo servo;
     @Override
-    protected void firstRun() {
+    protected void initRun() {
          servo = new FeedbackableServo(DevicePool.getInstance().aimR);
     }
 

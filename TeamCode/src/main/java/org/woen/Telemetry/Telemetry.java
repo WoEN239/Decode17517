@@ -7,9 +7,6 @@ import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Telemetry.ModulesInterfacesTelemetry.ModulesInterfacesTelemetry;
-import org.woen.Trajectory.Math.Line.LineSegment;
-import org.woen.Util.Vectors.Pose;
-import org.woen.Util.Vectors.Vector2d;
 
 import java.util.ArrayList;
 

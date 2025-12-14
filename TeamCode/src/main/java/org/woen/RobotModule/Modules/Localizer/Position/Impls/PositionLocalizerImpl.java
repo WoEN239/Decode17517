@@ -5,8 +5,15 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static org.woen.Config.ControlSystemConstant.*;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
+import org.woen.Hardware.DevicePool.DevicePool;
+import org.woen.Hardware.Devices.Odometers.Inter.PinPoint;
 import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
@@ -14,12 +21,13 @@ import org.woen.RobotModule.Modules.Localizer.Position.Architecture.LocalPositio
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.PositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
 import org.woen.Telemetry.Telemetry;
-import org.woen.Util.Angel.AngelUtil;
+import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.ExponentialFilter.ExponentialFilter;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
 public class PositionLocalizerImpl implements PositionLocalizer {
+    private PinPoint odo;
 
     private Pose position = MatchData.startPosition;
     private final PositionObserver positionObserver = new PositionObserver();
@@ -29,7 +37,6 @@ public class PositionLocalizerImpl implements PositionLocalizer {
             new Vector2d()
     );
     private final LocalPositionObserver localPositionObserver = new LocalPositionObserver();
-
 
     private LocalizeDeviceData deviceData = new LocalizeDeviceData();
 
@@ -42,82 +49,12 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         this.gyroAngle = gyroAngle;
     }
 
-    private double s1Old = 0;
-    private double xH2Old = 0;
-    private final ExponentialFilter filter = new ExponentialFilter();
-
     @Override
     public void update() {
+        Pose pRaw = odo.getPose();
 
-        double xLoc = deviceData.leftOdPos + deviceData.rightOdPos;
-        xLoc *= 0.5;
-
-        double hOd = -deviceData.leftOdPos + deviceData.rightOdPos;
-        Telemetry.getInstance().add("leftOd",deviceData.leftOdPos);
-        Telemetry.getInstance().add("rightOd",deviceData.rightOdPos);
-        hOd *= 0.5;
-        hOd *= odometerConstantConfig.meterPerAngle;
-        Telemetry.getInstance().add("hOd",hOd);
-
-        double yLoc = deviceData.sideOdPos;
-        yLoc += hOd* odometerConstantConfig.y_odometer_radius;
-
-        hOd = AngelUtil.normalize(hOd);
-
-//        double d1 = hOd       - s1Old;
-//        double d2 = gyroAngle - xH2Old;
-//
-//
-//        filter.update(d1,d2);
-//
-//        s1Old = hOd;
-//        xH2Old = filter.getX();
-
-//        double h = filter.getX() + MatchData.startPosition.h;
-
-        double h = gyroAngle + MatchData.startPosition.h;
-        h = AngelUtil.normalize(h);
-
-        Pose deltaLocalPosition = localPosition.minus(
-                new Pose(
-                        h,
-                        new Vector2d(xLoc,
-                                     yLoc)
-                )
-        ).unaryMinus();
-
-        double dx = deltaLocalPosition.vector.x;
-        double dy = deltaLocalPosition.vector.y;
-        double dh = deltaLocalPosition.h;
-
-        Vector2d dpCorrected;
-
-        if(abs(dh)<0.001){
-            dpCorrected = new Vector2d(dx,
-                                       dh
-            );
-        }else{
-            dpCorrected = new Vector2d(
-                    dx*sin(dh)/dh + dy*(cos(dh)-1)/dh,
-                    dx*(cos(dh)-1)/dh + dy*sin(dh)/dh
-            );
-        }
-
-
-        position = new Pose(
-                h,
-                position.vector.plus(dpCorrected.rotate(h))
-        );
-
-        localPosition  = new Pose(
-                h,
-                new Vector2d(xLoc,
-                             yLoc)
-        );
-
-        positionObserver.notifyListeners(position);
-        localPositionObserver.notifyListeners(localPosition);
-
+        positionObserver.notifyListeners(pRaw);
+        localPositionObserver.notifyListeners(position);
     }
 
     @Override
@@ -127,5 +64,7 @@ public class PositionLocalizerImpl implements PositionLocalizer {
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewAngleListener(this::setGyroAngle));
         position = MatchData.startPosition;
+        odo = DevicePool.getInstance().pinPoint;
+        odo.init();
     }
 }

@@ -1,24 +1,25 @@
 package org.woen.RobotModule.Modules.TrajectoryFollower.Impls;
 
-import static org.woen.Trajectory.Math.Line.LineSegment.lineFromTwoPoint;
+import static org.woen.Util.Trajectory.Math.Line.LineSegment.lineFromTwoPoint;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 import static java.lang.Math.sqrt;
 
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.NewTargetTrajectorySegmentEvent;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.SetNewTargetTrajectorySegmentEvent;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 import org.woen.Telemetry.Telemetry;
-import org.woen.Trajectory.Math.Line.LineSegment;
+import org.woen.Util.Trajectory.Math.Line.LineSegment;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
@@ -34,41 +35,52 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
     private boolean isReverse = false;
     private boolean isEndNear = false;
 
-    private Pose position =  MatchData.startPosition;
-    private Pose localPosition = new Pose(0,0,0);
+    private Pose pose =  MatchData.startPosition;
+    private void setPose(Pose pose) {this.pose = pose;}
 
     @Override
     public void update() {
-        if(targetPath.isEmpty()) return;
-
-        localRadius = ControlSystemConstant.feedbackConfig.PPLocalR;
-        if(position.vector.minus(targetPath.get(targetPath.size()-1).end).lengthSquare()<localRadius*localRadius){
-            localRadius = position.vector.minus(targetPath.get(targetPath.size()-1).end).length();
+        if(targetPath.isEmpty()) {
+            RobotLog.dd("target_pp_path_finished","path finished");
+            return;
         }
 
-        Vector2d projection = targetPath.get(0).findProjection(position.vector);
+        localRadius = ControlSystemConstant.feedbackConfig.PPLocalR;
+        Vector2d lastPoint = targetPath.get(targetPath.size()-1).end;
+        double distanceToEnd = pose.vector.minus(lastPoint).length();
+
+        if(distanceToEnd < localRadius){
+            localRadius = distanceToEnd;
+        }
+
+        Vector2d projection = targetPath.get(0).findProjection(pose.vector);
         LineSegment targetSegment = targetPath.get(0);
+        boolean isSegmentLast = false;
         for (int i = 0; i<targetPath.size();i++) {
-            Vector2d p = targetPath.get(i).findProjection(position.vector);
-            if(localRadius*localRadius > p.minus(position.vector).lengthSquare()){
+            Vector2d p = targetPath.get(i).findProjection(pose.vector);
+            if(localRadius*localRadius > p.minus(pose.vector).lengthSquare()){
                 projection = p;
                 targetSegment = targetPath.get(i);
+
+                if(i == targetPath.size()-1){
+                    isSegmentLast = true;
+                }
             }
         }
 
 
         double chord = localRadius;
-        double step = sqrt(localRadius*localRadius - projection.minus(position.vector).lengthSquare());
+        double step = sqrt(localRadius*localRadius - projection.minus(pose.vector).lengthSquare());
         if(Double.isNaN(step)) {
             step = localRadius;
-            chord = projection.plus(targetSegment.unitVector.multiply(step)).minus(position.vector).length();
+            chord = projection.plus(targetSegment.unitVector.multiply(step)).minus(pose.vector).length();
         }
 
         Vector2d virtualTarget = projection.plus(targetSegment.unitVector.multiply(step));
-        double y = virtualTarget.minus(position.vector).rotate(-position.h).y;
+        double y = virtualTarget.minus(pose.vector).rotate(-pose.h).y;
 
         double screwR = (chord*chord)/(2d*y);
-        double dir = signum(targetSegment.end.minus(position.vector).rotate(-position.h).getAngle());
+        double dir = signum(targetSegment.end.minus(pose.vector).rotate(-pose.h).getAngle());
         double angleVel = dir*(transVelocity/screwR);
 
         if(isReverse){
@@ -76,41 +88,40 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
             angleVel = -angleVel;
         }
 
-        if(targetSegment == targetPath.get(targetPath.size()-1)){
-        if(targetSegment.start.minus(projection).lengthSquare() > targetSegment.start.minus(targetSegment.end).lengthSquare()){
-            transVelocity = - abs(transVelocity);
-            angleVel = -angleVel;
-        }
+        if(isSegmentLast){
+            if(targetSegment.start.minus(projection).lengthSquare() >
+               targetSegment.start.minus(targetSegment.end).lengthSquare()){
+                transVelocity = -transVelocity;
+                angleVel = -angleVel;
+            }
         }
 
-        Pose targetPos = localPosition;
+        Pose targetPos = pose;
 
-        if(position.vector.minus(targetPath.get(targetPath.size()-1).end).lengthSquare() < endDetect*endDetect){
+        if(pose.vector.minus(lastPoint).lengthSquare() < endDetect*endDetect){
             isEndNear = true;
         }
 
         if(isEndNear){
-            targetPos = new Pose(endAngle,localPosition.vector);
+            targetPos = new Pose(endAngle,pose.vector);
             angleVel = 0;
             transVelocity = 0;
         }
 
-
-        observerPos.notifyListeners(new FeedbackReference(
-                        targetPos,
-                        new Pose(0,0,0)
-                )
-        );
         observerVel.notifyListeners(new FeedforwardReference(
                         new Pose(angleVel,transVelocity,0),
                         new Pose(0,0,0)
                 )
         );
+        observerPos.notifyListeners(new FeedbackReference(
+                new Pose(targetPos.h,0,0),
+                new Pose(0,0,0)
+        ));
 
         for(LineSegment i: targetPath) {
             Telemetry.getInstance().getField().line(i.start, i.end);
         }
-        Telemetry.getInstance().getField().line(position.vector,projection);
+        Telemetry.getInstance().getField().line(pose.vector,projection);
 
     }
 
@@ -119,41 +130,34 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
 
     @Override
     public void subscribeInit() {
-        EventBus.getInstance().subscribe(NewTargetTrajectorySegmentEvent.class,this::setNewTrajectoryEvent);
+        EventBus.getInstance().subscribe(SetNewTargetTrajectorySegmentEvent.class,this::setNewTrajectoryEvent);
     }
 
-    private Vector2d laterPoint;
-    private void setNewTrajectoryEvent(NewTargetTrajectorySegmentEvent e){
+    private void setNewTrajectoryEvent(SetNewTargetTrajectorySegmentEvent e){
+        ArrayList<LineSegment> buildPath = new ArrayList<>();
 
-        ArrayList<LineSegment> targetBuild = new ArrayList<>();
-        targetBuild.add(lineFromTwoPoint(laterPoint,e.getData().target[0].vector));
-
-        for(int i =0; i<e.getData().target.length-1; i++ ){
-            targetBuild.add(lineFromTwoPoint(e.getData().target[i].vector,e.getData().target[i+1].vector));
+        for(int i = 0; i<e.getData().path.length-1; i++ ){
+            buildPath.add(lineFromTwoPoint(e.getData().path[i].vector,e.getData().path[i+1].vector));
         }
-        targetPath = targetBuild;
+        targetPath = buildPath;
 
-        laterPoint = e.getData().target[e.getData().target.length-1].vector;
-        endAngle = e.getData().target[e.getData().target.length-1].h;
+        isEndNear = false;
+
+        endAngle = e.getData().path[e.getData().path.length-1].h;
         endDetect = e.getData().getEndDetect();
         isReverse = e.getData().isReverse;
-        isEndNear = false;
         transVelocity = e.getData().getVel();
+
+        String path_string = " ";
+        for(LineSegment i : targetPath) {
+            path_string += String.format("from %s to %s \n",i.start.toString(),i.end.toString());
+        }
+        RobotLog.dd("new_path_segment", path_string);
     }
 
     @Override
     public void init() {
-        EventBus.getListenersRegistration().invoke(new RegisterNewLocalPositionListener(this::setLocalPosition));
-        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPosition));
-        laterPoint = MatchData.startPosition.vector;
-    }
-
-    private void setLocalPosition(Pose localPosition) {
-        this.localPosition = localPosition;
-    }
-
-    private void setPosition(Pose position) {
-        this.position = position;
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
     }
 
 }

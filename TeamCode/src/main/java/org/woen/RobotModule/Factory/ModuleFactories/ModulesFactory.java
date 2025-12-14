@@ -1,7 +1,7 @@
 package org.woen.RobotModule.Factory.ModuleFactories;
 
-import org.woen.Autonom.AutonomTaskManager;
-import org.woen.Autonom.AutonomTaskManagerImpl;
+import org.woen.Autonom.WaypointsManager;
+import org.woen.Autonom.WaypointsManagerImpl;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
@@ -41,11 +41,11 @@ public class ModulesFactory implements IRobotModuleFactory {
         }
     }
 
-    private AutonomTaskManager createAutonomTaskManager(){
+    private WaypointsManager createAutonomTaskManager(){
         if(config.autonomTaskManager.get()){
-            return new AutonomTaskManagerImpl();
+            return new WaypointsManagerImpl();
         }else{
-            return new AutonomTaskManager() {};
+            return new WaypointsManager() {};
         }
     }
 }

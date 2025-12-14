@@ -1,10 +1,9 @@
-package org.woen.Trajectory;
+package org.woen.Util.Trajectory;
 
-import static org.woen.Trajectory.Math.Spline.QuinticBezierSplineSegment.createSpline;
+import static org.woen.Util.Trajectory.Math.Spline.QuinticBezierSplineSegment.createSpline;
 
-import org.woen.Trajectory.Config.RobotDriveConstants;
-import org.woen.Trajectory.Math.Spline.QuinticBezierSplineSegment;
-import org.woen.Trajectory.Math.TrajectorySegment.TrajectorySegment;
+import org.woen.Util.Trajectory.Config.RobotDriveConstants;
+import org.woen.Util.Trajectory.Math.TrajectorySegment.TrajectorySegment;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.io.IOException;

@@ -28,23 +28,27 @@ public class CameraImpl implements Camera{
 
     private AprilTagProcessor aprilTagProcessor;
 
+    private BallDetectProcessor ballDetectProcessor;
+
     private VisionPortal visionPortal;
 
-    public static int height = 600;
+    public static int height = 1080;
 
-    public static int width = 800;
+    public static int width = 1920;
 
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
         aprilTagProcessor = new AprilTagProcessor.Builder()
-                .setCameraPose(cameraPosition, cameraOrient)
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .build();
+        ballDetectProcessor = new BallDetectProcessor();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
         builder.addProcessor(aprilTagProcessor);
+        builder.addProcessor(ballDetectProcessor);
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         builder.setCameraResolution(new Size(width, height));
 

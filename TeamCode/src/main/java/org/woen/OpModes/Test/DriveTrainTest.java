@@ -14,6 +14,7 @@ public class DriveTrainTest extends BaseOpMode {
         ModulesActivateConfig modules = ModulesActivateConfig.getAllOn();
         modules.driveTrain.trajectoryFollower.set(false);
         modules.gun.set(false);
+        modules.camera.set(false);
         modulesActivationConfig = modules;
     }
 

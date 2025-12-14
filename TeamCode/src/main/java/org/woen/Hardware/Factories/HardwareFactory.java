@@ -1,6 +1,7 @@
 package org.woen.Hardware.Factories;
 
 import com.qualcomm.hardware.adafruit.AdafruitI2cColorSensor;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -12,10 +13,12 @@ import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.Devices.Motor.Impl.DcMotorImpl;
 import org.woen.Hardware.Devices.Motor.Impl.DcMotorMok;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
+import org.woen.Hardware.Devices.Odometers.Impl.PinPointImpl;
 import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
 import org.woen.Hardware.Devices.Odometers.Impl.OdometerImpl;
 import org.woen.Hardware.Devices.Odometers.Impl.OdometerMoc;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Devices.Odometers.Inter.PinPoint;
 import org.woen.Hardware.Devices.Servo.Impls.ServoImpl;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
@@ -24,6 +27,7 @@ import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensorImpl;
 import org.woen.RobotModule.Modules.Camera.Camera;
 import org.woen.RobotModule.Modules.Camera.CameraImpl;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Util.Vectors.Pose;
 
 public class HardwareFactory {
 
@@ -36,6 +40,17 @@ public class HardwareFactory {
         this.config = serviceActivation;
     }
 
+    public PinPoint createPinPoint(String name){
+        if(config.odometers.get()) {
+            return new PinPointImpl(hardwareMap.get(GoBildaPinpointDriver.class, name));
+        }else{
+            return new PinPoint(){
+                public Pose getPose() {return new Pose(0,0,0);}
+                public Pose getVel()  {return new Pose(0,0,0);}
+            };
+        }
+    }
+
     public Motor createDcMotor(String name, Provider<Double> pos, Provider<Double> vol){
         if(config.motors.get()){
             return new DcMotorImpl(hardwareMap.get(DcMotorEx.class, name));
@@ -44,6 +59,7 @@ public class HardwareFactory {
             return new DcMotorMok(pos, vol);
         }
     }
+
 
     public ServoMotor createServoMotor(String name){
         if(config.servos.get()){

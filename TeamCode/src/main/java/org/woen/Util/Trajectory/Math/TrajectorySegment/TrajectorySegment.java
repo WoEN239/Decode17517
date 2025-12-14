@@ -1,11 +1,10 @@
-package org.woen.Trajectory.Math.TrajectorySegment;
+package org.woen.Util.Trajectory.Math.TrajectorySegment;
 
 
 
 
 import static com.acmerobotics.roadrunner.Math.integralScan;
 import static com.acmerobotics.roadrunner.Math.lerpLookup;
-import static com.acmerobotics.roadrunner.Math.snz;
 
 import static java.lang.Double.min;
 import static java.lang.Math.PI;
@@ -16,9 +15,8 @@ import static java.lang.Math.sqrt;
 
 import com.acmerobotics.roadrunner.IntegralScanResult;
 
-import org.woen.Trajectory.Config.RobotDriveConstants;
-import org.woen.Trajectory.Math.Spline.QuinticBezierSplineSegment;
-import org.woen.Trajectory.TrajectoryPoint;
+import org.woen.Util.Trajectory.Config.RobotDriveConstants;
+import org.woen.Util.Trajectory.Math.Spline.QuinticBezierSplineSegment;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.io.FileWriter;

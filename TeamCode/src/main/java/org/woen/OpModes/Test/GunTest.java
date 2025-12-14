@@ -36,8 +36,8 @@ public class GunTest extends BaseOpMode {
     protected void loopRun() {
 
         pid.setTarget(target);
-        pid.setPos(DevicePool.getInstance().gun.getVel());
+        pid.setPos(DevicePool.getInstance().gunR.getVel());
         pid.update();
-        DevicePool.getInstance().gun.setPower(pid.getU());
+        DevicePool.getInstance().gunR.setPower(pid.getU());
     }
 }

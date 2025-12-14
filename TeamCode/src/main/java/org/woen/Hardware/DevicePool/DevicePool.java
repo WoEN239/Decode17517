@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
+import org.woen.Hardware.Devices.Odometers.Inter.PinPoint;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factories.HardwareFactory;
@@ -17,6 +17,8 @@ import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DevicePool {
 
+    public PinPoint pinPoint;
+
     public Odometer rightOdometer;
 
     public IMU gyro;
@@ -24,7 +26,9 @@ public class DevicePool {
     public Motor motorR;
     public Motor motorL;
 
-    public Motor gun;
+    public Motor gunR;
+    public Motor gunC;
+    public Motor gunL;
     public Motor brush;
 
     public ServoMotor shotR;
@@ -52,15 +56,22 @@ public class DevicePool {
             i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        motorL = factory.createDcMotor("motorL", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
+        pinPoint = factory.createPinPoint("odometerComputer");
 
+        motorL = factory.createDcMotor("motorL", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
         motorR = factory.createDcMotor("motorR", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
 
-        gun = factory.createDcMotor("gun", new Provider<>(0d), new Provider<>(0d));
-        gun.setDirection(DcMotorSimple.Direction.REVERSE);
+        gunC = factory.createDcMotor("gunC", new Provider<>(0d), new Provider<>(0d));
+        gunC.setDir(-1);
+
+        gunL = factory.createDcMotor("gunL", new Provider<>(0d), new Provider<>(0d));
+        gunL.setDir(1);
+
+        gunR = factory.createDcMotor("gunR", new Provider<>(0d), new Provider<>(0d));
+        gunR.setDir(-1);
 
         brush = factory.createDcMotor("brush", new Provider<>(0d), new Provider<>(0d));
-        brush.setDirection(DcMotorSimple.Direction.REVERSE);
+        brush.setDir(1);
 
         gyro = factory.createIMU("imu");
 
@@ -79,7 +90,9 @@ public class DevicePool {
         motorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        gun.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        gunR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        gunC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         brush.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         motorL.setDir(-1);

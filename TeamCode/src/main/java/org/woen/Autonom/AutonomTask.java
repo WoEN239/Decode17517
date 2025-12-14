@@ -5,14 +5,16 @@ import java.util.function.BooleanSupplier;
 public class AutonomTask {
     private final Runnable[] runnable;
     private BooleanSupplier isDone;
-    private boolean isRunOnce = false;
+    private boolean isFirstRun = true;
 
     public void run(){
-        if(!isRunOnce) {
+        if(isFirstRun) {
+            isFirstRun = false;
+
             for (Runnable i : runnable) {
                 i.run();
             }
-            isRunOnce = true;
+
             if(isDone.getAsBoolean()){
                 isDone = ()->true;
             }
@@ -20,11 +22,11 @@ public class AutonomTask {
     }
 
     public boolean isDone(){
-        return isDone.getAsBoolean()&&isRunOnce;
+        return isDone.getAsBoolean() && !isFirstRun;
     }
 
-    public boolean isRunOnce(){
-        return isRunOnce;
+    public boolean isFirstRun(){
+        return isFirstRun;
     }
 
     public AutonomTask(BooleanSupplier isDone, Runnable... runnable) {
@@ -32,5 +34,5 @@ public class AutonomTask {
         this.isDone = isDone;
     }
 
-    public static final AutonomTask Stub = new AutonomTask(()->true,new Runnable[]{});
+    public static final AutonomTask Stub = new AutonomTask(()->true);
 }

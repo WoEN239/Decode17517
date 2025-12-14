@@ -28,4 +28,8 @@ public class ServoAction {
     public ServoAction(ServoActionUnit ... action) {
         this.action = action;
     }
+
+    public ServoAction copy(){
+        return new ServoAction(action);
+    }
 }
