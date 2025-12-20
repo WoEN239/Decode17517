@@ -37,6 +37,11 @@ public class Pose {
                 vector.minus(b.vector));
     }
 
+    public Pose multiply(double b){
+        return new Pose(h * b,
+                vector.multiply(b));
+    }
+
     public Pose unaryMinus(){
         return new Pose(-h,new Vector2d(-vector.x, -vector.y));
     }
