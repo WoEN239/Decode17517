@@ -1,7 +1,11 @@
 package org.woen.OpModes.Main;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.AutonomTask;
@@ -13,16 +17,15 @@ import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.Vectors.Pose;
+import org.woen.Util.Vectors.Vector2d;
 
 @Autonomous
 public class AutoOpMode extends BaseOpMode{
@@ -37,7 +40,7 @@ public class AutoOpMode extends BaseOpMode{
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
         modConfig.driveTrain.trajectoryFollower.set(true);
         modConfig.gun.set(true);
-        modConfig.camera.set(true);
+        modConfig.camera.set(false);
         modConfig.autonomTaskManager.set(true);
 
         modulesActivationConfig = modConfig;
@@ -52,27 +55,30 @@ public class AutoOpMode extends BaseOpMode{
     protected void initRun(){
         timer.reset();
         EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.TARGET));
-        EventBus.getListenersRegistration().invoke(new RegisterNewLocalPositionListener(this::setPose));
-        EventBus.getInstance().invoke(new NewAimCommandAvaliable(true));
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        EventBus.getInstance().invoke(new NewAimEvent(true).setGoal( new Vector2d(-180,-170)));
 
 
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
-                new WayPoint(AutonomTask.Stub,pool.goal),
-                new WayPoint(new AutonomTask(
-                        //()->abs(AngleUtil.normalize(pose.h - pool.shoot.h)) < 0.1 )
-                        ()->true)
-                        ,pool.shoot),
+        new WayPoint(
+                         new AutonomTask(()->abs(pose.h-angleToGoal())<0.015),
+                        true,
+                        MatchData.startPosition,new Pose(angleToGoal(),100,-57))
+                .setName("start"),
                 new WayPoint(
-                        new AutonomTask(
-                                ()->gunStatus==GUN_COMMAND.EAT,
-                                ()->setGunCommand(GUN_COMMAND.PATTERN_FIRE)
-                        ),
-                        pool.shoot),
-                new WayPoint(new AutonomTask(()->true)
-                        ,pool.goal).setVel(40),
-                new WayPoint(new AutonomTask(()->false)
-                        ,pool.goal)));
-
+                        new AutonomTask(()->true,
+                                ()->RobotLog.dd("auto","fire")),
+                        new Pose(angleToGoal(),150,-57),new Pose(angleToGoal(),150,-57)
+                )
+                .setName("fire"),
+                new WayPoint(
+                        new AutonomTask(()->true,
+                                ()->RobotLog.dd("auto","eat")),
+                        new Pose(angleToGoal(),150,-57),
+                        new Pose(angleToGoal(),140,-57),
+                        new Pose(angleToGoal(),140,-80)
+                )
+        ));
 
     }
 
@@ -81,14 +87,17 @@ public class AutoOpMode extends BaseOpMode{
     public void setMotif(NewMotifEvent e) {
         this.motif = e.getData();
     }
-
+    private double angleToGoal(){
+        return  PI + new Vector2d(-180,-170).minus(pose.vector).getAngle();
+    }
     boolean firstRun = true;
     protected void loopRun() {
         if(firstRun) {timer.reset();}
         firstRun = false;
+
         telemetry.addData("motif",motif.toString());
         telemetry.update();
-        Telemetry.getInstance().add("angle err", AngleUtil.normalize(pose.h - pool.shoot.h));
+        Telemetry.getInstance().add("angle err", AngleUtil.normalize(pose.h - 15));
         Telemetry.getInstance().add("auto time", timer.seconds());
 
     }

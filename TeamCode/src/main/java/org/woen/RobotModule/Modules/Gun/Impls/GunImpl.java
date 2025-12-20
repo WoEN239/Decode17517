@@ -6,29 +6,29 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
-import org.woen.Hardware.Devices.Servo.FeedbackableServo;
+import org.woen.Hardware.Devices.Servo.ServoWithFeedback;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimCommandAvaliable;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Pid.Pid;
-import org.woen.Util.Pid.PidStatus;
+import org.woen.Util.Vectors.Pose;
+import org.woen.Util.Vectors.Vector2d;
 
 public class GunImpl implements Gun {
-    private FeedbackableServo shotR;
-    private FeedbackableServo shotC;
-    private FeedbackableServo shotL;
+    private ServoWithFeedback shotR;
+    private ServoWithFeedback shotC;
+    private ServoWithFeedback shotL;
 
     private ServoMotor aimR;
     private ServoMotor aimC;
@@ -63,37 +63,45 @@ public class GunImpl implements Gun {
 
                 break;
             case FULL_FIRE:
-                gunVel = gunConfig.shootVel;
+                gunVelSide = gunConfig.shootVelSide;
+                gunVelC = gunConfig.shootVelC;
+                if(!isFarAim){
+                    gunVelC = gunConfig.shootVelCNear;
+                }
+
                 brushPower = 1;
 
                 servoActionR = shotRAction.copy();
                 servoActionC = shotCAction.copy();
                 servoActionL = shotLAction.copy();
                 break;
-            case PATTERN_FIRE:
+            case OFF:
+                brushPower = 0;
                 break;
         }
     }
 
     private GUN_COMMAND command = EAT;
 
-    private boolean isAimHi = true;
-    private void setAimCommand(NewAimCommandAvaliable event){
-        isAimHi = event.getData();
-    }
-    private MOTIF motif = MOTIF.PGP;
-    public void setMotif(NewMotifEvent e) {
-        this.motif = e.getData();
+    private boolean isFarAim = true;
+    private Vector2d goal = new Vector2d();
+    private void setAimCommand(NewAimEvent event){
+        isFarAim = event.getData();
+        goal = event.getGoal();
     }
 
-    private double gunVel = gunConfig.shootVel;
+    private MOTIF motif = MOTIF.PGP;
+    public void setMotif(NewMotifEvent e) {this.motif = e.getData();}
+
+    private double gunVelSide = gunConfig.shootVelSide;
+    private double gunVelC    = gunConfig.shootVelC;
     private double brushPower = -1;
 
     @Override
     public void init() {
-        shotR = new FeedbackableServo(DevicePool.getInstance().shotR,command.right);
-        shotC = new FeedbackableServo(DevicePool.getInstance().shotC,command.center);
-        shotL = new FeedbackableServo(DevicePool.getInstance().shotL,command.left);
+        shotR = new ServoWithFeedback(DevicePool.getInstance().shotR,command.right);
+        shotC = new ServoWithFeedback(DevicePool.getInstance().shotC,command.center);
+        shotL = new ServoWithFeedback(DevicePool.getInstance().shotL,command.left);
 
         gunR = DevicePool.getInstance().gunR;
         gunL = DevicePool.getInstance().gunL;
@@ -109,27 +117,31 @@ public class GunImpl implements Gun {
     @Override
     public void subscribeInit() {
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class, this::setCommand);
-        EventBus.getInstance().subscribe(NewAimCommandAvaliable.class, this::setAimCommand);
+        EventBus.getInstance().subscribe(NewAimEvent.class, this::setAimCommand);
         EventBus.getInstance().subscribe(NewMotifEvent.class, this::setMotif);
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
     }
 
     @Override
     public void lateUpdate(){
-        if(isAimHi){
-            hiAim();
+        double dist = pose.vector.minus(goal).length();
+        Telemetry.getInstance().add("distance to goal",dist);
+
+        if(isFarAim){
+            farAim();
         }else{
-            lowAim();
+            nearAim(dist);
         }
 
-        pidR.setTarget(gunVel);
+        pidR.setTarget(gunVelSide);
         pidR.setPos(gunR.getVel());
         pidR.update();
 
-        pidL.setTarget(gunVel);
+        pidL.setTarget(gunVelSide);
         pidL.setPos(gunL.getVel());
         pidL.update();
 
-        pidC.setTarget(gunVel);
+        pidC.setTarget(gunVelC);
         pidC.setPos(gunC.getVel());
         pidC.update();
 
@@ -141,10 +153,15 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("case",command.toString());
 
         Telemetry.getInstance().add("shotR target", shotR.motionProfile.getPos(shotR.motionProfile.duration+1));
-        gunR.setPower(pidR.getU());
-        gunL.setPower(pidL.getU());
-        gunC.setPower(pidC.getU());
-
+        if(command == OFF){
+            gunR.setPower(0);
+            gunL.setPower(0);
+            gunC.setPower(0);
+        }else {
+            gunR.setPower(pidR.getU());
+            gunL.setPower(pidL.getU());
+            gunC.setPower(pidC.getU());
+        }
         brush.setPower(brushPower);
 
         servoActionR.update();
@@ -156,12 +173,21 @@ public class GunImpl implements Gun {
         shotC.update();
     }
 
-    private void hiAim(){
-        aim(aimLHi,aimCHi,aimRHi);
+    private void farAim(){
+        aim(aimLFar, aimCFar, aimRFar);
+        gunVelC = gunConfig.shootVelC;
     }
 
-    private void lowAim(){
-        aim(aimLLow,aimCLow,aimRLow);
+    private void nearAim(double dist){
+
+        double deltaC = (dist - gunConfig.distLow) * gunConfig.deltaPosC /(gunConfig.distHi - gunConfig.distLow);
+        double deltaS = (dist - gunConfig.distLow) * gunConfig.deltaPosS /(gunConfig.distHi - gunConfig.distLow);
+        Telemetry.getInstance().add("deltaC",deltaC);
+        Telemetry.getInstance().add("deltaS",deltaS);
+
+        aim(aimLNear+deltaS, aimCNear+deltaC, aimRNear+deltaS);
+        gunVelC = gunConfig.shootVelCNear;
+        gunVelSide = gunConfig.shootVelSideNear;
     }
 
     private void aim(double l, double c, double r){
@@ -169,6 +195,13 @@ public class GunImpl implements Gun {
         aimC.setPos(c);
         aimL.setPos(l);
     }
+
+    private Pose pose = new Pose(0,0,0);
+    private void setPose(Pose p){
+        pose = p;
+    }
+
+
     private ServoAction servoActionR = new ServoAction(
           new ServoActionUnit() {
                 @Override
@@ -203,7 +236,7 @@ public class GunImpl implements Gun {
         new ServoActionUnit() {
             @Override
             public boolean isAtTarget() {
-                return Math.abs(gunVel- gunR.getVel())<gunConfig.velTol;
+                return Math.abs(gunVelSide - gunR.getVel())<gunConfig.velTol;
             }
 
             @Override
@@ -221,7 +254,7 @@ public class GunImpl implements Gun {
     private ServoAction shotCAction = new ServoAction(
         new ServoActionUnit() {
             @Override
-            public boolean isAtTarget() {return Math.abs(gunVel- gunC.getVel())<gunConfig.velTol;}
+            public boolean isAtTarget() {return Math.abs(gunVelC - gunC.getVel())<gunConfig.velTol;}
             @Override
             public void run() {}
         },
@@ -235,7 +268,7 @@ public class GunImpl implements Gun {
             new ServoActionUnit() {
                 @Override
                 public boolean isAtTarget() {
-                    return Math.abs(gunVel - gunL.getVel()) < gunConfig.velTol;
+                    return Math.abs(gunVelSide - gunL.getVel()) < gunConfig.velTol;
                 }
 
                 @Override

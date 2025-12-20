@@ -8,7 +8,7 @@ import org.woen.RobotModule.Modules.Gyro.Interface.Gyro;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerImpl;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerMoc;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Interface.LocalizerDeviceListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Impls.PositionLocalizerImpl;
+import org.woen.RobotModule.Modules.Localizer.Position.Impls.LocalizerImpl;
 import org.woen.RobotModule.Modules.Localizer.Position.Impls.PositionLocalizerMoc;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Impls.VelocityLocalizerImpl;
@@ -31,7 +31,7 @@ public class LocalizerFactory implements IRobotModuleFactory {
 
     public PositionLocalizer createPositionLocalizer(){
         if(config.localizer.position.get()){
-            return new PositionLocalizerImpl();
+            return new LocalizerImpl();
         }else{
             return new PositionLocalizerMoc();
         }

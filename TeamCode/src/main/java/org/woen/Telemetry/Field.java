@@ -10,6 +10,7 @@ public class Field {
 
     public void setTelemetryPacket(TelemetryPacket telemetryPacket) {
         this.telemetryPacket = telemetryPacket;
+        telemetryPacket.fieldOverlay().setScale(smPerInch, smPerInch);
     }
 
     private void rotatePoints(double[] xPoints, double[] yPoints, double angle) {
@@ -30,8 +31,8 @@ public class Field {
     }
 
     private final double smPerInch = 1.0 / 2.54;
-    private final double height = 45/ 2.0;
-    private final double width =  20/ 2.0;
+    private final double height = 45.7/ 2.0;
+    private final double width =  45/ 2.0;
 
     public void robot(Pose pose) {
         double[] xPoints;
@@ -51,8 +52,6 @@ public class Field {
 
         rotatePoints(xPoints, yPoints, pose.h);
         plusVector(xPoints, yPoints, pose.vector);
-
-        telemetryPacket.fieldOverlay().setScale(smPerInch, smPerInch);
 
         telemetryPacket.fieldOverlay().setFill("blue");
         telemetryPacket.fieldOverlay().fillPolygon(xPoints, yPoints);

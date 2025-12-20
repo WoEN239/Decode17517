@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
@@ -135,7 +136,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
         FtcDashboard.getInstance().addConfigVariable("manual_trajectory_follow_profile","pos",profilePos);
 
         EventBus.getListenersRegistration().invoke(
-                new RegisterNewLocalPositionListener(this::setPosition));
+                new RegisterNewPositionListener(this::setPosition));
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewVelocityListener(this::setVelocity));
 

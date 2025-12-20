@@ -20,24 +20,25 @@ public class WaypointsManagerImpl implements WaypointsManager {
     private void setWayPoints(SetNewWaypointsSequenceEvent event){
         wayPoints = new ArrayList<>(Arrays.asList(event.getData()));
         EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(wayPoints.get(0)));
-        EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(wayPoints.get(1)));
     }
 
     public void update(){
-        if(wayPoints.size()<2) {
+        if(wayPoints.isEmpty()) {
             RobotLog.dd("end_of_trajectory","actual waypoints sequence finished");
             return;
         }
 
-        wayPoints.get(1).update();
+        wayPoints.get(0).update();
 
-        if(wayPoints.get(1).isDone()){
-            if(wayPoints.size()>2) {
-                RobotLog.dd("waypoint_change", "change waypoint from " + wayPoints.get(1) + " to " + wayPoints.get(2));
+        if(wayPoints.get(0).isDone()){
+            if(wayPoints.size()>1) {
+                RobotLog.dd("waypoint_change", "change waypoint from " + wayPoints.get(0).getName() + " to " + wayPoints.get(1).getName());
+            }else{
+                RobotLog.dd("waypoint_change", "change waypoint from " + " this is end");
             }
             wayPoints.remove(0);
-            if(wayPoints.size()>1) {
-                EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(wayPoints.get(1)));
+            if(!wayPoints.isEmpty()) {
+                EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(wayPoints.get(0)));
             }
         }
 

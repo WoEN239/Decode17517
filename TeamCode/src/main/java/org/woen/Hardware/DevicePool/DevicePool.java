@@ -2,7 +2,6 @@ package org.woen.Hardware.DevicePool;
 
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -25,6 +24,9 @@ public class DevicePool {
 
     public Motor motorR;
     public Motor motorL;
+
+    public ServoMotor ptoR;
+    public ServoMotor ptoL;
 
     public Motor gunR;
     public Motor gunC;
@@ -87,12 +89,16 @@ public class DevicePool {
         aimC   = factory.createServoMotor("aimC");
         aimL   = factory.createServoMotor("aimL");
 
+        ptoL = factory.createServoMotor("ptoL");
+        ptoR = factory.createServoMotor("ptoR");
+
         motorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         gunR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         gunC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         brush.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         motorL.setDir(-1);

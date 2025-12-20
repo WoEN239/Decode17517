@@ -53,9 +53,11 @@ public class Telemetry {
         if(gyro.get()){
             modulesTelemetry.addGyroToPacket(telemetryPacket);
         }
+
         if(voltage.get()){
             modulesTelemetry.addVoltageToPacket(telemetryPacket);
         }
+
         if(localizeDevice.get()){
             modulesTelemetry.addLocalizeDevicesToPacket(telemetryPacket);
         }
@@ -63,7 +65,6 @@ public class Telemetry {
         FtcDashboard.getInstance().sendTelemetryPacket(telemetryPacket);
         telemetryPacket = new TelemetryPacket();
         field.setTelemetryPacket(telemetryPacket);
-
     }
 
     public <T> void add(String name, T data) {

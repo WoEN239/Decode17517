@@ -2,6 +2,7 @@ package org.woen.RobotModule.Modules.TrajectoryFollower.Impls;
 
 import static org.woen.Util.Trajectory.Math.Line.LineSegment.lineFromTwoPoint;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 import static java.lang.Math.sqrt;
@@ -121,6 +122,7 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         for(LineSegment i: targetPath) {
             Telemetry.getInstance().getField().line(i.start, i.end);
         }
+
         Telemetry.getInstance().getField().line(pose.vector,projection);
 
     }
@@ -148,11 +150,12 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         isReverse = e.getData().isReverse;
         transVelocity = e.getData().getVel();
 
-        String path_string = " ";
+        StringBuilder path_string = new StringBuilder(" ");
         for(LineSegment i : targetPath) {
-            path_string += String.format("from %s to %s \n",i.start.toString(),i.end.toString());
+            path_string.append(String.format("from %s to %s \n", new Pose(0,i.start), new Pose(0,i.end) ));
         }
-        RobotLog.dd("new_path_segment", path_string);
+        path_string.append("total ").append(targetPath.size());
+        RobotLog.dd("new_path_segment", path_string.toString());
     }
 
     @Override

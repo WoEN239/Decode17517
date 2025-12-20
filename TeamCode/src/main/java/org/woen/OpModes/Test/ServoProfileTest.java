@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.Servo.FeedbackableServo;
+import org.woen.Hardware.Devices.Servo.ServoWithFeedback;
 import org.woen.OpModes.Main.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;
@@ -34,10 +34,10 @@ public class ServoProfileTest extends BaseOpMode {
         FtcDashboard.getInstance().addConfigVariable("servo test","target",target);
     }
 
-    FeedbackableServo servo;
+    ServoWithFeedback servo;
     @Override
     protected void initRun() {
-         servo = new FeedbackableServo(DevicePool.getInstance().aimR);
+         servo = new ServoWithFeedback(DevicePool.getInstance().aimR);
     }
 
     Provider<Double> target = new Provider<>(0.5);

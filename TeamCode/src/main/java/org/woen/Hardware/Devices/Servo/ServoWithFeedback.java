@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
 
-public class FeedbackableServo {
+public class ServoWithFeedback {
     private final ElapsedTime timer = new ElapsedTime();
     private final ServoMotor servo;
     public TrapezoidMotionProfile motionProfile = new TrapezoidMotionProfile(accel,velocity,0,0,0);
@@ -15,7 +15,7 @@ public class FeedbackableServo {
     private final static double velocity = 20;
 
     public void setTarget(double pos){
-    //    if(abs(pos-motionProfile.getPos(motionProfile.duration+1)) < 0.015) return;
+        if(abs(pos-motionProfile.getPos(motionProfile.duration+1)) < 0.015) return;
 
         motionProfile = new TrapezoidMotionProfile(accel, velocity,pos,getPos(),getVel());
         timer.reset();
@@ -37,10 +37,10 @@ public class FeedbackableServo {
         return timer.seconds() > motionProfile.duration;
     }
 
-    public FeedbackableServo(ServoMotor servo) {
+    public ServoWithFeedback(ServoMotor servo) {
         this.servo = servo;
     }
-    public FeedbackableServo(ServoMotor servo,double pos) {
+    public ServoWithFeedback(ServoMotor servo, double pos) {
         this.servo = servo;
         servo.setPos(pos);
 

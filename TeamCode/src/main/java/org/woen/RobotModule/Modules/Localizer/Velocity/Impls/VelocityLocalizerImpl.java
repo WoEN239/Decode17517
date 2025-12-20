@@ -65,8 +65,8 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
                 localVelocity.vector.rotate(robotAngle)
         );
 
-        localVelocityObserver.notifyListeners(localVelocity);
-        velocityObserver.notifyListeners(velocity);
+        //localVelocityObserver.notifyListeners(localVelocity);
+        //velocityObserver.notifyListeners(velocity);
     }
 
     @Override

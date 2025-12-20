@@ -24,10 +24,10 @@ public class ControlSystemConstant {
     public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
     public static class FeedforwardConfig{
-        public Double xFeedforwardKV = 2.2d;
-        public Double xFeedforwardKA = 0.2d;
-        public Double hSlip = 1.5d;
-        public Double staticVoltageOffsetX = 1.5d;
+        public Double xFeedforwardKA = 0.4d;
+        public Double xFeedforwardKV = 2.8d;
+        public Double hSlip = 1.15d;
+        public Double staticVoltageOffsetX = 1.d;
         public Double staticVoltageOffsetH = 2.1d;
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
@@ -48,14 +48,23 @@ public class ControlSystemConstant {
     public static OdometerConstantConfig odometerConstantConfig = new OdometerConstantConfig();
 
     public static class GunConfig {
-        public double delay = 1.5;
         public double velTol = 30;
-        public double shootVel = 1450;
-        public double eatVel = 1000;
-        public double patternShootVel = 1300;
-        public PidStatus rightPidStatus = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
-        public PidStatus leftPidStatus = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
-        public PidStatus centerPidStatus = new PidStatus(1, 0, 0, 0.0004, 0, 0, 0,50);
+
+        public double shootVelSide = 2000;
+        public double shootVelSideNear = 2000;
+
+        public double shootVelC = 1800;
+        public double shootVelCNear = 1600;
+
+        public double deltaPosC = 0.2;
+        public double deltaPosS = 0.2;
+
+        public double distLow = 50;
+        public double distHi = 60;
+
+        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.00037, 0, 0, 0,40);
+        public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00042, 0, 0, 0,40);
+        public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00046, 0, 0, 0,40);
     }
     public static GunConfig gunConfig = new GunConfig();
 

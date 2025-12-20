@@ -29,16 +29,19 @@ public class WayPoint {
     private boolean isEndNear  = false;
     public boolean isEndNear() {return isEndNear;}
 
-    private boolean isDone     = false;
+    private boolean isDone = false;
     public boolean isDone() {
         return isDone;
     }
 
 
     public void update(){
-        if(path[path.length-1].vector.minus(pose.vector).length() < endDetect){
+        double dstToEnd = path[path.length-1].vector.minus(pose.vector).length();
+
+        if(dstToEnd < endDetect){
             if(!isEndNear) {
-                RobotLog.dd("end_of_path_segment", "in waypoint " + name + " end detected");
+                RobotLog.dd("end_of_path_segment", "in waypoint " + name + " end detected (dst to end = " + dstToEnd +
+                        "\n" + "end point " + path[path.length-1].toString() + "pose " + pose.toString() );
             }
             isEndNear = true;
         }

@@ -27,15 +27,19 @@ public class PinPointImpl implements PinPoint {
         pinpointDriver.recalibrateIMU();
     }
 
+    public void update(){
+        pinpointDriver.update();
+    }
     @Override
     public Pose getPose() {
         return Pose.fromRR(pinpointDriver.getPosition());
     }
+
     @Override
     public Pose getVel(){
         return new Pose(pinpointDriver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS),
-                           pinpointDriver.getVelX(DistanceUnit.CM),
-                            pinpointDriver.getVelY(DistanceUnit.CM));
+                        pinpointDriver.getVelX(DistanceUnit.CM),
+                        pinpointDriver.getVelY(DistanceUnit.CM));
     }
 
 

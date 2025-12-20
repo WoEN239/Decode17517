@@ -11,7 +11,9 @@ import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelsVoltageObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewLocalVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
@@ -23,7 +25,7 @@ public class TankDriveTrainImpl implements DriveTrain {
     @Override
     public void lateUpdate() {
         WheelValueMap feedback = toWheelsVoltage(
-                feedbackController.computeU(feedbackReference.pos,position,
+                feedbackController.computeU(feedbackReference.pos, pose,
                         feedbackReference.vel,velocity));
 
         FeedforwardController feedforwardController = new FeedforwardController(
@@ -62,11 +64,11 @@ public class TankDriveTrainImpl implements DriveTrain {
             new Pose(0,0,0));
 
     //all in robot reference frame
-    private Pose position = new Pose(0,0,0);
+    private Pose pose = new Pose(0,0,0);
     private Pose velocity = new Pose(0,0,0);
 
-    public void setLocalPosition(Pose position) {
-        this.position = position;
+    public void setPose(Pose pose) {
+        this.pose = pose;
     }
 
     public void setLocalVelocity(Pose velocity) {
@@ -99,9 +101,9 @@ public class TankDriveTrainImpl implements DriveTrain {
                 new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
 
         EventBus.getListenersRegistration().invoke(
-                new RegisterNewLocalPositionListener(this::setLocalPosition));
+                new RegisterNewPositionListener(this::setPose));
         EventBus.getListenersRegistration().invoke(
-                new RegisterNewLocalVelocityListener(this::setLocalVelocity));
+                new RegisterNewVelocityListener(this::setLocalVelocity));
 
         EventBus.getInstance().subscribe(ReplaceFeedbackControllerEvent.class,this::replaceFeedbackController);
 

@@ -1,6 +1,7 @@
 package org.woen.OpModes.Main;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ServoController;
 
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
@@ -12,7 +13,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected static DeviceActivationConfig deviceActivationConfig = DeviceActivationConfig.getAllOn();
     protected static ModulesActivateConfig modulesActivationConfig = ModulesActivateConfig.getAllOn();
 
-    private void initOpMode(){
+    private void initOpMode() {
         DevicePool.getInstance().init(hardwareMap,deviceActivationConfig);
     }
 

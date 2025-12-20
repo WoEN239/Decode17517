@@ -66,12 +66,12 @@ public class Vector2d  {
     }
 
     public Vector2d norm(){
-        double h = Math.atan2(x,y);
+        double h = Math.atan2(y,x);
         return new Vector2d(cos(h),sin(h));
     }
 
     public double getAngle(){
-        return Math.atan2(x,y);
+        return Math.atan2(y,x);
     }
 
 }
