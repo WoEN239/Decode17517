@@ -24,7 +24,7 @@ public class PositionLocalizerMoc implements PositionLocalizer {
     private final Provider<Double> positionProviderH = new Provider<>(MatchData.startPosition.h);
     private final Provider<Pose> localPositionProvider = new Provider<>(new Pose(0,0,0));
 
-    private  FeedforwardReference feedforwardReference;
+    private  FeedforwardReference feedforwardReference = new FeedforwardReference(new Pose(0,0,0), new Pose(0,0,0));
 
     ElapsedTime time = new ElapsedTime();
 

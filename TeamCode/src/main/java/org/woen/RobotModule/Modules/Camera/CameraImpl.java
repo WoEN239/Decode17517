@@ -40,9 +40,9 @@ public class CameraImpl implements Camera{
 
     private VisionPortal visionPortal;
 
-    public static int height = 1080;
+    public static int height = 480;//1080
 
-    public static int width = 1920;
+    public static int width = 640;//1920
 
     PredominantColorProcessor colorSensor;
 
