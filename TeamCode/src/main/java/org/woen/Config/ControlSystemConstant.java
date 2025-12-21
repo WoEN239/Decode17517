@@ -11,7 +11,7 @@ public class ControlSystemConstant {
         public double PPLocalR   = 15;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
-        public PidStatus hPid = new PidStatus(1,0,0.,0,0,0.0,0);
+        public PidStatus hPid = new PidStatus(2.5,0,0.15    ,0,0,0.0,0);
     }
     public static FeedbackConfig feedbackConfig = new FeedbackConfig();
 
@@ -25,22 +25,14 @@ public class ControlSystemConstant {
 
     public static class FeedforwardConfig{
         public Double xFeedforwardKA = 0.4d;
+        public Double xFeedforwardKAReverse = 0.4d;
         public Double xFeedforwardKV = 2.8d;
         public Double hSlip = 1.15d;
         public Double staticVoltageOffsetX = 1.d;
         public Double staticVoltageOffsetH = 2.1d;
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
-
-    public static class KinematicConstrainConfig {
-        public Double transAccel = 15d;
-        public Double angleAccel = 2d;
-        public Double transVel = 15d;
-        public Double angleVel = 2d;
-
-    }
-    public static KinematicConstrainConfig kinematicConstrainConfig = new KinematicConstrainConfig();
-
+    
     public static class OdometerConstantConfig {
         public double meterPerAngle = 0.29;
         public double y_odometer_radius = 0;

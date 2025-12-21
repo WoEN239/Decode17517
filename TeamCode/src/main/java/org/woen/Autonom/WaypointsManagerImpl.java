@@ -6,6 +6,7 @@ import org.woen.Architecture.EventBus.EventBus;
 
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.SetNewTargetTrajectorySegmentEvent;
+import org.woen.Telemetry.Telemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ public class WaypointsManagerImpl implements WaypointsManager {
     {
         wayPoints.add(new WayPoint(AutonomTask.Stub,MatchData.startPosition));
     }
+
     private void setWayPoints(SetNewWaypointsSequenceEvent event){
         wayPoints = new ArrayList<>(Arrays.asList(event.getData()));
         EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(wayPoints.get(0)));
@@ -29,7 +31,9 @@ public class WaypointsManagerImpl implements WaypointsManager {
         }
 
         wayPoints.get(0).update();
-
+        Telemetry.getInstance().add("waypoint update","update");
+        Telemetry.getInstance().add("waypoint done",wayPoints.get(0).isDone());
+        Telemetry.getInstance().add("waypoints",wayPoints.size());
         if(wayPoints.get(0).isDone()){
             if(wayPoints.size()>1) {
                 RobotLog.dd("waypoint_change", "change waypoint from " + wayPoints.get(0).getName() + " to " + wayPoints.get(1).getName());

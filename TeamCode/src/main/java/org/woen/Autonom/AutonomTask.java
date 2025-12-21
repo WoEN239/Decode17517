@@ -14,11 +14,11 @@ public class AutonomTask {
             for (Runnable i : runnable) {
                 i.run();
             }
-
-            if(isDone.getAsBoolean()){
-                isDone = ()->true;
-            }
         }
+        if(isDone.getAsBoolean()){
+            isDone = ()->true;
+        }
+
     }
 
     public boolean isDone(){

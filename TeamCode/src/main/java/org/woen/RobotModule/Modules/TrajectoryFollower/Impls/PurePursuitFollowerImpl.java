@@ -78,15 +78,14 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         }
 
         Vector2d virtualTarget = projection.plus(targetSegment.unitVector.multiply(step));
+        Telemetry.getInstance().getField().line(virtualTarget,pose.vector);
         double y = virtualTarget.minus(pose.vector).rotate(-pose.h).y;
 
         double screwR = (chord*chord)/(2d*y);
-        double dir = signum(targetSegment.end.minus(pose.vector).rotate(-pose.h).getAngle());
-        double angleVel = dir*(transVelocity/screwR);
+        double angleVel = (transVelocity/screwR);
 
         if(isReverse){
             transVelocity = - abs(transVelocity);
-            angleVel = -angleVel;
         }
 
         if(isSegmentLast){
@@ -137,8 +136,8 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
 
     private void setNewTrajectoryEvent(SetNewTargetTrajectorySegmentEvent e){
         ArrayList<LineSegment> buildPath = new ArrayList<>();
-
-        for(int i = 0; i<e.getData().path.length-1; i++ ){
+        buildPath.add(lineFromTwoPoint(pose.vector,e.getData().path[1].vector));
+        for(int i = 1; i<e.getData().path.length-1; i++ ){
             buildPath.add(lineFromTwoPoint(e.getData().path[i].vector,e.getData().path[i+1].vector));
         }
         targetPath = buildPath;

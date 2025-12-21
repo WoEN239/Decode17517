@@ -21,7 +21,7 @@ public class PinPointImpl implements PinPoint {
     public void init(){
         pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
                 GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        pinpointDriver.setOffsets(12.75,0, DistanceUnit.CM);
+        pinpointDriver.setOffsets(12.589,0, DistanceUnit.CM);
         pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.startPosition.x, MatchData.startPosition.y,
                 AngleUnit.RADIANS,MatchData.startPosition.h));
         pinpointDriver.recalibrateIMU();

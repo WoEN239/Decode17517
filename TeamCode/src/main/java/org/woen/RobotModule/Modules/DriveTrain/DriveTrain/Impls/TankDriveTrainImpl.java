@@ -2,6 +2,8 @@ package org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls;
 
 import static org.woen.Config.ControlSystemConstant.*;
 
+import static java.lang.Math.signum;
+
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
@@ -10,9 +12,7 @@ import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedforwardController.
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelsVoltageObserver;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewLocalVelocityListener;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
@@ -28,13 +28,17 @@ public class TankDriveTrainImpl implements DriveTrain {
                 feedbackController.computeU(feedbackReference.pos, pose,
                         feedbackReference.vel,velocity));
 
+        double kV = feedforwardConfig.xFeedforwardKV;
+        double kA = feedforwardConfig.xFeedforwardKA;
+        if(signum(feedforwardReference.accel.h) != signum(feedforwardReference.vel.h) ){
+            kA = feedforwardConfig.xFeedforwardKAReverse;
+        }
         FeedforwardController feedforwardController = new FeedforwardController(
-                new WheelValueMap(feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV,
-                        feedforwardConfig.xFeedforwardKV, feedforwardConfig.xFeedforwardKV),
-                new WheelValueMap(feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA,
-                        feedforwardConfig.xFeedforwardKA, feedforwardConfig.xFeedforwardKA));
+                new WheelValueMap(kV,kV,kV,kV),
+                new WheelValueMap(kA,kA,kA,kA)
+        );
 
-        WheelValueMap feedforward = feedforwardController.computeU(toWheelsVelocities(feedforwardReference.now),
+        WheelValueMap feedforward = feedforwardController.computeU(toWheelsVelocities(feedforwardReference.vel),
                 toWheelsVelocities(feedforwardReference.accel));
 
         wheelsVoltageObserver.notifyListeners(feedforward.plus(feedback));

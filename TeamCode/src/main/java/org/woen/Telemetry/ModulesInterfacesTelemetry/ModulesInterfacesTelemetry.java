@@ -18,7 +18,6 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Regi
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Vectors.Pose;
-import org.woen.Util.Vectors.Vector2d;
 
 public class ModulesInterfacesTelemetry {
     private Pose robotPos = new Pose(0,0,0);
@@ -112,7 +111,7 @@ public class ModulesInterfacesTelemetry {
 
     public void setVoltage(WheelValueMap voltage) {this.voltage = voltage;}
 
-    public void setFeedforwardReference(FeedforwardReference reference) {this.targetVel = reference.now;}
+    public void setFeedforwardReference(FeedforwardReference reference) {this.targetVel = reference.vel;}
     public void setFeedbackReference(FeedbackReference reference) {this.targetPos = reference.pos;}
 
     public void setLocalizeDeviceData(LocalizeDeviceData localizeDeviceData) {this.localizeDeviceData = localizeDeviceData;}

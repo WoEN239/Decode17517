@@ -4,7 +4,9 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
+import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
 
 public class WayPoint {
@@ -14,7 +16,7 @@ public class WayPoint {
     public final AutonomTask onWay  ;
     public final AutonomTask onPoint;
 
-    private Pose pose;
+    private Pose pose = MatchData.startPosition;
     public final Pose[] path;
     private void setPose(Pose pose){this.pose = pose;}
 
@@ -37,7 +39,7 @@ public class WayPoint {
 
     public void update(){
         double dstToEnd = path[path.length-1].vector.minus(pose.vector).length();
-
+        Telemetry.getInstance().add("dst",dstToEnd);
         if(dstToEnd < endDetect){
             if(!isEndNear) {
                 RobotLog.dd("end_of_path_segment", "in waypoint " + name + " end detected (dst to end = " + dstToEnd +
@@ -73,6 +75,13 @@ public class WayPoint {
         this.path = path;
         this.isReverse = isReverse;
     }
+    public WayPoint (Runnable[] run, boolean isReverse, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.onPoint = new AutonomTask(()->Math.abs(pose.h-path[path.length-1].h)<0.015,run);
+        this.onWay = AutonomTask.Stub;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
     public WayPoint(AutonomTask onPoint, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
         this.onPoint = onPoint;
@@ -92,5 +101,7 @@ public class WayPoint {
         this.name = name;
         return this;
     }
-
+    public WayPoint copy(){
+        return new WayPoint(onWay,onPoint,isReverse,path);
+    }
 }

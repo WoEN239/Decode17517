@@ -13,6 +13,7 @@ import org.woen.Hardware.Devices.Servo.ServoWithFeedback;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.RobotModule.Modules.Camera.MOTIF;
 import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
@@ -57,9 +58,11 @@ public class GunImpl implements Gun {
                 servoActionR = updateRAction.copy();
                 servoActionC = updateCAction.copy();
                 servoActionL = updateLAction.copy();
+
+                EventBus.getInstance().invoke(new GunAtEatEvent(1));
                 break;
             case TARGET:
-                brushPower = 0.5;
+                brushPower = 1;
 
                 break;
             case FULL_FIRE:
@@ -95,7 +98,7 @@ public class GunImpl implements Gun {
 
     private double gunVelSide = gunConfig.shootVelSide;
     private double gunVelC    = gunConfig.shootVelC;
-    private double brushPower = -1;
+    private double brushPower = 1;
 
     @Override
     public void init() {
