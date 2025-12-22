@@ -1,36 +1,25 @@
 package org.woen.RobotModule.Modules.Camera;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
+
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
-import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Telemetry.Telemetry;
 
-import java.util.Comparator;
+
 import java.util.List;
-import java.util.Optional;
 
 @Config
 public class CameraImpl implements Camera{
@@ -44,7 +33,54 @@ public class CameraImpl implements Camera{
 
     public static int width = 640;//1920
 
-    PredominantColorProcessor colorSensor;
+    /// left
+    public static double leftL = -0.8;
+    public static double topL = 0.1;
+    public static double rightL = -0.6;
+    public static double bottomL = -0.1;
+    /// center
+    public static double   leftC = -0.1;
+    public static double    topC = 0.1;
+    public static double  rightC = 0.1;
+    public static double bottomC = -0.1;
+    /// right
+    public static double   leftR = 0.6;
+    public static double    topR = 0.1;
+    public static double  rightR = 0.8;
+    public static double bottomR = -0.1;
+    PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
+            .setSwatches(
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.RED,
+                    PredominantColorProcessor.Swatch.BLUE,
+                    PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.BLACK,
+                    PredominantColorProcessor.Swatch.WHITE)
+            .build();
+    PredominantColorProcessor rightDetection = new PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(leftR, topR, rightR, bottomR))
+            .setSwatches(
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.RED,
+                    PredominantColorProcessor.Swatch.BLUE,
+                    PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.BLACK,
+                    PredominantColorProcessor.Swatch.WHITE)
+            .build();
+    PredominantColorProcessor centerDetection = new PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(leftC, topC, rightC, bottomC))
+            .setSwatches(
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.RED,
+                    PredominantColorProcessor.Swatch.BLUE,
+                    PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.BLACK,
+                    PredominantColorProcessor.Swatch.WHITE)
+            .build();
 
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
@@ -53,71 +89,72 @@ public class CameraImpl implements Camera{
                 .build();
 
 
-         colorSensor = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(0, 0, 400, 400))
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
-                        PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                        PredominantColorProcessor.Swatch.RED,
-                        PredominantColorProcessor.Swatch.BLUE,
-                        PredominantColorProcessor.Swatch.YELLOW,
-                        PredominantColorProcessor.Swatch.BLACK,
-                        PredominantColorProcessor.Swatch.WHITE)
-                .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
-        //builder.addProcessor(colorSensor);
 
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         builder.setCameraResolution(new Size(width, height));
-        //builder.addProcessor(new myProcessor());
-        builder.addProcessor(aprilTagProcessor);
+        builder.addProcessor(aprilTagProcessor)
+                .addProcessor(leftDetection)
+                .addProcessor(rightDetection)
+                .addProcessor(centerDetection);
 
         visionPortal = builder.build();
     }
 
     private MOTIF latterMotif = null;
+
+   private MOTIF ballsInMouthOld = null;
+
     public void update() {
         List<AprilTagDetection> currentDetectionList = aprilTagProcessor.getDetections();
 
         if (!currentDetectionList.isEmpty()) {
             double id = currentDetectionList.get(0).id;
             MOTIF motif = latterMotif;
-            if(id == 22){
+            if (id == 22) {
                 motif = MOTIF.PGP;
-            }else if (id == 23){
+            } else if (id == 23) {
                 motif = MOTIF.PPG;
-            }else if(id == 21){
+            } else if (id == 21) {
                 motif = MOTIF.GPP;
             }
-            if(latterMotif!=motif){
+            if (latterMotif != motif) {
                 EventBus.getInstance().invoke(new NewMotifEvent(motif));
             }
             latterMotif = motif;
         }
-        Telemetry.getInstance().add("color",colorSensor.getAnalysis().closestSwatch.name());
+
+        PredominantColorProcessor.Result resultL = leftDetection.getAnalysis();
+        PredominantColorProcessor.Result resultR = rightDetection.getAnalysis();
+        PredominantColorProcessor.Result resultC = centerDetection.getAnalysis();
+         MOTIF ballsInMouth = ballsInMouthOld;
+        if (resultL.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN
+                && resultC.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE
+                && resultR.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
+            ballsInMouth = MOTIF.PPG;
+        else {
+            if (resultL.closestSwatch == PredominantColorProcessor.Swatch.PURPLE
+                    && resultC.closestSwatch == PredominantColorProcessor.Swatch.GREEN
+                    && resultR.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
+                ballsInMouth = MOTIF.PGP;
+            else {
+                if (resultL.closestSwatch == PredominantColorProcessor.Swatch.PURPLE
+                        && resultC.closestSwatch == PredominantColorProcessor.Swatch.PURPLE
+                        && resultR.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
+                    ballsInMouth = MOTIF.PPG;
+                else {
+                    ballsInMouth = MOTIF.NONE;
+                }
+            }
+        }
+        Telemetry.getInstance().add("left", resultL.closestSwatch);
+        Telemetry.getInstance().add("center", resultC.closestSwatch);
+        Telemetry.getInstance().add("right", resultR.closestSwatch);
+        if(ballsInMouthOld != ballsInMouth)
+            EventBus.getInstance().invoke(new NewDetectionBallsEvent(ballsInMouth));
     }
-
-}
-
-class myProcessor implements VisionProcessor{
-    @Override
-    public void init(int width, int height, CameraCalibration calibration) {}
-
-    @Override
-    public Object processFrame(Mat frame, long captureTimeNanos) {
-            Imgproc.resize(frame,frame,new org.opencv.core.Size(192,108));
-            Imgproc.resize(frame,frame,new org.opencv.core.Size(1920,1080));
-
-            return null;
-    }
-
-    @Override
-    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-
-    }
-
 }
