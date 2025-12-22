@@ -30,7 +30,6 @@ public class PurePursuitTest extends BaseOpMode {
 
         modulesActivationConfig = modConfig;
 
-        MatchData.startPosition = new Pose(0,0,0);
     }
 
     PositionPoolFar pool = new PositionPoolFar();
