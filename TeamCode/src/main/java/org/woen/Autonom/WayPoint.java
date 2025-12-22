@@ -16,7 +16,7 @@ public class WayPoint {
     public final AutonomTask onWay  ;
     public final AutonomTask onPoint;
 
-    private Pose pose = MatchData.startPosition;
+    private Pose pose = MatchData.start.pose;
     public final Pose[] path;
     private void setPose(Pose pose){this.pose = pose;}
 

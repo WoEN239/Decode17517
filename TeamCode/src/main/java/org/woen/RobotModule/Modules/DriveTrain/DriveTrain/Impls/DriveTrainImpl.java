@@ -23,7 +23,7 @@ public class DriveTrainImpl implements DriveTrain {
     private FeedbackReference feedbackReference       = new FeedbackReference(new Pose(0,0,0),
                                                                               new Pose(0,0,0));
 
-    private Pose position = MatchData.startPosition;
+    private Pose position = MatchData.start.pose;
     private Pose velocity = new Pose(0,0,0);
 
     public void setPosition(Pose position) {

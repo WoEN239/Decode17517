@@ -20,8 +20,8 @@ public class PinPointTest extends LinearOpMode {
         pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
                 GoBildaPinpointDriver.EncoderDirection.REVERSED);
         pinpointDriver.setOffsets(12.75,0, DistanceUnit.CM);
-        pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.startPosition.x, MatchData.startPosition.y,
-                AngleUnit.RADIANS,MatchData.startPosition.h));
+        pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.start.pose.x, MatchData.start.pose.y,
+                AngleUnit.RADIANS,MatchData.start.pose.h));
         pinpointDriver.recalibrateIMU();
 
         while (opModeIsActive()){

@@ -4,15 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.woen.Config.MatchData;
+import org.woen.Config.Start;
 import org.woen.Config.Team;
 
-@Autonomous
-public class ChooseRed extends LinearOpMode {
+@Autonomous(group = "choose")
+public class ChooseRedNear extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
         while (opModeIsActive()){
             MatchData.team = Team.RED;
+            MatchData.start = Start.NEAR_RED;
         }
     }
 }

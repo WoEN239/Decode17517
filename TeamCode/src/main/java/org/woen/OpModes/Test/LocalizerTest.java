@@ -62,7 +62,7 @@ public class LocalizerTest extends BaseOpMode {
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
     }
 
-    private Pose pose = MatchData.startPosition;
+    private Pose pose = MatchData.start.pose;
     private void setPose(Pose pose) {this.pose = pose;}
 
     ElapsedTime timer = new ElapsedTime();

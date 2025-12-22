@@ -23,13 +23,13 @@ public class VelocityLocalizerImpl implements VelocityLocalizer {
 
 
     private Pose localVelocity = new Pose(
-            MatchData.startPosition.h,
+            MatchData.start.pose.h,
             new Vector2d()
     );
     private final LocalVelocityObserver localVelocityObserver = new LocalVelocityObserver();
 
 
-    private double robotAngle = MatchData.startPosition.h;
+    private double robotAngle = MatchData.start.pose.h;
 
     private void setRobotAngle(Pose pos){
         robotAngle = pos.h;

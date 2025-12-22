@@ -15,9 +15,6 @@ import java.util.Arrays;
 */
 public class WaypointsManagerImpl implements WaypointsManager {
     private ArrayList<WayPoint> wayPoints = new ArrayList<>();
-    {
-        wayPoints.add(new WayPoint(AutonomTask.Stub,MatchData.startPosition));
-    }
 
     private void setWayPoints(SetNewWaypointsSequenceEvent event){
         wayPoints = new ArrayList<>(Arrays.asList(event.getData()));

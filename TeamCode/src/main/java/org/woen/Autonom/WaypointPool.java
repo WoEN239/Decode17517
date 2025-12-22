@@ -14,7 +14,6 @@ import org.woen.Util.Vectors.Pose;
 public class WaypointPool {
     PositionPool pool = new PositionPool();
 
-
     public Boolean isGunEat = false;
 
     public void setGunCommand(NewGunCommandAvailable event){
@@ -29,7 +28,6 @@ public class WaypointPool {
     public void setGunIs(GunAtEatEvent event){
         isGunEat = true;
     }
-
 
     public WayPoint firstAim = new WayPoint(
             new Runnable[]{

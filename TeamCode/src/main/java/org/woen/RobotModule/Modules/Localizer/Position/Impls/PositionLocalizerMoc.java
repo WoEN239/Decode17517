@@ -19,20 +19,19 @@ public class PositionLocalizerMoc implements PositionLocalizer {
     private final PositionObserver positionObserver = new PositionObserver();
     private final LocalPositionObserver localPositionObserver = new LocalPositionObserver();
 
-    private final Provider<Double> positionProviderX = new Provider<>(MatchData.startPosition.vector.x);
-    private final Provider<Double> positionProviderY = new Provider<>(MatchData.startPosition.vector.y);
-    private final Provider<Double> positionProviderH = new Provider<>(MatchData.startPosition.h);
+    private final Provider<Double> positionProviderX = new Provider<>(MatchData.start.pose.vector.x);
+    private final Provider<Double> positionProviderY = new Provider<>(MatchData.start.pose.vector.y);
+    private final Provider<Double> positionProviderH = new Provider<>(MatchData.start.pose.h);
     private final Provider<Pose> localPositionProvider = new Provider<>(new Pose(0,0,0));
 
     private  FeedforwardReference feedforwardReference = new FeedforwardReference(new Pose(0,0,0), new Pose(0,0,0));
 
     ElapsedTime time = new ElapsedTime();
 
-    
 
-   public void setFeedforwardReference(FeedforwardReference feedforwardReference){
+    public void setFeedforwardReference(FeedforwardReference feedforwardReference){
        this.feedforwardReference = feedforwardReference;
-   }
+    }
 
     @Override
     public void update() {
@@ -44,7 +43,7 @@ public class PositionLocalizerMoc implements PositionLocalizer {
 
        localPositionObserver.notifyListeners(localPositionProvider.get());
 
-        integratePose(new Pose(positionProviderX.get(),positionProviderY.get(), positionProviderH.get()));
+       integratePose(new Pose(positionProviderX.get(),positionProviderY.get(), positionProviderH.get()));
 
     }
 
@@ -68,12 +67,12 @@ public class PositionLocalizerMoc implements PositionLocalizer {
 
     private Pose integratePose(Pose x0){
         Pose x = x0;
-        Pose vt = integrateVel(feedforwardReference.now);
-       if(x != oldPos){
+        Pose vt = integrateVel(feedforwardReference.vel);
+        if(x != oldPos){
 
             x = x0.plus(vt.multiply(dt));
         }
-       oldPos = x;
+        oldPos = x;
         return x;
     }
 
