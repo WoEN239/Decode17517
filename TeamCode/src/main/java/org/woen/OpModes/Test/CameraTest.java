@@ -6,8 +6,8 @@ import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.OpModes.Main.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
-import org.woen.RobotModule.Modules.Camera.MOTIF;
-import org.woen.RobotModule.Modules.Camera.NewMotifEvent;
+import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
+import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
 import org.woen.Telemetry.Telemetry;
 
 @TeleOp(name = "camera_test")

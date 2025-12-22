@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.Camera;
+package org.woen.RobotModule.Modules.Camera.Interfaces;
 
 import org.woen.RobotModule.Interface.IRobotModule;
 
