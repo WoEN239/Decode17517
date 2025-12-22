@@ -114,9 +114,9 @@ public class CameraImpl implements Camera {
 
     private MOTIF latterMotif = null;
 
-   private BALL_COLOR ballsInMouthLeftOld = null;
-    private BALL_COLOR ballsInMouthRightOld = null;
-    private BALL_COLOR ballsInMouthCenterOld = null;
+   private PredominantColorProcessor.Swatch ballsInMouthLeftOld = null;
+    private PredominantColorProcessor.Swatch ballsInMouthRightOld = null;
+    private PredominantColorProcessor.Swatch ballsInMouthCenterOld = null;
 
     public void update() {
         List<AprilTagDetection> currentDetectionList = aprilTagProcessor.getDetections();
@@ -141,20 +141,22 @@ public class CameraImpl implements Camera {
         PredominantColorProcessor.Result resultR = rightDetection.getAnalysis();
         PredominantColorProcessor.Result resultC = centerDetection.getAnalysis();
 
-        BALL_COLOR left = ballsInMouthLeftOld;
-        BALL_COLOR right = ballsInMouthRightOld;
-        BALL_COLOR center = ballsInMouthCenterOld;
 
-        if(ballsInMouthCenterOld != center)
-            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(center));
-        if(ballsInMouthLeftOld != left)
-            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(left));
-        if(ballsInMouthRightOld != right)
-            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(right));
+
+        if(ballsInMouthCenterOld != resultC.closestSwatch)
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(resultC.closestSwatch));
+        if(ballsInMouthLeftOld != resultL.closestSwatch)
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL.closestSwatch));
+        if(ballsInMouthRightOld != resultR.closestSwatch)
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR.closestSwatch));
 
         Telemetry.getInstance().add("left", resultL.closestSwatch);
         Telemetry.getInstance().add("center", resultC.closestSwatch);
         Telemetry.getInstance().add("right", resultR.closestSwatch);
+
+        ballsInMouthCenterOld = resultC.closestSwatch;
+        ballsInMouthLeftOld = resultL.closestSwatch;
+        ballsInMouthRightOld = resultR.closestSwatch;
 
     }
 }
