@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Pools.WaypointPoolNear;
 import org.woen.Autonom.SetNewWaypointsSequenceEvent;
-import org.woen.Autonom.WaypointPool;
+import org.woen.Autonom.Pools.WaypointPoolFar;
+import org.woen.Config.MatchData;
+import org.woen.Config.Start;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
@@ -27,23 +30,40 @@ public class AutoOpMode extends BaseOpMode{
     }
 
     @Override
-    protected void initRun(){
-        EventBus.getInstance().invoke(new NewAimEvent(true).setGoal( new Vector2d(-180,-170)));
+    protected void initRun() {
+        EventBus.getInstance().invoke(new NewAimEvent(true).setGoal(new Vector2d(-180, -170)));
 
-        WaypointPool pool = new WaypointPool();
 
-        EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
-                pool.firstAim.copy(),
-                pool.fire1.copy(),
-                pool.rotate.copy(),
-                pool.firstEat.copy(),
-                pool.secondAim.copy(),
-                pool.fire2.copy(),
-                pool.rotate.copy(),
-                pool.secondEat.copy(),
-                pool.secondAim.copy(),
-                pool.fire3.copy()
-        ));
+        if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
+            WaypointPoolFar poolFar = new WaypointPoolFar();
+                EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+                    poolFar.firstAim.copy(),
+                    poolFar.fire1.copy(),
+                    poolFar.rotate.copy(),
+                    poolFar.firstEat.copy(),
+                    poolFar.secondAim.copy(),
+                    poolFar.fire2.copy(),
+                    poolFar.rotate.copy(),
+                    poolFar.secondEat.copy(),
+                    poolFar.secondAim.copy(),
+                    poolFar.fire3.copy()
+            ));
+        }
+
+        if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
+            WaypointPoolNear poolNear = new WaypointPoolNear();
+                EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+                        poolNear.look.copy(),
+                        poolNear.firstAim.copy(),
+                        poolNear.fire1.copy(),
+                        poolNear.firstEat.copy(),
+                        poolNear.secondAim.copy(),
+                        poolNear.fire2.copy(),
+                        poolNear.secondEat.copy(),
+                        poolNear.thirdAim.copy(),
+                        poolNear.fire3.copy()
+                ));
+        }
     }
 
     protected void loopRun() {}

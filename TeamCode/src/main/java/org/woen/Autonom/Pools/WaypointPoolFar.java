@@ -1,26 +1,27 @@
-package org.woen.Autonom;
+package org.woen.Autonom.Pools;
 
 import static java.lang.Math.PI;
 
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.AutonomTask;
+import org.woen.Autonom.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
-public class WaypointPool {
-    PositionPool pool = new PositionPool();
-
+public class WaypointPoolFar {
+    PositionPoolFar pool = new PositionPoolFar();
     public Boolean isGunEat = false;
 
     public void setGunCommand(NewGunCommandAvailable event){
         isGunEat = event.getData() == GUN_COMMAND.EAT;
     }
 
-    public WaypointPool() {
+    public WaypointPoolFar() {
         EventBus.getInstance().subscribe(GunAtEatEvent.class,this::setGunIs);
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class,this::setGunCommand);
     }
@@ -32,7 +33,7 @@ public class WaypointPool {
     public WayPoint firstAim = new WayPoint(
             new Runnable[]{
                     ()-> RobotLog.dd("auto","firstAim")
-            },true, MatchData.startPosition,pool.fire
+            },true, MatchData.start.pose,pool.fire
     ).setName("firstAim");
 
     public WayPoint fire1 = new WayPoint(

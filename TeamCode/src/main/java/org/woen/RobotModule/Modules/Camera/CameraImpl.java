@@ -30,11 +30,7 @@ import java.util.List;
 
 @Config
 public class CameraImpl implements Camera {
-    public static double minArea = 4000;
-
     private AprilTagProcessor aprilTagProcessor;
-
-    private VisionPortal visionPortal;
 
     public static int height = 480;//1080
 
@@ -108,8 +104,6 @@ public class CameraImpl implements Camera {
                 .addProcessor(leftDetection)
                 .addProcessor(rightDetection)
                 .addProcessor(centerDetection);
-
-        visionPortal = builder.build();
     }
 
     private MOTIF latterMotif = null;
@@ -150,13 +144,13 @@ public class CameraImpl implements Camera {
         if(ballsInMouthRightOld != resultR.closestSwatch)
             EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR.closestSwatch));
 
-        Telemetry.getInstance().add("left", resultL.closestSwatch);
-        Telemetry.getInstance().add("center", resultC.closestSwatch);
-        Telemetry.getInstance().add("right", resultR.closestSwatch);
+        Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
+        Telemetry.getInstance().add("center ball color", resultC.closestSwatch);
+        Telemetry.getInstance().add("right  ball color", resultR.closestSwatch);
 
         ballsInMouthCenterOld = resultC.closestSwatch;
-        ballsInMouthLeftOld = resultL.closestSwatch;
-        ballsInMouthRightOld = resultR.closestSwatch;
+        ballsInMouthLeftOld   = resultL.closestSwatch;
+        ballsInMouthRightOld  = resultR.closestSwatch;
 
     }
 }

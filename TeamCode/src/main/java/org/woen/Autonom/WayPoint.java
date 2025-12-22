@@ -25,6 +25,9 @@ public class WayPoint {
     private double endDetect = 3;
     public double getEndDetect() {return endDetect;}
 
+    private double lookAheadRadius = 20;
+    private double getLookAheadRadius(){return lookAheadRadius;}
+
     private double vel = ControlSystemConstant.feedbackConfig.PPTransVel;
     public double getVel() {return vel;}
 
@@ -93,6 +96,10 @@ public class WayPoint {
         this.endDetect = endDetect;
         return this;
     }
+    public WayPoint setLookAheadRadius(double lookAheadRadius){
+        this.lookAheadRadius = lookAheadRadius;
+        return this;
+    }
     public WayPoint setVel(double vel){
         this.vel = vel;
         return this;
@@ -102,6 +109,7 @@ public class WayPoint {
         return this;
     }
     public WayPoint copy(){
-        return new WayPoint(onWay,onPoint,isReverse,path);
+        return new WayPoint(onWay,onPoint,isReverse,path)
+                   .setVel(vel).setName(name+"`").setEndDetect(endDetect).setLookAheadRadius(lookAheadRadius);
     }
 }
