@@ -6,12 +6,18 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.Devices.Servo.ServoWithFeedback;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
+import org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewMotifCheck;
 import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
@@ -81,10 +87,123 @@ public class GunImpl implements Gun {
             case OFF:
                 brushPower = 0;
                 break;
+            case PATTERN_FIRE:
+                if(isItMotif == true){
+                    gunVelSide = gunConfig.shootVelSide;
+                    gunVelC = gunConfig.shootVelC;
+                    if(!isFarAim){
+                        gunVelC = gunConfig.shootVelCNear;
+                    }
+
+                    brushPower = 1;
+
+                    if(motif == MOTIF.GPP){
+                        if(getMotif() == MOTIF.GPP){
+                            shotLCR();
+                        }
+                        if(getMotif() == MOTIF.PGP){
+                            shotCLR();
+                        }
+                        if(getMotif() == MOTIF.PPG){
+                            shotRLC();
+                        }
+                        break;
+                    }
+                    if(motif == MOTIF.PGP){
+                        if(getMotif() == MOTIF.GPP){
+                            shotCLR();
+                        }
+                        if(getMotif() == MOTIF.PGP){
+                            shotLCR();
+                        }
+                        if(getMotif() == MOTIF.PPG){
+                            shotLRC();
+                        }
+                        break;
+                    }
+                    if(motif == MOTIF.PPG){
+                        if(getMotif() == MOTIF.GPP){
+                            shotCRL();
+                        }
+                        if(getMotif() == MOTIF.PGP){
+                            shotRLC();
+                        }
+                        if(getMotif() == MOTIF.PPG){
+                            shotLCR();
+                        }
+                        break;
+                    }
+
+                }
+                else {
+                    //TODO поставить состояние для обычной стрельбы
+                }
         }
     }
 
-    private GUN_COMMAND command = EAT;
+
+    private void shotLCR(){
+        servoActionL = servoActionL.copy();
+        if(servoActionL.isDone()){
+            servoActionC = servoActionC.copy();
+            if(servoActionC.isDone()){
+                servoActionR = servoActionR.copy();
+            }
+        }
+    }
+    private void shotLRC() {
+        servoActionL = servoActionL.copy();
+        if (servoActionL.isDone()) {
+            servoActionR = servoActionR.copy();
+            if (servoActionR.isDone()) {
+                servoActionC = servoActionC.copy();
+            }
+        }
+    }
+    private void shotRCL(){
+            servoActionR = servoActionR.copy();
+            if(servoActionR.isDone()){
+                servoActionC = servoActionC.copy();
+                if(servoActionC.isDone()){
+                    servoActionL = servoActionL.copy();
+                }
+            }
+
+        }
+    private void shotRLC(){
+        servoActionR = servoActionR.copy();
+        if(servoActionR.isDone()){
+            servoActionL = servoActionL.copy();
+            if(servoActionL.isDone()){
+                servoActionC = servoActionC.copy();
+            }
+        }
+
+    }
+    private void shotCLR(){
+        servoActionC = servoActionC.copy();
+        if(servoActionC.isDone()){
+            servoActionL = servoActionL.copy();
+            if(servoActionL.isDone()){
+                servoActionR = servoActionR.copy();
+            }
+        }
+
+    }
+    private void shotCRL(){
+        servoActionC = servoActionC.copy();
+        if(servoActionC.isDone()){
+            servoActionR = servoActionR.copy();
+            if(servoActionR.isDone()){
+                servoActionL = servoActionL.copy();
+            }
+        }
+
+    }
+
+
+
+        private GUN_COMMAND command = EAT;
 
     private boolean isFarAim = true;
     private Vector2d goal = new Vector2d();
@@ -99,6 +218,44 @@ public class GunImpl implements Gun {
     private double gunVelSide = gunConfig.shootVelSide;
     private double gunVelC    = gunConfig.shootVelC;
     private double brushPower = 1;
+
+    PredominantColorProcessor.Swatch center = null;
+    PredominantColorProcessor.Swatch left = null;
+    PredominantColorProcessor.Swatch right = null;
+    Boolean isItMotif = null;
+
+    MOTIF inMouth = null;
+
+    private MOTIF getMotif() {
+        if (isItMotif == true) {
+            if (left == PredominantColorProcessor.Swatch.GREEN)
+                inMouth = MOTIF.GPP;
+            else{
+                if (center == PredominantColorProcessor.Swatch.GREEN)
+                    inMouth = MOTIF.PGP;
+                else{
+                    if (right == PredominantColorProcessor.Swatch.GREEN){
+                        inMouth = MOTIF.PPG;
+                    }
+                }
+            }
+        }
+        return inMouth;
+    }
+
+    private void setLeft(NewDetectionBallsLeftEvent event){
+        left = event.getData();
+    }
+    private void setRight(NewDetectionBallsRightEvent event){
+        right = event.getData();
+    }
+    private void setCenter(NewDetectionBallsCenterEvent event){
+        center = event.getData();
+    }
+
+    private void setStatusOfMotrif(NewMotifCheck event){
+        isItMotif = event.getData();
+    }
 
     @Override
     public void init() {
@@ -122,6 +279,10 @@ public class GunImpl implements Gun {
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class, this::setCommand);
         EventBus.getInstance().subscribe(NewAimEvent.class, this::setAimCommand);
         EventBus.getInstance().subscribe(NewMotifEvent.class, this::setMotif);
+        EventBus.getInstance().subscribe(NewDetectionBallsRightEvent.class, this::setRight);
+        EventBus.getInstance().subscribe(NewDetectionBallsLeftEvent.class, this::setLeft);
+        EventBus.getInstance().subscribe(NewDetectionBallsCenterEvent.class, this::setCenter);
+        EventBus.getInstance().subscribe(NewMotifCheck.class, this::setStatusOfMotrif);
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
     }
 
@@ -203,7 +364,6 @@ public class GunImpl implements Gun {
     private void setPose(Pose p){
         pose = p;
     }
-
 
     private ServoAction servoActionR = new ServoAction(
           new ServoActionUnit() {

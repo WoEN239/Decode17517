@@ -36,7 +36,7 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
     private boolean isReverse = false;
     private boolean isEndNear = false;
 
-    private Pose pose =  MatchData.startPosition;
+    private Pose pose =  MatchData.start.pose;
     private void setPose(Pose pose) {this.pose = pose;}
 
     @Override

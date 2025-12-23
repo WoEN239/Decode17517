@@ -21,6 +21,7 @@ import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewMotifCheck;
 import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
 import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
 import org.woen.Telemetry.Telemetry;
@@ -112,6 +113,7 @@ public class CameraImpl implements Camera {
     private PredominantColorProcessor.Swatch ballsInMouthRightOld = null;
     private PredominantColorProcessor.Swatch ballsInMouthCenterOld = null;
 
+
     public void update() {
         List<AprilTagDetection> currentDetectionList = aprilTagProcessor.getDetections();
 
@@ -127,6 +129,7 @@ public class CameraImpl implements Camera {
             }
             if (latterMotif != motif) {
                 EventBus.getInstance().invoke(new NewMotifEvent(motif));
+
             }
             latterMotif = motif;
         }
@@ -135,15 +138,51 @@ public class CameraImpl implements Camera {
         PredominantColorProcessor.Result resultR = rightDetection.getAnalysis();
         PredominantColorProcessor.Result resultC = centerDetection.getAnalysis();
 
+        int sumOfBalls = 0;
 
-
-        if(ballsInMouthCenterOld != resultC.closestSwatch)
+        if(ballsInMouthCenterOld != resultC.closestSwatch) {
             EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(resultC.closestSwatch));
-        if(ballsInMouthLeftOld != resultL.closestSwatch)
-            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL.closestSwatch));
-        if(ballsInMouthRightOld != resultR.closestSwatch)
-            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR.closestSwatch));
+            if(resultC.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
+                sumOfBalls += 2;
+            else {
+                if (resultC.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
+                    sumOfBalls += 1;
+                else{
+                    sumOfBalls = 0;
+                }
+            }
 
+        }
+        if(ballsInMouthLeftOld != resultL.closestSwatch) {
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL.closestSwatch));
+            if(resultL.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
+                sumOfBalls += 2;
+            else {
+                if (resultL.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
+                    sumOfBalls += 1;
+                else{
+                    sumOfBalls = 0;
+                }
+            }
+        }
+        if(ballsInMouthRightOld != resultR.closestSwatch) {
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR.closestSwatch));
+            if(resultR.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
+                sumOfBalls += 2;
+            else {
+                if (resultR.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
+                    sumOfBalls += 1;
+                else{
+                    sumOfBalls = 0;
+                }
+            }
+        }
+
+        if(sumOfBalls == 4)
+            EventBus.getInstance().invoke(new NewMotifCheck(true));
+        else EventBus.getInstance().invoke(new NewMotifCheck(false));
+
+        Telemetry.getInstance().add("sum balls", sumOfBalls);
         Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
         Telemetry.getInstance().add("center ball color", resultC.closestSwatch);
         Telemetry.getInstance().add("right  ball color", resultR.closestSwatch);
