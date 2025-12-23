@@ -55,17 +55,18 @@ public class GunImpl implements Gun {
         setCommand(event.getData());
     }
 
+
     private void setCommand(GUN_COMMAND command){
         this.command = command;
         switch (this.command){
             case EAT:
                 brushPower = 1;
-
                 servoActionR = updateRAction.copy();
                 servoActionC = updateCAction.copy();
                 servoActionL = updateLAction.copy();
 
                 EventBus.getInstance().invoke(new GunAtEatEvent(1));
+
                 break;
             case TARGET:
                 brushPower = 1;
@@ -86,8 +87,10 @@ public class GunImpl implements Gun {
                 break;
             case OFF:
                 brushPower = 0;
+
                 break;
             case PATTERN_FIRE:
+
                 if(isItMotif == true){
                     gunVelSide = gunConfig.shootVelSide;
                     gunVelC = gunConfig.shootVelC;
@@ -97,42 +100,9 @@ public class GunImpl implements Gun {
 
                     brushPower = 1;
 
-                    if(motif == MOTIF.GPP){
-                        if(getMotif() == MOTIF.GPP){
-                            shotLCR();
-                        }
-                        if(getMotif() == MOTIF.PGP){
-                            shotCLR();
-                        }
-                        if(getMotif() == MOTIF.PPG){
-                            shotRLC();
-                        }
-                        break;
-                    }
-                    if(motif == MOTIF.PGP){
-                        if(getMotif() == MOTIF.GPP){
-                            shotCLR();
-                        }
-                        if(getMotif() == MOTIF.PGP){
-                            shotLCR();
-                        }
-                        if(getMotif() == MOTIF.PPG){
-                            shotLRC();
-                        }
-                        break;
-                    }
-                    if(motif == MOTIF.PPG){
-                        if(getMotif() == MOTIF.GPP){
-                            shotCRL();
-                        }
-                        if(getMotif() == MOTIF.PGP){
-                            shotRLC();
-                        }
-                        if(getMotif() == MOTIF.PPG){
-                            shotLCR();
-                        }
-                        break;
-                    }
+                    chooseServoComb();
+
+                    break;
 
                 }
                 else {
@@ -141,61 +111,95 @@ public class GunImpl implements Gun {
         }
     }
 
-
+    private void chooseServoComb(){
+        if(motif == MOTIF.GPP){
+            if(getMotif() == MOTIF.GPP){
+                shotLCR();
+            }
+            if(getMotif() == MOTIF.PGP){
+                shotCLR();
+            }
+            if(getMotif() == MOTIF.PPG){
+                shotRLC();
+            }
+        }
+        if(motif == MOTIF.PGP){
+            if(getMotif() == MOTIF.GPP){
+                shotCLR();
+            }
+            if(getMotif() == MOTIF.PGP){
+                shotLCR();
+            }
+            if(getMotif() == MOTIF.PPG){
+                shotLRC();
+            }
+        }
+        if(motif == MOTIF.PPG){
+            if(getMotif() == MOTIF.GPP){
+                shotCRL();
+            }
+            if(getMotif() == MOTIF.PGP){
+                shotRLC();
+            }
+            if(getMotif() == MOTIF.PPG){
+                shotLCR();
+            }
+        }
+    }
     private void shotLCR(){
-        servoActionL = servoActionL.copy();
+        servoActionL = updateLAction.copy();
         if(servoActionL.isDone()){
-            servoActionC = servoActionC.copy();
+            servoActionC = updateCAction.copy();
             if(servoActionC.isDone()){
-                servoActionR = servoActionR.copy();
+                servoActionR = updateRAction.copy();
             }
         }
     }
     private void shotLRC() {
-        servoActionL = servoActionL.copy();
+        servoActionL = updateLAction.copy();
         if (servoActionL.isDone()) {
-            servoActionR = servoActionR.copy();
+            servoActionR = updateRAction.copy();
             if (servoActionR.isDone()) {
-                servoActionC = servoActionC.copy();
+                servoActionC = updateCAction.copy();
             }
         }
     }
     private void shotRCL(){
-            servoActionR = servoActionR.copy();
+            servoActionR = updateRAction.copy();
             if(servoActionR.isDone()){
-                servoActionC = servoActionC.copy();
+                servoActionC = updateCAction.copy();
                 if(servoActionC.isDone()){
-                    servoActionL = servoActionL.copy();
+                    servoActionL = updateLAction.copy();
                 }
             }
 
         }
     private void shotRLC(){
-        servoActionR = servoActionR.copy();
+        servoActionR = updateRAction.copy();
         if(servoActionR.isDone()){
-            servoActionL = servoActionL.copy();
+            servoActionL = updateLAction.copy();
             if(servoActionL.isDone()){
-                servoActionC = servoActionC.copy();
+                servoActionC = updateCAction.copy();
             }
         }
 
     }
     private void shotCLR(){
-        servoActionC = servoActionC.copy();
+        servoActionC = updateCAction.copy();
         if(servoActionC.isDone()){
-            servoActionL = servoActionL.copy();
+            servoActionL = updateLAction.copy();
             if(servoActionL.isDone()){
-                servoActionR = servoActionR.copy();
+                servoActionR = updateRAction.copy();
             }
         }
 
     }
     private void shotCRL(){
-        servoActionC = servoActionC.copy();
+        servoActionC = updateCAction.copy();
         if(servoActionC.isDone()){
-            servoActionR = servoActionR.copy();
+            servoActionR = updateRAction.copy();
             if(servoActionR.isDone()){
-                servoActionL = servoActionL.copy();
+                servoActionL = updateLAction.copy();
             }
         }
 
@@ -203,7 +207,7 @@ public class GunImpl implements Gun {
 
 
 
-        private GUN_COMMAND command = EAT;
+    private GUN_COMMAND command = EAT;
 
     private boolean isFarAim = true;
     private Vector2d goal = new Vector2d();
@@ -335,6 +339,10 @@ public class GunImpl implements Gun {
         shotL.update();
         shotR.update();
         shotC.update();
+
+        if(command == PATTERN_FIRE){
+            chooseServoComb();
+        }
     }
 
     private void farAim(){
