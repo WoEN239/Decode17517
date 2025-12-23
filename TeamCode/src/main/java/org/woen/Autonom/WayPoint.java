@@ -9,6 +9,8 @@ import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewP
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
 
+import java.util.function.Supplier;
+
 public class WayPoint {
     private String name = "unnamed";
     public String getName() {return name;}
@@ -30,6 +32,9 @@ public class WayPoint {
 
     private double vel = ControlSystemConstant.feedbackConfig.PPTransVel;
     public double getVel() {return vel;}
+
+    public Supplier<Double> getEndAngle() {return endAngle;}
+    private Supplier<Double> endAngle;
 
     private boolean isEndNear  = false;
     public boolean isEndNear() {return isEndNear;}
@@ -66,6 +71,7 @@ public class WayPoint {
 
     public WayPoint(AutonomTask onPoint, boolean isReverse, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
         this.onPoint = onPoint;
         this.onWay = AutonomTask.Stub;
         this.path = path;
@@ -73,6 +79,7 @@ public class WayPoint {
     }
     public WayPoint(AutonomTask onWay, AutonomTask onPoint, boolean isReverse, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
         this.onWay = onWay;
         this.onPoint = onPoint;
         this.path = path;
@@ -80,6 +87,7 @@ public class WayPoint {
     }
     public WayPoint (Runnable[] run, boolean isReverse, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
         this.onPoint = new AutonomTask(()->Math.abs(pose.h-path[path.length-1].h)<0.015,run);
         this.onWay = AutonomTask.Stub;
         this.path = path;
@@ -87,6 +95,7 @@ public class WayPoint {
     }
     public WayPoint(AutonomTask onPoint, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
         this.onPoint = onPoint;
         this.onWay = AutonomTask.Stub;
         this.path = path;
@@ -108,8 +117,16 @@ public class WayPoint {
         this.name = name;
         return this;
     }
+    public WayPoint setEndAngle(Supplier<Double> endAngle){
+        this.endAngle = endAngle;
+        return this;
+    }
     public WayPoint copy(){
         return new WayPoint(onWay,onPoint,isReverse,path)
-                   .setVel(vel).setName(name+"`").setEndDetect(endDetect).setLookAheadRadius(lookAheadRadius);
+                    .setVel(vel)
+                    .setName(name+"`")
+                    .setEndDetect(endDetect)
+                    .setLookAheadRadius(lookAheadRadius)
+                    .setEndAngle(endAngle);
     }
 }

@@ -39,18 +39,18 @@ public class AutoOpMode extends BaseOpMode{
                 EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                     poolFar.firstAim.copy(),
                     poolFar.fire1.copy(),
-                    poolFar.rotate.copy(),
+                    poolFar.rotate1.copy(),
                     poolFar.firstEat.copy(),
                     poolFar.secondAim.copy(),
                     poolFar.fire2.copy(),
-                    poolFar.rotate.copy(),
+                    poolFar.rotate2.copy(),
                     poolFar.secondEat.copy(),
-                    poolFar.secondAim.copy(),
+                    poolFar.thirdAim.copy(),
                     poolFar.fire3.copy()
             ));
         }
 
-        if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
+        if(MatchData.start == Start.NEAR_BLUE || MatchData.start == Start.NEAR_RED){
             WaypointPoolNear poolNear = new WaypointPoolNear();
                 EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                         poolNear.look.copy(),

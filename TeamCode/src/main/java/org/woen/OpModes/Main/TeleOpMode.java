@@ -29,8 +29,7 @@ import org.woen.Util.Vectors.Vector2d;
 @TeleOp(name = "teleop")
 public class TeleOpMode extends BaseOpMode{
     private final FeedforwardReferenceObserver feedforwardReferenceObserver = new FeedforwardReferenceObserver();
-    private final Provider<Double> xGoal = new Provider<>(-180d);
-    private final Provider<Double> yGoal = new Provider<>(-170d);
+
     @Override
     protected void initConfig(){
         DeviceActivationConfig devConfig =  DeviceActivationConfig.getAllOn();
@@ -48,13 +47,6 @@ public class TeleOpMode extends BaseOpMode{
         modConfig.autonomTaskManager.set(false);
 
         modulesActivationConfig = modConfig;
-
-        if(MatchData.team == Team.RED){
-            yGoal.set(170d);
-            xGoal.set(-180d);
-        }
-        FtcDashboard.getInstance().addConfigVariable("goal pos","x",xGoal);
-        FtcDashboard.getInstance().addConfigVariable("goal pos","y",yGoal);
     }
 
     private Pose pose = new Pose(0,0,0);
@@ -78,7 +70,7 @@ public class TeleOpMode extends BaseOpMode{
     private int dir = 1;
     @Override
     protected void loopRun() {
-        Vector2d goal = new Vector2d(xGoal.get(),yGoal.get());
+        Vector2d goal = MatchData.team.goalPose;
         feedforwardReferenceObserver.notifyListeners(new FeedforwardReference(new Pose(
                 -(gamepad1.right_stick_x*Math.abs(gamepad1.right_stick_x))*8,
                 -dir*(gamepad1.left_stick_y*Math.abs(gamepad1.left_stick_y)*270), 0

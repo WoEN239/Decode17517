@@ -25,13 +25,14 @@ import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 public class PurePursuitFollowerImpl implements TrajectoryFollower {
     private ArrayList<LineSegment> targetPath;
     private double localRadius = ControlSystemConstant.feedbackConfig.PPLocalR;
 
     private double transVelocity = ControlSystemConstant.feedbackConfig.PPTransVel;
-    private double endAngle = 0;
+    private Supplier<Double> endAngle = ()->0.0;
     private double endDetect = 5;
     private boolean isReverse = false;
     private boolean isEndNear = false;
@@ -88,14 +89,6 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
             transVelocity = - abs(transVelocity);
         }
 
-        if(isSegmentLast){
-            if(targetSegment.start.minus(projection).lengthSquare() >
-               targetSegment.start.minus(targetSegment.end).lengthSquare()){
-                transVelocity = -transVelocity;
-                angleVel = -angleVel;
-            }
-        }
-
         Pose targetPos = pose;
 
         if(pose.vector.minus(lastPoint).lengthSquare() < endDetect*endDetect){
@@ -103,7 +96,7 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         }
 
         if(isEndNear){
-            targetPos = new Pose(endAngle,pose.vector);
+            targetPos = new Pose(endAngle.get(),pose.vector);
             angleVel = 0;
             transVelocity = 0;
         }
@@ -144,7 +137,7 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
 
         isEndNear = false;
 
-        endAngle = e.getData().path[e.getData().path.length-1].h;
+        endAngle = e.getData().getEndAngle();
         endDetect = e.getData().getEndDetect();
         isReverse = e.getData().isReverse;
         transVelocity = e.getData().getVel();

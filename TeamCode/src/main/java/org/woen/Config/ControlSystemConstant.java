@@ -11,7 +11,7 @@ public class ControlSystemConstant {
         public double PPLocalR   = 15;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
-        public PidStatus hPid = new PidStatus(2.5,0,0.15    ,0,0,0.0,0);
+        public PidStatus hPid = new PidStatus(2.5,5,0.2,0,0,0.1,0);
     }
     public static FeedbackConfig feedbackConfig = new FeedbackConfig();
 

@@ -8,9 +8,10 @@ import org.woen.Util.Vectors.Pose;
 
 public class PositionPoolFar {
     public Pose fire = new Pose(0.324,145,-57);
-    public Pose[] firstEat = new Pose[]{fire,new Pose(0,90,-57),new Pose(PI*0.5,90,-130)};
-    public Pose[] secondAim = new Pose[]{new Pose(0,90,-130),new Pose(0,90,-57),fire};
-    public Pose[] secondEat = new Pose[]{fire,new Pose(0,40,-57),new Pose(PI*0.5,40,-130)};
+    public Pose[] firstEat = new Pose[]{fire,new Pose(-2.36+PI,90,-130)};
+    public Pose[] secondAim = new Pose[]{new Pose(-2.36+PI,90,-130),fire};
+    public Pose[] secondEat = new Pose[]{fire,new Pose(-2.66+PI,40,-115)};
+    public Pose[] thirdAim = new Pose[]{new Pose(-2.66+PI,50,-115),fire};
 
     public PositionPoolFar(){
         if(MatchData.team==RED){

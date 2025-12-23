@@ -20,7 +20,7 @@ public class Battery implements IRobotModule {
     }
 
     public void update() {
-        if (timer.seconds() > 0.25) {
+        if (timer.seconds() > 1) {
             ArrayExtra.updateLikeBuffer(revVoltageSensor.getVoltage(), reads);
             EventBus.getInstance().invoke(new NewVoltageAvailable(ArrayExtra.findMedian(reads)));
             timer.reset();
