@@ -55,6 +55,7 @@ public class GunImpl implements Gun {
         setCommand(event.getData());
     }
 
+    boolean shooter = false;
 
     private void setCommand(GUN_COMMAND command){
         this.command = command;
@@ -90,8 +91,10 @@ public class GunImpl implements Gun {
 
                 break;
             case PATTERN_FIRE:
+                shooter = true;
 
-                if(isItMotif == true){
+                if(isItMotif || shooter){
+
                     gunVelSide = gunConfig.shootVelSide;
                     gunVelC = gunConfig.shootVelC;
                     if(!isFarAim){
@@ -102,12 +105,12 @@ public class GunImpl implements Gun {
 
                     chooseServoComb();
 
-                    break;
 
                 }
                 else {
                     //TODO поставить состояние для обычной стрельбы
                 }
+                break;
         }
     }
 
@@ -145,10 +148,12 @@ public class GunImpl implements Gun {
                 shotLCR();
             }
         }
+        shooter = false;
     }
     private void shotLCR(){
         servoActionL = updateLAction.copy();
         if(servoActionL.isDone()){
+            Telemetry.getInstance().add("work ", true );
             servoActionC = updateCAction.copy();
             if(servoActionC.isDone()){
                 servoActionR = updateRAction.copy();
@@ -203,6 +208,7 @@ public class GunImpl implements Gun {
             }
         }
 
+
     }
 
 
@@ -226,23 +232,22 @@ public class GunImpl implements Gun {
     PredominantColorProcessor.Swatch center = null;
     PredominantColorProcessor.Swatch left = null;
     PredominantColorProcessor.Swatch right = null;
-    Boolean isItMotif = null;
+    boolean isItMotif = false;
 
     MOTIF inMouth = null;
 
     private MOTIF getMotif() {
-        if (isItMotif == true) {
-            if (left == PredominantColorProcessor.Swatch.GREEN)
+
+            if (left == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
                 inMouth = MOTIF.GPP;
             else{
-                if (center == PredominantColorProcessor.Swatch.GREEN)
+                if (center == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
                     inMouth = MOTIF.PGP;
                 else{
-                    if (right == PredominantColorProcessor.Swatch.GREEN){
+                    if (right == PredominantColorProcessor.Swatch.ARTIFACT_GREEN){
                         inMouth = MOTIF.PPG;
                     }
                 }
-            }
         }
         return inMouth;
     }
@@ -321,6 +326,9 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("case",command.toString());
 
         Telemetry.getInstance().add("shotR target", shotR.motionProfile.getPos(shotR.motionProfile.duration+1));
+
+        Telemetry.getInstance().add("getMotif", getMotif());
+        Telemetry.getInstance().add("isItMotif", isItMotif);
         if(command == OFF){
             gunR.setPower(0);
             gunL.setPower(0);
@@ -477,7 +485,7 @@ public class GunImpl implements Gun {
                 @Override
                 public boolean isAtTarget() {return shotR.isAtTarget();}
                 @Override
-                public void run() {shotR.setTarget(EAT.right);}
+                public void run() {shotR.setTarget(command.right);}
             }
     );
 
@@ -486,7 +494,7 @@ public class GunImpl implements Gun {
                 @Override
                 public boolean isAtTarget() {return shotC.isAtTarget();}
                 @Override
-                public void run() {shotC.setTarget(EAT.center);}
+                public void run() {shotC.setTarget(command.center);}
             }
     );
 
@@ -495,7 +503,7 @@ public class GunImpl implements Gun {
                 @Override
                 public boolean isAtTarget() {return shotL.isAtTarget();}
                 @Override
-                public void run() {shotL.setTarget(EAT.left);}
+                public void run() {shotL.setTarget(command.left);}
             }
     );
 }

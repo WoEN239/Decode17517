@@ -38,29 +38,26 @@ public class CameraImpl implements Camera {
     public static int width = 640;//1920
 
     /// left
-    public static double leftL = -0.8;
-    public static double topL = 0.1;
-    public static double rightL = -0.6;
-    public static double bottomL = -0.1;
+    public static double leftL = -0.6;
+    public static double topL = 0.9;
+    public static double rightL = -0.5;
+    public static double bottomL = 0.7;
     /// center
-    public static double   leftC = -0.1;
-    public static double    topC = 0.1;
-    public static double  rightC = 0.1;
-    public static double bottomC = -0.1;
+    public static double   leftC = -0.25;
+    public static double    topC = 0.9;
+    public static double  rightC = -0.1;
+    public static double bottomC = 0.7;
     /// right
-    public static double   leftR = 0.6;
-    public static double    topR = 0.1;
-    public static double  rightR = 0.8;
-    public static double bottomR = -0.1;
+    public static double   leftR = 0.8;
+    public static double    topR = 0.9;
+    public static double  rightR = 1;
+    public static double bottomR = 0.7;
     PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
             .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                    PredominantColorProcessor.Swatch.RED,
-                    PredominantColorProcessor.Swatch.BLUE,
                     PredominantColorProcessor.Swatch.YELLOW,
-                    PredominantColorProcessor.Swatch.BLACK,
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
     PredominantColorProcessor rightDetection = new PredominantColorProcessor.Builder()
@@ -68,10 +65,7 @@ public class CameraImpl implements Camera {
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                    PredominantColorProcessor.Swatch.RED,
-                    PredominantColorProcessor.Swatch.BLUE,
                     PredominantColorProcessor.Swatch.YELLOW,
-                    PredominantColorProcessor.Swatch.BLACK,
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
     PredominantColorProcessor centerDetection = new PredominantColorProcessor.Builder()
@@ -79,12 +73,11 @@ public class CameraImpl implements Camera {
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                    PredominantColorProcessor.Swatch.RED,
-                    PredominantColorProcessor.Swatch.BLUE,
                     PredominantColorProcessor.Swatch.YELLOW,
-                    PredominantColorProcessor.Swatch.BLACK,
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
+
+    VisionPortal visionPortal = null;
 
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
@@ -105,6 +98,8 @@ public class CameraImpl implements Camera {
                 .addProcessor(leftDetection)
                 .addProcessor(rightDetection)
                 .addProcessor(centerDetection);
+
+        visionPortal = builder.build();
     }
 
     private MOTIF latterMotif = null;
@@ -142,45 +137,51 @@ public class CameraImpl implements Camera {
 
         if(ballsInMouthCenterOld != resultC.closestSwatch) {
             EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(resultC.closestSwatch));
-            if(resultC.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
-                sumOfBalls += 2;
-            else {
-                if (resultC.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
-                    sumOfBalls += 1;
-                else{
-                    sumOfBalls = 0;
-                }
-            }
-
         }
         if(ballsInMouthLeftOld != resultL.closestSwatch) {
             EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL.closestSwatch));
-            if(resultL.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
-                sumOfBalls += 2;
-            else {
-                if (resultL.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
-                    sumOfBalls += 1;
-                else{
-                    sumOfBalls = 0;
-                }
-            }
         }
         if(ballsInMouthRightOld != resultR.closestSwatch) {
             EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR.closestSwatch));
-            if(resultR.closestSwatch == PredominantColorProcessor.Swatch.GREEN)
-                sumOfBalls += 2;
-            else {
-                if (resultR.closestSwatch == PredominantColorProcessor.Swatch.PURPLE)
-                    sumOfBalls += 1;
-                else{
-                    sumOfBalls = 0;
-                }
+
+        }
+
+        if(resultC.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+            sumOfBalls += 2;
+        else {
+            if (resultC.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE)
+                sumOfBalls += 1;
+            else{
+                sumOfBalls = 0;
             }
         }
 
-        if(sumOfBalls == 4)
+        if(resultL.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+            sumOfBalls += 2;
+        else {
+            if (resultL.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE)
+                sumOfBalls += 1;
+            else{
+                sumOfBalls = 0;
+            }
+        }
+
+        if(resultR.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+            sumOfBalls += 2;
+        else {
+            if (resultR.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE)
+                sumOfBalls += 1;
+            else{
+                sumOfBalls = 0;
+            }
+        }
+
+        if(sumOfBalls == 4) {
             EventBus.getInstance().invoke(new NewMotifCheck(true));
-        else EventBus.getInstance().invoke(new NewMotifCheck(false));
+            Telemetry.getInstance().add("nigger", true);
+        }
+        else
+            EventBus.getInstance().invoke(new NewMotifCheck(false));
 
         Telemetry.getInstance().add("sum balls", sumOfBalls);
         Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
@@ -190,6 +191,6 @@ public class CameraImpl implements Camera {
         ballsInMouthCenterOld = resultC.closestSwatch;
         ballsInMouthLeftOld   = resultL.closestSwatch;
         ballsInMouthRightOld  = resultR.closestSwatch;
-
+        sumOfBalls = 0;
     }
 }

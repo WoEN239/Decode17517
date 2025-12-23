@@ -44,7 +44,7 @@ public class TeleOpMode extends BaseOpMode{
         modConfig.driveTrain.trajectoryFollower.set(false);
         modConfig.driveTrain.voltageController.set(true);
         modConfig.gun.set(true);
-        modConfig.camera.set(false);
+        modConfig.camera.set(true);
         modConfig.autonomTaskManager.set(false);
 
         modulesActivationConfig = modConfig;
@@ -131,6 +131,10 @@ public class TeleOpMode extends BaseOpMode{
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
+        }
+
+        if(gamepad1.dpad_right){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
         }
     }
 
