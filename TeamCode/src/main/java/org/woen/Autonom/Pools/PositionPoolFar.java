@@ -8,6 +8,8 @@ import org.woen.Util.Vectors.Pose;
 
 public class PositionPoolFar {
     public Pose fire = new Pose(0.324,145,-57);
+    public Pose rotate1 = new Pose(-2.36,fire.vector);
+    public Pose rotate2 = new Pose(-2.66,fire.vector);
     public Pose[] firstEat = new Pose[]{fire,new Pose(-2.36+PI,90,-130)};
     public Pose[] secondAim = new Pose[]{new Pose(-2.36+PI,90,-130),fire};
     public Pose[] secondEat = new Pose[]{fire,new Pose(-2.66+PI,40,-115)};
@@ -16,6 +18,8 @@ public class PositionPoolFar {
     public PositionPoolFar(){
         if(MatchData.team==RED){
             fire = fire.teamReverse();
+            rotate1 = rotate1.teamReverse();
+            rotate2 = rotate2.teamReverse();
 
             for (int i = 0; i < firstEat.length; i++) {
                 firstEat[i] = firstEat[i].teamReverse();

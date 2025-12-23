@@ -72,13 +72,13 @@ public class WaypointPoolFar {
     public WayPoint rotate1 = new WayPoint(
             new Runnable[]{
                     ()-> RobotLog.dd("auto","rotate")
-            },false,pool.fire,new Pose(-2.36,pool.fire.vector)
+            },false,pool.fire,pool.rotate1
     ).setName("firstRotate").setEndDetect(10);
 
     public WayPoint rotate2 = new WayPoint(
             new Runnable[]{
                     ()-> RobotLog.dd("auto","rotate")
-            },false,pool.fire,new Pose(-2.66,pool.fire.vector)
+            },false,pool.fire,pool.rotate2
     ).setName("secondRotate").setEndDetect(10);
 
     public WayPoint firstEat = new WayPoint(
