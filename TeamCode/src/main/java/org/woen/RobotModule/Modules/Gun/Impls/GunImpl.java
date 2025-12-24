@@ -16,7 +16,6 @@ import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
-import org.woen.RobotModule.Modules.Camera.Events.NewMotifCheck;
 import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
@@ -96,7 +95,8 @@ public class GunImpl implements Gun {
                     gunVelC = gunConfig.shootVelCNear;
                 }
                 brushPower = 1;
-                shooterComb();
+
+                servoMovement();
                 break;
         }
     }
@@ -107,53 +107,144 @@ public class GunImpl implements Gun {
 
     private int numb = 0;
 
+    private int numb2 = 0;
+
     //1 - левый
     //2 - средний
     //3 - правый
 
+    private PoseInBrush numbToEnum(int n) {
+        if (n == 1)
+            return PoseInBrush.LEFT;
+        if (n == 2)
+            return PoseInBrush.CENTER;
+        if (n == 3)
+            return PoseInBrush.RIGHT;
+        return PoseInBrush.NULL;
+    }
+
+    PoseInBrush targetGreen = PoseInBrush.NULL;
+    PoseInBrush whereGreenBall = PoseInBrush.NULL;
+
+    int[][] pos = new int[3][3];
+
+    boolean isItPat = true;
 
     private void shooterComb() {
         char[] target = motifToSymbols(motif);
         char[] inShooter = motifToSymbols(getMotif());
-
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
                 if (target[i] == inShooter[j] && target[i] == 'G') {
-                    numb = j + 1;
+                    numb = i + 1;
+                    numb2 = j + 1;
                 }
             }
         }
-    }
-
-    private void servoMovement() {
-        if (numb == 1) {
-            servoActionL = updateLAction.copy();
-
-            if (servoActionL.isDone()) {
-                servoActionC = updateCAction.copy();
-                servoActionR = updateRAction.copy();
-            }
-        }
-        if (numb == 2) {
-            servoActionC = updateCAction.copy();
-            if (servoActionC.isDone()) {
-                servoActionL = updateLAction.copy();
-                servoActionR = updateRAction.copy();
-            }
-        }
-        if (numb == 3) {
-            servoActionR = updateRAction.copy();
-            if (servoActionR.isDone()) {
-                servoActionL = updateLAction.copy();
-                servoActionC = updateCAction.copy();
-            }
-        }
-
-        if (servoActionC.isDone() && servoActionL.isDone() && servoActionR.isDone()) {
-            setCommand(EAT);
+        if (isItPat) {
+            whereGreenBall = numbToEnum(numb2);
+            targetGreen = numbToEnum(numb);
+            isItPat = !isItPat;
         }
 
     }
+
+    private enum PoseInBrush {
+        LEFT, CENTER, RIGHT, NULL
+    }
+
+        private void servoMovement() {
+            switch (targetGreen) {
+                case LEFT:
+                    switch (whereGreenBall) {
+                        case RIGHT:
+                            servoActionR = updateRAction.copy();
+                            if (servoActionR.isDone()) {
+                                servoActionC = updateCAction.copy();
+                                servoActionL = updateLAction.copy();
+                            }
+                            break;
+                        case CENTER:
+                            servoActionC = updateCAction.copy();
+                            if (servoActionC.isDone()) {
+                                servoActionL = updateLAction.copy();
+                                servoActionR = updateRAction.copy();
+                            }
+                            break;
+                        case LEFT:
+                            servoActionL = updateLAction.copy();
+                            if (servoActionL.isDone()) {
+                                servoActionC = updateCAction.copy();
+                                servoActionR = updateRAction.copy();
+                            }
+                            break;
+                    }
+                    break;
+                case CENTER:
+                    switch (whereGreenBall) {
+                        case RIGHT:
+                            servoActionC = updateCAction.copy();
+                            if (servoActionC.isDone()) {
+                                servoActionL = updateLAction.copy();
+                                if (servoActionL.isDone()) {
+                                    servoActionR = updateRAction.copy();
+                                }
+                            }
+                            break;
+                        case CENTER:
+                            servoActionR = updateRAction.copy();
+                            if (servoActionR.isDone()) {
+                                servoActionC = updateCAction.copy();
+                                if (servoActionC.isDone()) {
+                                    servoActionL = updateLAction.copy();
+                                }
+                            }
+                            break;
+                        case LEFT:
+                            servoActionR = updateRAction.copy();
+                            if (servoActionR.isDone()) {
+                                servoActionL = updateLAction.copy();
+                                if (servoActionL.isDone()) {
+                                    servoActionC = updateCAction.copy();
+                                }
+                            }
+                            break;
+                    }
+                    break;
+                case RIGHT:
+                    switch (whereGreenBall) {
+                        case RIGHT:
+                            servoActionL = updateLAction.copy();
+                            servoActionC = updateCAction.copy();
+                            if (servoActionL.isDone() && servoActionC.isDone()) {
+                                servoActionR = updateRAction.copy();
+                            }
+                            break;
+                        case CENTER:
+                            servoActionL = updateRAction.copy();
+                            servoActionR = updateRAction.copy();
+                            if (servoActionL.isDone() && servoActionR.isDone()) {
+                                servoActionC = updateCAction.copy();
+                            }
+                            break;
+                        case LEFT:
+                            servoActionR = updateRAction.copy();
+                            servoActionC = updateCAction.copy();
+                            if (servoActionR.isDone() && servoActionC.isDone()) {
+                                servoActionL = updateLAction.copy();
+                            }
+                            break;
+                    }
+                    break;
+
+            }
+
+            if (servoActionC.isDone() && servoActionL.isDone() && servoActionR.isDone()) {
+                isItPat = !isItPat;
+                setCommand(EAT);
+            }
+
+        }
 
     private GUN_COMMAND command = EAT;
 
@@ -295,9 +386,11 @@ public class GunImpl implements Gun {
         shotR.update();
         shotC.update();
 
-        if (command == PATTERN_FIRE) {
+        if (command == PATTERN_FIRE && isItPat) {
             shooterComb();
         }
+        if(command == PATTERN_FIRE)
+            servoMovement();
     }
 
     private void farAim() {
