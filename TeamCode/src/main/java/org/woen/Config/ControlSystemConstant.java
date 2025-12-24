@@ -8,7 +8,7 @@ import org.woen.Util.Pid.PidStatus;
 public class ControlSystemConstant {
 
     public static class FeedbackConfig {
-        public double PPLocalR   = 15;
+        public double PPLocalR   = 30;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
         public PidStatus hPid = new PidStatus(2.5,5,0.2,0,0,0.1,0);
@@ -40,12 +40,12 @@ public class ControlSystemConstant {
     public static OdometerConstantConfig odometerConstantConfig = new OdometerConstantConfig();
 
     public static class GunConfig {
-        public double velTol = 30;
+        public double velTol = 60;
 
         public double shootVelSide = 2000;
         public double shootVelSideNear = 2000;
 
-        public double shootVelC = 1800;
+        public double shootVelC = 1700;
         public double shootVelCNear = 1600;
 
         public double deltaPosC = 0.2;

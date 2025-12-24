@@ -7,6 +7,7 @@ import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
+import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.Vectors.Pose;
 
 import java.util.function.Supplier;
@@ -88,7 +89,7 @@ public class WayPoint {
     public WayPoint (Runnable[] run, boolean isReverse, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
         this.endAngle = ()->path[path.length-1].h;
-        this.onPoint = new AutonomTask(()->Math.abs(pose.h-path[path.length-1].h)<0.015,run);
+        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<0.015,run);
         this.onWay = AutonomTask.Stub;
         this.path = path;
         this.isReverse = isReverse;
