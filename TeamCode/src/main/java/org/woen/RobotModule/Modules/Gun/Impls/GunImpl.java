@@ -6,23 +6,24 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Devices.Motor.Interface.Motor;
-import org.woen.Hardware.Devices.Servo.ServoWithFeedback;
 import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewMotifCheck;
 import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
+import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
@@ -31,13 +32,15 @@ import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
 public class GunImpl implements Gun {
-    private ServoWithFeedback shotR;
-    private ServoWithFeedback shotC;
-    private ServoWithFeedback shotL;
+    private ServoMotor shotR;
+    private ServoMotor shotC;
+    private ServoMotor shotL;
 
     private ServoMotor aimR;
     private ServoMotor aimC;
     private ServoMotor aimL;
+
+
 
     private Motor gunR;
     private Motor gunL;
@@ -49,27 +52,36 @@ public class GunImpl implements Gun {
     private final Pid pidL = new Pid(gunConfig.leftPidStatus);
     private final Pid pidC = new Pid(gunConfig.centerPidStatus);
 
+
+
     public void setCommand(NewGunCommandAvailable event) {
         setCommand(event.getData());
     }
 
-    boolean shooter = false;
+    boolean isItTar = false;
 
     private void setCommand(GUN_COMMAND command) {
         this.command = command;
+
+    }
+
+    private void update2(){
+        if(this.command == previousCommand)
+            time.reset();
         switch (this.command) {
             case EAT:
+                previousCommand = command;
                 brushPower = 1;
-                servoActionR = updateRAction.copy();
-                servoActionC = updateCAction.copy();
-                servoActionL = updateLAction.copy();
+                shotR.setPos(eatR);
+                shotC.setPos(eatC);
+                shotL.setPos(eatL);
 
                 EventBus.getInstance().invoke(new GunAtEatEvent(1));
 
                 break;
             case TARGET:
                 brushPower = 1;
-
+                previousCommand = command;
                 break;
             case FULL_FIRE:
                 gunVelSide = gunConfig.shootVelSide;
@@ -79,24 +91,41 @@ public class GunImpl implements Gun {
                 }
 
                 brushPower = 1;
-
-                servoActionR = shotRAction.copy();
-                servoActionC = shotCAction.copy();
-                servoActionL = shotLAction.copy();
+                if(time.seconds() > 0.1) {
+                    shotR.setPos(GunServoPositions.shotR);
+                    shotC.setPos(GunServoPositions.shotC);
+                    shotL.setPos(GunServoPositions.shotL);
+                }
+                if(time.seconds() > 0.6) {
+                    setCommand(EAT);
+                    previousCommand = command;
+                }
                 break;
             case OFF:
                 brushPower = 0;
                 break;
             case PATTERN_FIRE:
+                if(isItMotif) {
+                    gunVelSide = gunConfig.shootVelSide;
+                    gunVelC = gunConfig.shootVelC;
+                    if (!isFarAim) {
+                        gunVelC = gunConfig.shootVelCNear;
+                    }
+                    brushPower = 1;
 
-                gunVelSide = gunConfig.shootVelSide;
-                gunVelC = gunConfig.shootVelC;
-                if (!isFarAim) {
-                    gunVelC = gunConfig.shootVelCNear;
+                    if (time.seconds() < 0.1)
+                        shooterComb();
+                    if (time.seconds() > 0.1)
+                        servoMovement();
+
+                    if (time.seconds() > 0.7) {
+                        setCommand(EAT);
+                        previousCommand = command;
+                    }
                 }
-                brushPower = 1;
-
-                servoMovement();
+                else{
+                    setCommand(FULL_FIRE);
+                }
                 break;
         }
     }
@@ -120,13 +149,13 @@ public class GunImpl implements Gun {
             return PoseInBrush.CENTER;
         if (n == 3)
             return PoseInBrush.RIGHT;
-        return PoseInBrush.NULL;
+        return PoseInBrush.LEFT;
     }
 
-    PoseInBrush targetGreen = PoseInBrush.NULL;
-    PoseInBrush whereGreenBall = PoseInBrush.NULL;
+    PoseInBrush targetGreen = PoseInBrush.LEFT;
+    PoseInBrush whereGreenBall = PoseInBrush.LEFT;
 
-    int[][] pos = new int[3][3];
+
 
     boolean isItPat = true;
 
@@ -141,11 +170,9 @@ public class GunImpl implements Gun {
                 }
             }
         }
-        if (isItPat) {
             whereGreenBall = numbToEnum(numb2);
             targetGreen = numbToEnum(numb);
-            isItPat = !isItPat;
-        }
+
 
     }
 
@@ -158,24 +185,24 @@ public class GunImpl implements Gun {
                 case LEFT:
                     switch (whereGreenBall) {
                         case RIGHT:
-                            servoActionR = updateRAction.copy();
-                            if (servoActionR.isDone()) {
-                                servoActionC = updateCAction.copy();
-                                servoActionL = updateLAction.copy();
+                            shotL.setPos(GunServoPositions.shotL);
+                            if (time.seconds()>0.4) {
+                                shotC.setPos(GunServoPositions.shotC);
+                                shotR.setPos(GunServoPositions.shotR);
                             }
                             break;
                         case CENTER:
-                            servoActionC = updateCAction.copy();
-                            if (servoActionC.isDone()) {
-                                servoActionL = updateLAction.copy();
-                                servoActionR = updateRAction.copy();
+                            shotC.setPos(GunServoPositions.shotC);
+                            if (time.seconds()>0.4) {
+                                shotR.setPos(GunServoPositions.shotR);
+                                shotL.setPos(GunServoPositions.shotL);
                             }
                             break;
                         case LEFT:
-                            servoActionL = updateLAction.copy();
-                            if (servoActionL.isDone()) {
-                                servoActionC = updateCAction.copy();
-                                servoActionR = updateRAction.copy();
+                            shotR.setPos(GunServoPositions.shotR);
+                            if (time.seconds()>0.4) {
+                                shotC.setPos(GunServoPositions.shotC);
+                                shotL.setPos(GunServoPositions.shotL);
                             }
                             break;
                     }
@@ -183,30 +210,30 @@ public class GunImpl implements Gun {
                 case CENTER:
                     switch (whereGreenBall) {
                         case RIGHT:
-                            servoActionC = updateCAction.copy();
-                            if (servoActionC.isDone()) {
-                                servoActionL = updateLAction.copy();
-                                if (servoActionL.isDone()) {
-                                    servoActionR = updateRAction.copy();
-                                }
+                            shotC.setPos(GunServoPositions.shotC);
+                            if (time.seconds() > 0.3) {
+                                shotL.setPos(GunServoPositions.shotL);
+                            }
+                            if (time.seconds() > 0.7) {
+                               shotR.setPos(GunServoPositions.shotR);
                             }
                             break;
                         case CENTER:
-                            servoActionR = updateRAction.copy();
-                            if (servoActionR.isDone()) {
-                                servoActionC = updateCAction.copy();
-                                if (servoActionC.isDone()) {
-                                    servoActionL = updateLAction.copy();
-                                }
+                            shotR.setPos(GunServoPositions.shotR);
+                            if (time.seconds() > 0.3) {
+                                shotC.setPos(GunServoPositions.shotC);
+                            }
+                            if (time.seconds() > 0.7) {
+                                shotL.setPos(GunServoPositions.shotL);
                             }
                             break;
                         case LEFT:
-                            servoActionR = updateRAction.copy();
-                            if (servoActionR.isDone()) {
-                                servoActionL = updateLAction.copy();
-                                if (servoActionL.isDone()) {
-                                    servoActionC = updateCAction.copy();
-                                }
+                            shotL.setPos(GunServoPositions.shotL);
+                            if (time.seconds() > 0.3) {
+                                shotR.setPos(GunServoPositions.shotR);
+                            }
+                            if (time.seconds() > 0.7) {
+                                shotC.setPos(GunServoPositions.shotC);
                             }
                             break;
                     }
@@ -214,24 +241,24 @@ public class GunImpl implements Gun {
                 case RIGHT:
                     switch (whereGreenBall) {
                         case RIGHT:
-                            servoActionL = updateLAction.copy();
-                            servoActionC = updateCAction.copy();
-                            if (servoActionL.isDone() && servoActionC.isDone()) {
-                                servoActionR = updateRAction.copy();
+                            shotR.setPos(GunServoPositions.shotR);
+                            shotC.setPos(GunServoPositions.shotC);
+                            if(time.seconds() > 0.4){
+                                shotL.setPos(GunServoPositions.shotL);
                             }
                             break;
                         case CENTER:
-                            servoActionL = updateRAction.copy();
-                            servoActionR = updateRAction.copy();
-                            if (servoActionL.isDone() && servoActionR.isDone()) {
-                                servoActionC = updateCAction.copy();
+                            shotL.setPos(GunServoPositions.shotL);
+                            shotR.setPos(GunServoPositions.shotR);
+                            if(time.seconds() > 0.4){
+                                shotC.setPos(GunServoPositions.shotC);
                             }
                             break;
                         case LEFT:
-                            servoActionR = updateRAction.copy();
-                            servoActionC = updateCAction.copy();
-                            if (servoActionR.isDone() && servoActionC.isDone()) {
-                                servoActionL = updateLAction.copy();
+                            shotC.setPos(GunServoPositions.shotC);
+                            shotL.setPos(GunServoPositions.shotL);
+                            if(time.seconds() > 0.4){
+                                shotR.setPos(GunServoPositions.shotR);
                             }
                             break;
                     }
@@ -239,14 +266,13 @@ public class GunImpl implements Gun {
 
             }
 
-            if (servoActionC.isDone() && servoActionL.isDone() && servoActionR.isDone()) {
-                isItPat = !isItPat;
-                setCommand(EAT);
-            }
 
         }
 
+
     private GUN_COMMAND command = EAT;
+
+    private GUN_COMMAND previousCommand = EAT;
 
     private boolean isFarAim = true;
     private Vector2d goal = new Vector2d();
@@ -256,10 +282,16 @@ public class GunImpl implements Gun {
         goal = event.getGoal();
     }
 
-    private MOTIF motif = MOTIF.PGP;
+    private MOTIF motif = MOTIF.PPG;
 
     public void setMotif(NewMotifEvent e) {
         this.motif = e.getData();
+    }
+
+    private boolean isItMotif = false;
+
+    public void setStatusMotif(NewMotifCheck e){
+        isItMotif = e.getData();
     }
 
     private double gunVelSide = gunConfig.shootVelSide;
@@ -300,11 +332,13 @@ public class GunImpl implements Gun {
     }
 
 
+    ElapsedTime time = new ElapsedTime();
+
     @Override
     public void init() {
-        shotR = new ServoWithFeedback(DevicePool.getInstance().shotR, command.right);
-        shotC = new ServoWithFeedback(DevicePool.getInstance().shotC, command.center);
-        shotL = new ServoWithFeedback(DevicePool.getInstance().shotL, command.left);
+        shotR = DevicePool.getInstance().shotR;
+        shotC = DevicePool.getInstance().shotC;
+        shotL = DevicePool.getInstance().shotL;
 
         gunR = DevicePool.getInstance().gunR;
         gunL = DevicePool.getInstance().gunL;
@@ -315,6 +349,8 @@ public class GunImpl implements Gun {
         aimR = DevicePool.getInstance().aimR;
         aimC = DevicePool.getInstance().aimC;
         aimL = DevicePool.getInstance().aimL;
+
+        time.reset();
     }
 
     @Override
@@ -332,6 +368,8 @@ public class GunImpl implements Gun {
         EventBus.getInstance().subscribe(NewDetectionBallsCenterEvent.class, this::setCenter);
 
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+
+        EventBus.getInstance().subscribe(NewMotifCheck.class, this::setStatusMotif);
     }
 
     @Override
@@ -362,35 +400,30 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("gunL vel", gunL.getVel());
         Telemetry.getInstance().add("gunC vel", gunC.getVel());
 
+        Telemetry.getInstance().add("timer", time.seconds());
+
         Telemetry.getInstance().add("case", command.toString());
 
-        Telemetry.getInstance().add("shotR target", shotR.motionProfile.getPos(shotR.motionProfile.duration + 1));
 
         Telemetry.getInstance().add("getMotif", getMotif());
+
+        Telemetry.getInstance().add("targetGreen", targetGreen);
+        Telemetry.getInstance().add("in Robot", inMouth);
+        Telemetry.getInstance().add("Green Ball", whereGreenBall);
+
+
         if (command == OFF) {
             gunR.setPower(0);
             gunL.setPower(0);
             gunC.setPower(0);
         } else {
             gunR.setPower(pidR.getU());
-            gunL.setPower(pidL.getU());
+           gunL.setPower(pidL.getU());
             gunC.setPower(pidC.getU());
         }
         brush.setPower(brushPower);
+        update2();
 
-        servoActionR.update();
-        servoActionL.update();
-        servoActionC.update();
-
-        shotL.update();
-        shotR.update();
-        shotC.update();
-
-        if (command == PATTERN_FIRE && isItPat) {
-            shooterComb();
-        }
-        if(command == PATTERN_FIRE)
-            servoMovement();
     }
 
     private void farAim() {
@@ -422,162 +455,4 @@ public class GunImpl implements Gun {
         pose = p;
     }
 
-    private ServoAction servoActionR = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return true;
-                }
-
-                @Override
-                public void run() {
-                }
-            });
-
-    private ServoAction servoActionL = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return true;
-                }
-
-                @Override
-                public void run() {
-                }
-            });
-
-    private ServoAction servoActionC = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return true;
-                }
-
-                @Override
-                public void run() {
-                }
-            });
-
-    private ServoAction shotRAction = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return Math.abs(gunVelSide - gunR.getVel()) < gunConfig.velTol;
-                }
-
-                @Override
-                public void run() {
-                }
-            },
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotR.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-                    shotR.setTarget(command.right);
-                }
-            });
-    private ServoAction shotCAction = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return Math.abs(gunVelC - gunC.getVel()) < gunConfig.velTol;
-                }
-
-                @Override
-                public void run() {
-                }
-            },
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotC.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-                    shotC.setTarget(command.center);
-                }
-            });
-    private ServoAction shotLAction = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return Math.abs(gunVelSide - gunL.getVel()) < gunConfig.velTol;
-                }
-
-                @Override
-                public void run() {
-                }
-            },
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotL.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-                    shotL.setTarget(command.left);
-                }
-
-            },
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotR.isAtTarget() && shotC.isAtTarget() && shotL.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-
-                }
-            },
-            () -> setCommand(EAT)
-    );
-
-    private final ServoAction updateRAction = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotR.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-                    shotR.setTarget(command.right);
-                }
-            }
-    );
-
-    private final ServoAction updateCAction = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotC.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-                    shotC.setTarget(command.center);
-                }
-            }
-    );
-
-    private ServoAction updateLAction = new ServoAction(
-            new ServoActionUnit() {
-                @Override
-                public boolean isAtTarget() {
-                    return shotL.isAtTarget();
-                }
-
-                @Override
-                public void run() {
-                    shotL.setTarget(command.left);
-                }
-            }
-    );
 }
