@@ -31,7 +31,6 @@ public class LocalizerTest extends BaseOpMode {
         deviceConfig.motors.set(false);
         deviceConfig.servos.set(false);
         deviceConfig.odometers.set(true);
-        deviceConfig.colorSensor.set(false);
         deviceActivationConfig = deviceConfig;
 
         ModulesActivateConfig moduleConfig = new ModulesActivateConfig();

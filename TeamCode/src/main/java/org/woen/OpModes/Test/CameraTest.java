@@ -17,7 +17,6 @@ public class CameraTest extends BaseOpMode {
     @Override
     protected void initConfig(){
         DeviceActivationConfig deviceConfig = new DeviceActivationConfig();
-        deviceConfig.colorSensor.set(false);
         deviceConfig.servos.set(false);
         deviceConfig.motors.set(false);
         deviceConfig.odometers.set(false);

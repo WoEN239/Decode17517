@@ -3,8 +3,6 @@ package org.woen.RobotModule.Factory.ModuleFactories;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
-import org.woen.RobotModule.Modules.Gyro.Impls.GyroImpl;
-import org.woen.RobotModule.Modules.Gyro.Interface.Gyro;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerImpl;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerMoc;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Interface.LocalizerDeviceListener;
@@ -25,7 +23,7 @@ public class LocalizerFactory implements IRobotModuleFactory {
     @Override
     public IRobotModule[] create(){
         return new IRobotModule[]{
-                createDeviceListener(), createPositionLocalizer(), createVelocityLocalizer(), createGyro()
+                createDeviceListener(), createPositionLocalizer(), createVelocityLocalizer()
         };
     }
 
@@ -53,16 +51,4 @@ public class LocalizerFactory implements IRobotModuleFactory {
         }
     }
 
-    public Gyro createGyro(){
-        if(config.localizer.device.get()){
-            return new GyroImpl();
-        }else{
-            return new Gyro() {
-                @Override
-                public void update() {
-
-                }
-            };
-        }
-    }
 }

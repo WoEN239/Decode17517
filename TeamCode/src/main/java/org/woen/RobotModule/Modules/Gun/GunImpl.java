@@ -15,6 +15,7 @@ import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.DevicePool.Devices.Servo.ServoWithFeedback;
+import org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
@@ -267,6 +268,7 @@ public class GunImpl implements Gun {
             new BooleanSupplier[]{()->true},
             new Runnable[]{()->{servoL.setTarget(eatLPos);servoR.setTarget(eatRPos);servoC.setTarget(eatCPos);}});
 
+   
     private ServoAction buildPatternFireAction(MOTIF in, MOTIF out) {
         Runnable[] servos = new Runnable[4];
         servos[3] = ()->setCommand(EAT);

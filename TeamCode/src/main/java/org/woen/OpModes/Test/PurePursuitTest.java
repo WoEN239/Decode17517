@@ -19,7 +19,6 @@ public class PurePursuitTest extends BaseOpMode {
     protected void initConfig(){
         DeviceActivationConfig devConfig =  DeviceActivationConfig.getAllOn();
         devConfig.servos.set(true);
-        devConfig.colorSensor.set(false);
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();

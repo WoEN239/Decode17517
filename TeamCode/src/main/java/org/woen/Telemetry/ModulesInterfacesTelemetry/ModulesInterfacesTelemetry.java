@@ -5,8 +5,6 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.RegisterNewWheelsVoltageListener;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
-import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngleListener;
-import org.woen.RobotModule.Modules.Gyro.Arcitecture.RegisterNewAngularVelocityListener;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
@@ -74,9 +72,6 @@ public class ModulesInterfacesTelemetry {
 
         EventBus.getListenersRegistration().invoke(new RegisterNewLocalPositionListener(this::setRobotLocalPos));
         EventBus.getListenersRegistration().invoke(new RegisterNewLocalVelocityListener(this::setRobotLocalVel));
-
-        EventBus.getListenersRegistration().invoke(new RegisterNewAngleListener(this::setGyroAngle));
-        EventBus.getListenersRegistration().invoke(new RegisterNewAngularVelocityListener(this::setGyroAngularVel));
 
         EventBus.getListenersRegistration().invoke(new RegisterNewWheelsVoltageListener(this::setVoltage));
         EventBus.getListenersRegistration().invoke(new RegisterNewLocalizeDeviceListener(this::setLocalizeDeviceData));

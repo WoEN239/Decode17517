@@ -84,13 +84,6 @@ public class HardwareFactory {
         }
     }
 
-    public ColorSensor createColorSensor(String name, Provider<Integer> red, Provider<Integer> green, Provider<Integer> blue){
-        if (config.colorSensor.get())
-            return new ColorSensorImpl(hardwareMap.get(AdafruitI2cColorSensor.class, name));
-        else
-            return new ColorSensorMok(red, green, blue);
-    }
-
     public IMU createIMU(String name){
         return hardwareMap.get(IMU.class,name );
     }

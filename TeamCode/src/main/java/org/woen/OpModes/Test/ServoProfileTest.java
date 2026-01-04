@@ -22,7 +22,6 @@ public class ServoProfileTest extends BaseOpMode {
         deviceConfig.motors.set(false);
         deviceConfig.servos.set(true);
         deviceConfig.odometers.set(false);
-        deviceConfig.colorSensor.set(false);
         deviceActivationConfig = deviceConfig;
 
         ModulesActivateConfig moduleConfig = new ModulesActivateConfig();
