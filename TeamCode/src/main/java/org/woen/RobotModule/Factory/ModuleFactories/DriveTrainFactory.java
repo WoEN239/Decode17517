@@ -7,12 +7,11 @@ import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.Battery.Battery;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainMoc;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.TankDriveTrainImpl;
+import org.woen.RobotModule.Modules.DriveTrain.TankDriveTrainImpl;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
-import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Impls.VoltageControllerImpl;
+import org.woen.RobotModule.Modules.DriveTrain.VoltageController.VoltageControllerImpl;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Impls.PurePursuitFollowerImpl;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Impls.TrajectoryFollowerImpl;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Impls.TrajectoryFollowerMoc;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
 

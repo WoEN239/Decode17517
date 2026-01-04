@@ -1,6 +1,7 @@
 package org.woen.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -10,7 +11,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
-
+@Disabled
 @TeleOp(name = "upd_test")
 public class UPDTest extends LinearOpMode {
     @Override

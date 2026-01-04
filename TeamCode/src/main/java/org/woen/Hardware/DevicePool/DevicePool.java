@@ -5,13 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.Hardware.Devices.Odometers.Inter.PinPoint;
-import org.woen.Hardware.Devices.Servo.Interface.ServoMotor;
-import org.woen.Hardware.Devices.VoltageSensor.RevVoltageSensor;
-import org.woen.Hardware.Factories.HardwareFactory;
-import org.woen.Hardware.Devices.Motor.Interface.Motor;
-import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
+import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
+import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
+import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensor;
+import org.woen.Hardware.Factory.HardwareFactory;
+import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
+import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.Odometer;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 
 public class DevicePool {

@@ -1,7 +1,7 @@
 package org.woen.OpModes.ServiceOpMode;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 
-import static org.woen.Hardware.Devices.ColorSensor.ColorSensorFix.fix;
+import static org.woen.Hardware.DevicePool.Devices.ColorSensor.ColorSensorFix.fix;
 import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.ANALOG_INPUT;
 import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.BATTERY_VOLTAGE;
 import static org.woen.OpModes.ServiceOpMode.DeviceTest.DeviceType.DISTANCE_SENSOR;

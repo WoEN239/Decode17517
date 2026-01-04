@@ -2,18 +2,20 @@ package org.woen.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.Motor.Interface.Motor;
-import org.woen.OpModes.Main.BaseOpMode;
+import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
+import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 
 @Config
+@Disabled
 @TeleOp(name = "gun_test")
 public class GunTest extends BaseOpMode {
     Motor motor;

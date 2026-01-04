@@ -2,8 +2,8 @@ package org.woen.OpModes.ConfigBuild;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.OpModes.Main.BaseOpMode;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
+import org.woen.OpModes.BaseOpMode;
 
 @TeleOp(name = "build device")
 public class BulidDeviceConfigOpMode extends BaseOpMode {

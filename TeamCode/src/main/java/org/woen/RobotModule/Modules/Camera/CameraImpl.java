@@ -77,7 +77,7 @@ public class CameraImpl implements Camera {
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
 
-    VisionPortal visionPortal = null;
+    VisionPortal visionPortal;
 
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
@@ -86,11 +86,9 @@ public class CameraImpl implements Camera {
                 .build();
 
 
-
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-
 
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
         builder.setCameraResolution(new Size(width, height));
@@ -103,8 +101,7 @@ public class CameraImpl implements Camera {
     }
 
     private MOTIF latterMotif = null;
-
-   private PredominantColorProcessor.Swatch ballsInMouthLeftOld = null;
+    private PredominantColorProcessor.Swatch ballsInMouthLeftOld = null;
     private PredominantColorProcessor.Swatch ballsInMouthRightOld = null;
     private PredominantColorProcessor.Swatch ballsInMouthCenterOld = null;
 
@@ -178,10 +175,10 @@ public class CameraImpl implements Camera {
 
         if(sumOfBalls == 4) {
             EventBus.getInstance().invoke(new NewMotifCheck(true));
-            Telemetry.getInstance().add("nigger", true);
         }
-        else
+        else {
             EventBus.getInstance().invoke(new NewMotifCheck(false));
+        }
 
         Telemetry.getInstance().add("sum balls", sumOfBalls);
         Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
@@ -191,6 +188,5 @@ public class CameraImpl implements Camera {
         ballsInMouthCenterOld = resultC.closestSwatch;
         ballsInMouthLeftOld   = resultL.closestSwatch;
         ballsInMouthRightOld  = resultR.closestSwatch;
-        sumOfBalls = 0;
     }
 }

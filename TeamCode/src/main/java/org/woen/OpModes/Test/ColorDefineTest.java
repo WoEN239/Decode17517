@@ -2,11 +2,8 @@ package org.woen.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Util.Color.ColorDetect.Impls.ColorDetection;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
 
 
 public class ColorDefineTest extends LinearOpMode {

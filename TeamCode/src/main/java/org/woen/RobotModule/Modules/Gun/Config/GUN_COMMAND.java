@@ -3,11 +3,8 @@ package org.woen.RobotModule.Modules.Gun.Config;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 public enum GUN_COMMAND {
-
-    OFF(shotL, shotC, shotR,open),FULL_FIRE(shotL, shotC, shotR,open),PATTERN_FIRE(shotL,shotC,shotR,open)
-    ,EAT(eatL, eatC, eatR,halfClose),REVERSE(eatL,eatC,eatR,open),
-    SHOT_LEFT(shotL, eatC, eatR,open),SHOT_CENTER(eatL, shotC, eatR,open),SHOT_RIGHT(eatL, eatC, shotR,open),
-    TARGET(eatL, eatC, eatR,close);
+    OFF(shotLPos, shotCPos, shotRPos,open),FULL_FIRE(shotLPos, shotCPos, shotRPos,open),PATTERN_FIRE(shotLPos, shotCPos, shotRPos,open),
+    EAT(eatLPos, eatCPos, eatRPos,halfClose),REVERSE(eatLPos, eatCPos, eatRPos,open);
 
     public final double right ;
     public final double center;

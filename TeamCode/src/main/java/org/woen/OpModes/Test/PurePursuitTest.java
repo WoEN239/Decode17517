@@ -1,18 +1,17 @@
 package org.woen.OpModes.Test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.AutonomTask;
-import org.woen.Autonom.Pools.PositionPoolFar;
-import org.woen.Autonom.SetNewWaypointsSequenceEvent;
-import org.woen.Autonom.WayPoint;
-import org.woen.Config.MatchData;
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.OpModes.Main.BaseOpMode;
+import org.woen.Autonom.Structure.AutonomTask;
+import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
+import org.woen.Autonom.Structure.WayPoint;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
+import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.Util.Vectors.Pose;
-
+@Disabled
 @TeleOp(name = "pure_pursuit_test")
 public class PurePursuitTest extends BaseOpMode {
 
@@ -32,7 +31,6 @@ public class PurePursuitTest extends BaseOpMode {
 
     }
 
-    PositionPoolFar pool = new PositionPoolFar();
     @Override
     public void initRun(){
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(

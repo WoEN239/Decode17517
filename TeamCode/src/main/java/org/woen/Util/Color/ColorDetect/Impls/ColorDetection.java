@@ -3,10 +3,8 @@ package org.woen.Util.Color.ColorDetect.Impls;
 import static java.lang.Math.sqrt;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.adafruit.AdafruitI2cColorSensor;
 
-import org.woen.Hardware.Devices.ColorSensor.Impl.ColorSensorImpl;
-import org.woen.Hardware.Devices.ColorSensor.Interface.ColorSensor;
+import org.woen.Hardware.DevicePool.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Util.Color.BALLS_COLOR;
 import org.woen.Util.Color.ColorDetect.ColorDetection.ColorsBallsConfig;
 

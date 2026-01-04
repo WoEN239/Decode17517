@@ -6,22 +6,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Pools.WaypointPoolNear;
-import org.woen.Autonom.SetNewWaypointsSequenceEvent;
+import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
 import org.woen.Autonom.Pools.WaypointPoolFar;
 import org.woen.Config.MatchData;
 import org.woen.Config.Start;
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
+import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
-import org.woen.Util.Vectors.Vector2d;
 
 @Autonomous
-public class AutoOpMode extends BaseOpMode{
-
+public class AutoOpMode extends BaseOpMode {
     @Override
     protected void initConfig(){
         DeviceActivationConfig devConfig =  DeviceActivationConfig.getAllOn();
-        devConfig.colorSensor.set(false);
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
@@ -32,9 +30,8 @@ public class AutoOpMode extends BaseOpMode{
     @Override
     protected void initRun() {
 
-
         if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
-            EventBus.getInstance().invoke(new NewAimEvent(true).setGoal(MatchData.team.goalPose));
+            EventBus.getInstance().invoke(new NewAimEvent(true));
             WaypointPoolFar poolFar = new WaypointPoolFar();
                 EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                     poolFar.firstAim.copy().setVel(70),
@@ -61,7 +58,7 @@ public class AutoOpMode extends BaseOpMode{
         }
 
         if(MatchData.start == Start.NEAR_BLUE || MatchData.start == Start.NEAR_RED){
-            EventBus.getInstance().invoke(new NewAimEvent(false).setGoal(MatchData.team.goalPose));
+            EventBus.getInstance().invoke(new NewAimEvent(false));
             WaypointPoolNear poolNear = new WaypointPoolNear();
                 EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                         poolNear.look.copy(),
@@ -81,6 +78,6 @@ public class AutoOpMode extends BaseOpMode{
 
     @Override
     protected void lastRun() {
-        OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().getActivity()).initOpMode("teleop");
+        OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().getActivity()).initOpMode("teleOp");
     }
 }

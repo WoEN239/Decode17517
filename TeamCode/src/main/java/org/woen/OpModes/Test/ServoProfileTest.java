@@ -1,18 +1,19 @@
 package org.woen.OpModes.Test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.Servo.ServoWithFeedback;
-import org.woen.OpModes.Main.BaseOpMode;
+import org.woen.Hardware.DevicePool.Devices.Servo.ServoWithFeedback;
+import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;
 import org.woen.RobotModule.Modules.Localizer.ActivationConfig.LocalizerActivationConfig;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Telemetry.Telemetry;
-
+@Disabled
 @TeleOp(name = "servo_profile_test", group = "test")
 public class ServoProfileTest extends BaseOpMode {
     @Override

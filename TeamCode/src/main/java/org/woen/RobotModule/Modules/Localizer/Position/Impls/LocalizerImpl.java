@@ -1,7 +1,7 @@
 package org.woen.RobotModule.Modules.Localizer.Position.Impls;
 
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.Odometers.Inter.PinPoint;
+import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.PositionObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
 import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.VelocityObserver;

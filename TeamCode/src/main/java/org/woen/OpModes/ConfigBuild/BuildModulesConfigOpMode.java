@@ -2,7 +2,7 @@ package org.woen.OpModes.ConfigBuild;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.woen.OpModes.Main.BaseOpMode;
+import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 
 @TeleOp(name = "build modules")

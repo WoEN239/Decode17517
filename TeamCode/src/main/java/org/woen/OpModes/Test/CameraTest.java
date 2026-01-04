@@ -1,15 +1,17 @@
 package org.woen.OpModes.Test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
-import org.woen.OpModes.Main.BaseOpMode;
+import org.woen.Hardware.Factory.DeviceActivationConfig;
+import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
 import org.woen.Telemetry.Telemetry;
 
+@Disabled
 @TeleOp(name = "camera_test")
 public class CameraTest extends BaseOpMode {
     @Override

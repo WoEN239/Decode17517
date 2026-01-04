@@ -1,13 +1,13 @@
 package org.woen.RobotModule.Factory.ModuleFactories;
 
-import org.woen.Autonom.WaypointsManager;
-import org.woen.Autonom.WaypointsManagerImpl;
+import org.woen.Autonom.Structure.WaypointsManager;
+import org.woen.Autonom.Structure.WaypointsManagerImpl;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
 import org.woen.RobotModule.Modules.Camera.CameraImpl;
-import org.woen.RobotModule.Modules.Gun.Impls.GunImpl;
+import org.woen.RobotModule.Modules.Gun.GunImpl;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 
 public class ModulesFactory implements IRobotModuleFactory {

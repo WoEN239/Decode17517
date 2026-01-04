@@ -68,7 +68,6 @@ public class Filter {
         for (int i = 0; i < sortReads.length; i++) {
             double abs = abs(sortReads[i]);
             sortReads[i] = abs;
-
         }
         Arrays.sort(sortReads);
         double[] filterReads = reads.clone();

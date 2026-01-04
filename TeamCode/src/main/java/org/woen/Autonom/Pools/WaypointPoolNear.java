@@ -3,30 +3,15 @@ package org.woen.Autonom.Pools;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.AutonomTask;
-import org.woen.Autonom.WayPoint;
+import org.woen.Autonom.Structure.AutonomTask;
+import org.woen.Autonom.Structure.WayPoint;
 import org.woen.Config.MatchData;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
+import org.woen.Util.Vectors.Pose;
 
-public class WaypointPoolNear {
+public class WaypointPoolNear extends WaypointPool{
     PositionPoolNear pool = new PositionPoolNear();
-
-    public Boolean isGunEat = false;
-
-    public void setGunCommand(NewGunCommandAvailable event){
-        isGunEat = event.getData() == GUN_COMMAND.EAT;
-    }
-
-    public WaypointPoolNear() {
-        EventBus.getInstance().subscribe(GunAtEatEvent.class,this::setGunIs);
-        EventBus.getInstance().subscribe(NewGunCommandAvailable.class,this::setGunCommand);
-    }
-
-    public void setGunIs(GunAtEatEvent event){
-        isGunEat = true;
-    }
 
     public WayPoint look = new WayPoint(
             new Runnable[]{
@@ -92,3 +77,14 @@ public class WaypointPoolNear {
             }, false,pool.thirdAim
     ).setName("thirdAim");
 }
+class PositionPoolNear {
+    public Pose look = new Pose(0,0,0);
+    public Pose firstAim = new Pose(0,0,0);
+    public Pose fire = new Pose(0,0,0);
+    public Pose firstEat = new Pose(0,0,0);
+    public Pose secondAim = new Pose(0,0,0);
+    public Pose secondEat = new Pose(0,0,0);
+    public Pose thirdAim = new Pose(0,0,0);
+
+}
+

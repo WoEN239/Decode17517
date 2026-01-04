@@ -17,7 +17,7 @@ public class Pid {
 
     public String name;
 
-    public boolean isAngle = false;
+    public boolean isNormolized = false;
     public boolean isDAccessible = false;
 
     public void setName(String n) {
@@ -76,7 +76,7 @@ public class Pid {
     private void calc() {
         err = target - pos;
 
-        if(isAngle){
+        if(isNormolized){
             err = AngleUtil.normalize(err);
         }
 

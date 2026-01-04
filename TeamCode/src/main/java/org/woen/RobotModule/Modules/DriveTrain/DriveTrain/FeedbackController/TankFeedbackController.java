@@ -10,11 +10,11 @@ public class TankFeedbackController {
 
     public TankFeedbackController(PidStatus translation, PidStatus rotation) {
         xPid = new Pid(translation);
-        xPid.isAngle = false;
+        xPid.isNormolized = false;
         xPid.isDAccessible = false;
 
         hPid = new Pid(rotation);
-        hPid.isAngle = true;
+        hPid.isNormolized = true;
         hPid.isDAccessible = false;
 
     }

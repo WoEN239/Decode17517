@@ -1,7 +1,7 @@
 package org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls;
 
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.Devices.Odometers.Inter.Odometer;
+import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.Odometer;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizerDeviceObserver;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Interface.LocalizerDeviceListener;

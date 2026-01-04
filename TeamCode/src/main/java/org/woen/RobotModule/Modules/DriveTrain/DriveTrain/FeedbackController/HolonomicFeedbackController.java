@@ -12,15 +12,15 @@ public class HolonomicFeedbackController {
 
     public HolonomicFeedbackController(PidStatus translation, PidStatus rotation) {
         xPid = new Pid(translation);
-        xPid.isAngle = true;
+        xPid.isNormolized = true;
         xPid.isDAccessible = false;
 
         yPid = new Pid(translation);
-        yPid.isAngle = true;
+        yPid.isNormolized = true;
         yPid.isDAccessible = false;
 
         hPid = new Pid(rotation);
-        hPid.isAngle = true;
+        hPid.isNormolized = true;
         hPid.isDAccessible = false;
 
     }
