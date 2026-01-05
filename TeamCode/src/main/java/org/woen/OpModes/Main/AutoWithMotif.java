@@ -13,10 +13,9 @@ import org.woen.Config.Start;
 import org.woen.Hardware.ActivationConfig.DeviceActivationConfig;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
-import org.woen.Util.Vectors.Vector2d;
 
 @Autonomous
-public class AutoOpMode extends BaseOpMode{
+public class AutoWithMotif extends BaseOpMode{
 
     @Override
     protected void initConfig(){
@@ -25,7 +24,7 @@ public class AutoOpMode extends BaseOpMode{
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
-        modConfig.camera.set(false);
+        modConfig.camera.set(true);
         modulesActivationConfig = modConfig;
     }
 
@@ -36,26 +35,17 @@ public class AutoOpMode extends BaseOpMode{
         if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
             EventBus.getInstance().invoke(new NewAimEvent(true).setGoal(MatchData.team.goalPose));
             WaypointPoolFar poolFar = new WaypointPoolFar();
-                EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+            EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                     poolFar.firstAim.copy().setVel(70),
-                    poolFar.fire1.copy(),
+                    poolFar.fire1Pat.copy(),
                     poolFar.rotate1.copy(),
-                    poolFar.firstEat.copy().setVel(120),
+                    poolFar.firstEat.copy().setVel(80),
                     poolFar.secondAim.copy().setVel(80),
-                    poolFar.fire2.copy(),
+                    poolFar.fire2Pat.copy(),
                     poolFar.rotate2.copy(),
-                    poolFar.secondEat.copy().setVel(120).setEndDetect(20),
+                    poolFar.secondEat.copy().setVel(80).setEndDetect(20),
                     poolFar.thirdAim.copy().setVel(80),
-                    poolFar.fire3.copy(),
-                    poolFar.rotate3.copy(),
-                    poolFar.thirdEat.copy().setVel(150),
-                    poolFar.thirdEatRotate.copy(),
-                    poolFar.forthAim.copy().setVel(110),
-                    poolFar.fire4.copy(),
-                    poolFar.rotate4.copy(),
-                    poolFar.forthEat.copy().setVel(150),
-                    poolFar.fiveAim.copy().setVel(110),
-                    poolFar.fire5.copy(),
+                    poolFar.fire3Pat.copy(),
                     poolFar.park.copy()
             ));
         }
@@ -63,17 +53,17 @@ public class AutoOpMode extends BaseOpMode{
         if(MatchData.start == Start.NEAR_BLUE || MatchData.start == Start.NEAR_RED){
             EventBus.getInstance().invoke(new NewAimEvent(false).setGoal(MatchData.team.goalPose));
             WaypointPoolNear poolNear = new WaypointPoolNear();
-                EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
-                        poolNear.look.copy(),
-                        poolNear.firstAim.copy(),
-                        poolNear.fire1.copy(),
-                        poolNear.firstEat.copy(),
-                        poolNear.secondAim.copy(),
-                        poolNear.fire2.copy(),
-                        poolNear.secondEat.copy(),
-                        poolNear.thirdAim.copy(),
-                        poolNear.fire3.copy()
-                ));
+            EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+                    poolNear.look.copy(),
+                    poolNear.firstAim.copy(),
+                    poolNear.fire1.copy(),
+                    poolNear.firstEat.copy(),
+                    poolNear.secondAim.copy(),
+                    poolNear.fire2.copy(),
+                    poolNear.secondEat.copy(),
+                    poolNear.thirdAim.copy(),
+                    poolNear.fire3.copy()
+            ));
         }
     }
 
@@ -82,5 +72,6 @@ public class AutoOpMode extends BaseOpMode{
     @Override
     protected void lastRun() {
         OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().getActivity()).initOpMode("teleop");
+        OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().getActivity()).startActiveOpMode();
     }
 }

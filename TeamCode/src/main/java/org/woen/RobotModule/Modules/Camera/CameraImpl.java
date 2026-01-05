@@ -27,6 +27,7 @@ import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
 import org.woen.Telemetry.Telemetry;
 
 
+import java.lang.ref.PhantomReference;
 import java.util.List;
 
 @Config
@@ -57,7 +58,9 @@ public class CameraImpl implements Camera {
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.RED,
                     PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.BLACK,
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
     PredominantColorProcessor rightDetection = new PredominantColorProcessor.Builder()
@@ -65,15 +68,20 @@ public class CameraImpl implements Camera {
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.RED,
                     PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.BLACK,
                     PredominantColorProcessor.Swatch.WHITE)
+
             .build();
     PredominantColorProcessor centerDetection = new PredominantColorProcessor.Builder()
             .setRoi(ImageRegion.asUnityCenterCoordinates(leftC, topC, rightC, bottomC))
             .setSwatches(
-                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.RED,
                     PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.BLACK,
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
 
@@ -183,10 +191,10 @@ public class CameraImpl implements Camera {
         else
             EventBus.getInstance().invoke(new NewMotifCheck(false));
 
-        Telemetry.getInstance().add("sum balls", sumOfBalls);
-        Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
-        Telemetry.getInstance().add("center ball color", resultC.closestSwatch);
-        Telemetry.getInstance().add("right  ball color", resultR.closestSwatch);
+        //Telemetry.getInstance().add("sum balls", sumOfBalls);
+        //Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
+       // Telemetry.getInstance().add("center ball color", resultC.closestSwatch);
+      //  Telemetry.getInstance().add("right  ball color", resultR.closestSwatch);
 
         ballsInMouthCenterOld = resultC.closestSwatch;
         ballsInMouthLeftOld   = resultL.closestSwatch;

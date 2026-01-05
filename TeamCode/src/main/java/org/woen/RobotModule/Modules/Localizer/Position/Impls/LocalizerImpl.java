@@ -20,6 +20,7 @@ public class LocalizerImpl implements PositionLocalizer {
         Pose pose = odo.getPose();
         Pose vel = odo.getVel();
 
+
         poseObserver.notifyListeners(pose);
         velocityObserver.notifyListeners(vel);
     }

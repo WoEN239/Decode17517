@@ -45,6 +45,8 @@ public class DevicePool {
 
     public HardwareMap hardwareMap;
 
+    public DcMotor light;
+
     private static final  DevicePool Instance = new DevicePool();
     public static DevicePool getInstance(){
         return Instance;
@@ -74,6 +76,8 @@ public class DevicePool {
 
         brush = factory.createDcMotor("brush", new Provider<>(0d), new Provider<>(0d));
         brush.setDir(1);
+
+        light = hardwareMap.get(DcMotor.class, "light");
 
         gyro = factory.createIMU("imu");
 

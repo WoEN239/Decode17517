@@ -42,14 +42,14 @@ public class ControlSystemConstant {
     public static class GunConfig {
         public double velTol = 60;
 
-        public double shootVelSide = 2000;
-        public double shootVelSideNear = 2000;
+        public double shootVelSide = 1850;
+        public double shootVelSideNear = 1750;
 
-        public double shootVelC = 1700;
-        public double shootVelCNear = 1600;
+        public double shootVelC = 1720;
+        public double shootVelCNear = 1550;
 
-        public double deltaPosC = 0.2;
-        public double deltaPosS = 0.2;
+        public double deltaPosC = 0;
+        public double deltaPosS = 0;
 
         public double distLow = 50;
         public double distHi = 60;

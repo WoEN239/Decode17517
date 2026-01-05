@@ -6,6 +6,7 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
@@ -40,6 +41,7 @@ public class GunImpl implements Gun {
     private ServoMotor aimC;
     private ServoMotor aimL;
 
+    private DcMotor light;
 
 
     private Motor gunR;
@@ -53,7 +55,6 @@ public class GunImpl implements Gun {
     private final Pid pidC = new Pid(gunConfig.centerPidStatus);
 
 
-
     public void setCommand(NewGunCommandAvailable event) {
         setCommand(event.getData());
     }
@@ -62,42 +63,68 @@ public class GunImpl implements Gun {
 
     private void setCommand(GUN_COMMAND command) {
         this.command = command;
-
     }
 
-    private void update2(){
-        if(this.command == previousCommand)
+    private double leftSPos = eatL;
+
+    private double rightSPos = eatR;
+
+    private double centerSPos = eatC;
+
+    boolean stop = false;
+
+    private void update2() {
+
+        if (this.command == previousCommand)
             time.reset();
+
         switch (this.command) {
             case EAT:
+                light.setPower(0);
                 previousCommand = command;
                 brushPower = 1;
                 shotR.setPos(eatR);
                 shotC.setPos(eatC);
                 shotL.setPos(eatL);
-
+                centerSPos = eatC;
+                rightSPos = eatR;
+                leftSPos = eatL;
                 EventBus.getInstance().invoke(new GunAtEatEvent(1));
-
                 break;
             case TARGET:
                 brushPower = 1;
                 previousCommand = command;
                 break;
+            case REVERSE:
+
+                brushPower = -1;
+                shotR.setPos(eatR);
+                shotC.setPos(eatC);
+                shotL.setPos(eatL);
+                centerSPos = eatC;
+                rightSPos = eatR;
+                leftSPos = eatL;
+                light.setPower(0);
+                previousCommand = command;
+                EventBus.getInstance().invoke(new GunAtEatEvent(1));
+                break;
             case FULL_FIRE:
                 gunVelSide = gunConfig.shootVelSide;
                 gunVelC = gunConfig.shootVelC;
+
                 if (!isFarAim) {
                     gunVelC = gunConfig.shootVelCNear;
                 }
 
                 brushPower = 1;
-                if(time.seconds() > 0.1) {
+                if (time.seconds() > 0.1) {
                     shotR.setPos(GunServoPositions.shotR);
                     shotC.setPos(GunServoPositions.shotC);
                     shotL.setPos(GunServoPositions.shotL);
                 }
-                if(time.seconds() > 0.6) {
+                if (time.seconds() > 0.8) {
                     setCommand(EAT);
+                    time.reset();
                     previousCommand = command;
                 }
                 break;
@@ -105,28 +132,82 @@ public class GunImpl implements Gun {
                 brushPower = 0;
                 break;
             case PATTERN_FIRE:
-                if(isItMotif) {
-                    gunVelSide = gunConfig.shootVelSide;
-                    gunVelC = gunConfig.shootVelC;
-                    if (!isFarAim) {
-                        gunVelC = gunConfig.shootVelCNear;
-                    }
-                    brushPower = 1;
+                gunVelSide = gunConfig.shootVelSide;
+                gunVelC = gunConfig.shootVelC;
+                if (!isFarAim) {
+                    gunVelC = gunConfig.shootVelCNear;
+                }
 
-                    if (time.seconds() < 0.1)
-                        shooterComb();
-                    if (time.seconds() > 0.1)
-                        servoMovement();
+                brushPower = 1;
 
-                    if (time.seconds() > 0.7) {
-                        setCommand(EAT);
-                        previousCommand = command;
+                if (time.seconds() < 0.1) {
+                    shooterComb();
+                }
+                if (time.seconds() > 0.1)
+                    servoMovement();
+                break;
+            case GREEN_FIRE:
+                light.setPower(1);
+                if (time.seconds() > 0.1) {
+                    if (center == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && !stop) {
+                        shotC.setPos(GunServoPositions.shotC);
+                        centerSPos = GunServoPositions.shotC;
+                        stop = true;
+                    } else {
+                        if (right == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && !stop) {
+                            shotR.setPos(GunServoPositions.shotR);
+                            rightSPos = GunServoPositions.shotR;
+                            stop = true;
+                        } else {
+                            if (left == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && !stop) {
+                                shotL.setPos(GunServoPositions.shotC);
+                                leftSPos = GunServoPositions.shotL;
+                                stop = true;
+                            }
+                        }
                     }
                 }
-                else{
-                    setCommand(FULL_FIRE);
+                if (time.seconds() > 0.5) {
+                    light.setPower(0);
+                    stop = false;
+                    setCommand(WAIT_SERVO);
                 }
                 break;
+            case PURPLE_FIRE:
+                light.setPower(1);
+                if (time.seconds() > 0.1) {
+                    if (center == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE && !stop) {
+                        shotC.setPos(GunServoPositions.shotC);
+                        centerSPos = GunServoPositions.shotC;
+                        stop = true;
+                    } else {
+                        if (right == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE && !stop) {
+                            shotR.setPos(GunServoPositions.shotR);
+                            rightSPos = GunServoPositions.shotR;
+                            stop = true;
+                        } else {
+                            if (left == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE && !stop) {
+                                shotL.setPos(GunServoPositions.shotC);
+                                leftSPos = GunServoPositions.shotL;
+                                stop = true;
+                            }
+                        }
+                    }
+                }
+                if (time.seconds() > 0.5) {
+                    light.setPower(0);
+                    stop = false;
+                    previousCommand = command;
+                    setCommand(WAIT_SERVO);
+                }
+            case WAIT_SERVO:
+                shotC.setPos(centerSPos);
+                shotL.setPos(leftSPos);
+                shotR.setPos(rightSPos);
+                if (leftSPos == GunServoPositions.shotL
+                        && rightSPos == GunServoPositions.shotR
+                        && centerSPos == GunServoPositions.shotC)
+                    setCommand(EAT);
         }
     }
 
@@ -156,7 +237,6 @@ public class GunImpl implements Gun {
     PoseInBrush whereGreenBall = PoseInBrush.LEFT;
 
 
-
     boolean isItPat = true;
 
     private void shooterComb() {
@@ -170,8 +250,8 @@ public class GunImpl implements Gun {
                 }
             }
         }
-            whereGreenBall = numbToEnum(numb2);
-            targetGreen = numbToEnum(numb);
+        whereGreenBall = numbToEnum(numb2);
+        targetGreen = numbToEnum(numb);
 
 
     }
@@ -180,94 +260,141 @@ public class GunImpl implements Gun {
         LEFT, CENTER, RIGHT, NULL
     }
 
-        private void servoMovement() {
-            switch (targetGreen) {
-                case LEFT:
-                    switch (whereGreenBall) {
-                        case RIGHT:
-                            shotL.setPos(GunServoPositions.shotL);
-                            if (time.seconds()>0.4) {
-                                shotC.setPos(GunServoPositions.shotC);
-                                shotR.setPos(GunServoPositions.shotR);
-                            }
-                            break;
-                        case CENTER:
+    private void servoMovement() {
+        switch (targetGreen) {
+            case LEFT:
+                switch (whereGreenBall) {
+                    case RIGHT:
+                        shotL.setPos(GunServoPositions.shotL);
+                        if (time.seconds() > 0.9) {
                             shotC.setPos(GunServoPositions.shotC);
-                            if (time.seconds()>0.4) {
-                                shotR.setPos(GunServoPositions.shotR);
-                                shotL.setPos(GunServoPositions.shotL);
-                            }
-                            break;
-                        case LEFT:
                             shotR.setPos(GunServoPositions.shotR);
-                            if (time.seconds()>0.4) {
-                                shotC.setPos(GunServoPositions.shotC);
-                                shotL.setPos(GunServoPositions.shotL);
-                            }
-                            break;
-                    }
-                    break;
-                case CENTER:
-                    switch (whereGreenBall) {
-                        case RIGHT:
-                            shotC.setPos(GunServoPositions.shotC);
-                            if (time.seconds() > 0.3) {
-                                shotL.setPos(GunServoPositions.shotL);
-                            }
-                            if (time.seconds() > 0.7) {
-                               shotR.setPos(GunServoPositions.shotR);
-                            }
-                            break;
-                        case CENTER:
-                            shotR.setPos(GunServoPositions.shotR);
-                            if (time.seconds() > 0.3) {
-                                shotC.setPos(GunServoPositions.shotC);
-                            }
-                            if (time.seconds() > 0.7) {
-                                shotL.setPos(GunServoPositions.shotL);
-                            }
-                            break;
-                        case LEFT:
-                            shotL.setPos(GunServoPositions.shotL);
-                            if (time.seconds() > 0.3) {
-                                shotR.setPos(GunServoPositions.shotR);
-                            }
-                            if (time.seconds() > 0.7) {
-                                shotC.setPos(GunServoPositions.shotC);
-                            }
-                            break;
-                    }
-                    break;
-                case RIGHT:
-                    switch (whereGreenBall) {
-                        case RIGHT:
-                            shotR.setPos(GunServoPositions.shotR);
-                            shotC.setPos(GunServoPositions.shotC);
-                            if(time.seconds() > 0.4){
-                                shotL.setPos(GunServoPositions.shotL);
-                            }
-                            break;
-                        case CENTER:
-                            shotL.setPos(GunServoPositions.shotL);
-                            shotR.setPos(GunServoPositions.shotR);
-                            if(time.seconds() > 0.4){
-                                shotC.setPos(GunServoPositions.shotC);
-                            }
-                            break;
-                        case LEFT:
-                            shotC.setPos(GunServoPositions.shotC);
-                            shotL.setPos(GunServoPositions.shotL);
-                            if(time.seconds() > 0.4){
-                                shotR.setPos(GunServoPositions.shotR);
-                            }
-                            break;
-                    }
-                    break;
+                        }
 
-            }
+                        if(time.seconds() > 1) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
 
+                        break;
+                    case CENTER:
+                        shotC.setPos(GunServoPositions.shotC);
+                        if (time.seconds() > 0.9) {
+                            shotR.setPos(GunServoPositions.shotR);
+                            shotL.setPos(GunServoPositions.shotL);
+                        }
+                        if(time.seconds() > 1) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                    case LEFT:
+                        shotR.setPos(GunServoPositions.shotR);
+                        if (time.seconds() > 0.9) {
+                            shotC.setPos(GunServoPositions.shotC);
+                            shotL.setPos(GunServoPositions.shotL);
+                        }
+                        if(time.seconds() > 1) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                }
+                break;
+            case CENTER:
+                switch (whereGreenBall) {
+                    case RIGHT:
+                        shotC.setPos(GunServoPositions.shotC);
+                        if (time.seconds() > 0.8) {
+                            shotL.setPos(GunServoPositions.shotL);
+                        }
+                        if (time.seconds() > 1.6) {
+                            shotR.setPos(GunServoPositions.shotR);
+                        }
+                        if(time.seconds() > 1.7) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                    case CENTER:
+                        shotR.setPos(GunServoPositions.shotR);
+                        if (time.seconds() > 0.8) {
+                            shotC.setPos(GunServoPositions.shotC);
+                        }
+                        if (time.seconds() > 1.6) {
+                            shotL.setPos(GunServoPositions.shotL);
+                        }
+                        if(time.seconds() > 1.7) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                    case LEFT:
+                        shotL.setPos(GunServoPositions.shotL);
+                        if (time.seconds() > 0.8) {
+                            shotR.setPos(GunServoPositions.shotR);
+                        }
+                        if (time.seconds() > 1.6) {
+                            shotC.setPos(GunServoPositions.shotC);
+                        }
+                        if(time.seconds() > 1.7) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                }
+                break;
+            case RIGHT:
+                switch (whereGreenBall) {
+                    case RIGHT:
+                        shotR.setPos(GunServoPositions.shotR);
+                        shotC.setPos(GunServoPositions.shotC);
+                        if (time.seconds() > 1) {
+                            shotL.setPos(GunServoPositions.shotL);
+                        }
+                        if(time.seconds() > 1.1) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                    case CENTER:
+                        shotL.setPos(GunServoPositions.shotL);
+                        shotR.setPos(GunServoPositions.shotR);
+                        if (time.seconds() > 1) {
+                            shotC.setPos(GunServoPositions.shotC);
+                        }
+                        if(time.seconds() > 1.1) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                    case LEFT:
+                        shotC.setPos(GunServoPositions.shotC);
+                        shotL.setPos(GunServoPositions.shotL);
+                        if (time.seconds() > 1) {
+                            shotR.setPos(GunServoPositions.shotR);
+                        }
+                        if(time.seconds() > 1.1) {
+                            setCommand(EAT);
+                            light.setPower(0);
+                            previousCommand = command;
+                        }
+                        break;
+                }
+                break;
 
         }
+
+
+    }
 
 
     private GUN_COMMAND command = EAT;
@@ -282,7 +409,7 @@ public class GunImpl implements Gun {
         goal = event.getGoal();
     }
 
-    private MOTIF motif = MOTIF.PPG;
+    private MOTIF motif = MOTIF.PGP;
 
     public void setMotif(NewMotifEvent e) {
         this.motif = e.getData();
@@ -290,7 +417,7 @@ public class GunImpl implements Gun {
 
     private boolean isItMotif = false;
 
-    public void setStatusMotif(NewMotifCheck e){
+    public void setStatusMotif(NewMotifCheck e) {
         isItMotif = e.getData();
     }
 
@@ -318,6 +445,7 @@ public class GunImpl implements Gun {
         }
         return inMouth;
     }
+
 
     private void setLeft(NewDetectionBallsLeftEvent event) {
         left = event.getData();
@@ -349,6 +477,8 @@ public class GunImpl implements Gun {
         aimR = DevicePool.getInstance().aimR;
         aimC = DevicePool.getInstance().aimC;
         aimL = DevicePool.getInstance().aimL;
+
+        light = DevicePool.getInstance().light;
 
         time.reset();
     }
@@ -383,6 +513,7 @@ public class GunImpl implements Gun {
             nearAim(dist);
         }
 
+
         pidR.setTarget(gunVelSide);
         pidR.setPos(gunR.getVel());
         pidR.update();
@@ -394,6 +525,14 @@ public class GunImpl implements Gun {
         pidC.setTarget(gunVelC);
         pidC.setPos(gunC.getVel());
         pidC.update();
+
+        Telemetry.getInstance().add("powerBrush", brushPower);
+
+        Telemetry.getInstance().add("left", left);
+
+        Telemetry.getInstance().add("right", right);
+
+        Telemetry.getInstance().add("center", center);
 
 
         Telemetry.getInstance().add("gunR vel", gunR.getVel());
@@ -418,7 +557,7 @@ public class GunImpl implements Gun {
             gunC.setPower(0);
         } else {
             gunR.setPower(pidR.getU());
-           gunL.setPower(pidL.getU());
+            gunL.setPower(pidL.getU());
             gunC.setPower(pidC.getU());
         }
         brush.setPower(brushPower);
@@ -436,6 +575,7 @@ public class GunImpl implements Gun {
         double deltaC = (dist - gunConfig.distLow) * gunConfig.deltaPosC / (gunConfig.distHi - gunConfig.distLow);
         double deltaS = (dist - gunConfig.distLow) * gunConfig.deltaPosS / (gunConfig.distHi - gunConfig.distLow);
         Telemetry.getInstance().add("deltaC", deltaC);
+        Telemetry.getInstance().add("deltaS", deltaS);
         Telemetry.getInstance().add("deltaS", deltaS);
 
         aim(aimLNear + deltaS, aimCNear + deltaC, aimRNear + deltaS);

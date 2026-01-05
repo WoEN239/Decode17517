@@ -58,7 +58,7 @@ public class WaypointPoolFar {
                     ()->EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
             ),
             true,pool.fire,pool.fire
-    ).setName("firstFire").setEndDetect(10).setEndAngle(this::angleToGoal);
+    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToGoal);
 
     public WayPoint fire3 = new WayPoint(
             new AutonomTask(
@@ -117,7 +117,7 @@ public class WaypointPoolFar {
                     ()-> RobotLog.dd("auto","firstEat"),
             },
             false,pool.firstEat
-    ).setName("firstEat").setVel(80).setEndDetect(10);
+    ).setName("firstEat").setVel(80);
 
     public WayPoint secondAim = new WayPoint(
             new Runnable[]{
@@ -178,7 +178,35 @@ public class WaypointPoolFar {
 
     public WayPoint park = new WayPoint(
             AutonomTask.Stub,
-            true,pool.fire,new Pose(0,0,-70)
-    ).setVel(200);
+            true,pool.fire,new Pose(0,120,-57)
+    ).setVel(120);
+
+
+    public WayPoint fire1Pat = new WayPoint(
+            new AutonomTask(
+                    ()-> isGunEat,
+                    ()->RobotLog.dd("auto","firstFire"),
+                    ()->EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
+            ),
+            true,pool.fire,pool.fire
+    ).setName("firstFire").setEndDetect(10).setEndAngle(this::angleToGoal);
+
+    public WayPoint fire2Pat = new WayPoint(
+            new AutonomTask(
+                    ()-> isGunEat,
+                    ()->RobotLog.dd("auto","firstFire"),
+                    ()->EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
+            ),
+            true,pool.fire,pool.fire
+    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToGoal);
+
+    public WayPoint fire3Pat = new WayPoint(
+            new AutonomTask(
+                    ()-> isGunEat,
+                    ()->RobotLog.dd("auto","firstFire"),
+                    ()->EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
+            ),
+            true,pool.fire,pool.fire
+    ).setName("firstFire").setEndDetect(10).setEndAngle(this::angleToGoal);
 }
 

@@ -42,5 +42,12 @@ public class PinPointImpl implements PinPoint {
                         pinpointDriver.getVelY(DistanceUnit.CM));
     }
 
+    @Override
+    public void setPos(double x, double y, double h){
+        pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, x, y,
+                AngleUnit.RADIANS,h));
+    }
+
+
 
 }
