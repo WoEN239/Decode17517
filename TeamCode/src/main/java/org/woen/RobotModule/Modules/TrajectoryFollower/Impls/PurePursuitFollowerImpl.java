@@ -128,9 +128,11 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
     }
 
     private void setNewTrajectoryEvent(SetNewTargetTrajectorySegmentEvent e){
+        if(e.getData().path.length == 0){return;}
+
         ArrayList<LineSegment> buildPath = new ArrayList<>();
-        buildPath.add(lineFromTwoPoint(pose.vector,e.getData().path[1].vector));
-        for(int i = 1; i<e.getData().path.length-1; i++ ){
+        buildPath.add(lineFromTwoPoint(pose.vector,e.getData().path[0].vector));
+        for(int i = 0; i<e.getData().path.length-1; i++ ){
             buildPath.add(lineFromTwoPoint(e.getData().path[i].vector,e.getData().path[i+1].vector));
         }
         targetPath = buildPath;
