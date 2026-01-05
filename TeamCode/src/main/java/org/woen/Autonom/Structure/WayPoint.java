@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.Vectors.Pose;
@@ -90,6 +90,14 @@ public class WayPoint {
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
         this.endAngle = ()->path[path.length-1].h;
         this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<0.015,run);
+        this.onWay = AutonomTask.Stub;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
+    public WayPoint(Runnable[] run, boolean isReverse, double angleTolerance, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<angleTolerance,run);
         this.onWay = AutonomTask.Stub;
         this.path = path;
         this.isReverse = isReverse;
