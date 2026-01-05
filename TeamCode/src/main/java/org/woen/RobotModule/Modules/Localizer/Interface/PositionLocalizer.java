@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.Localizer.Position.Interface;
+package org.woen.RobotModule.Modules.Localizer.Interface;
 
 import org.woen.RobotModule.Interface.IRobotModule;
 

@@ -9,9 +9,7 @@ import org.woen.Telemetry.Telemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-/*
-     waypoints has a view : latter waypoint , actual target waypoint, next waypoints
-*/
+
 public class WaypointsManagerImpl implements WaypointsManager {
     private ArrayList<WayPoint> wayPoints = new ArrayList<>();
 
@@ -27,9 +25,9 @@ public class WaypointsManagerImpl implements WaypointsManager {
         }
 
         wayPoints.get(0).update();
-        Telemetry.getInstance().add("waypoint update","update");
-        Telemetry.getInstance().add("waypoint done",wayPoints.get(0).isDone());
-        Telemetry.getInstance().add("waypoints",wayPoints.size());
+        Telemetry.getInstance().add("is waypoint update","update");
+        Telemetry.getInstance().add("is waypoint done",wayPoints.get(0).isDone());
+        Telemetry.getInstance().add("waypoints amount",wayPoints.size());
         if(wayPoints.get(0).isDone()){
             if(wayPoints.size()>1) {
                 RobotLog.dd("waypoint_change", "change waypoint from " + wayPoints.get(0).getName() + " to " + wayPoints.get(1).getName());

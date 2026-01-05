@@ -1,14 +1,14 @@
-package org.woen.RobotModule.Modules.Localizer.Position.Architecture;
+package org.woen.RobotModule.Modules.Localizer.Architecture;
 
 import org.woen.Architecture.EventBus.IEvent;
 import org.woen.Architecture.Observers.IListener;
 import org.woen.Util.Vectors.Pose;
 
-public class RegisterNewVelocityListener implements IEvent<IListener<Pose>> {
+public class RegisterNewLocalPositionListener implements IEvent<IListener<Pose>> {
 
     private final IListener<Pose> data;
 
-    public RegisterNewVelocityListener(IListener<Pose> data) {
+    public RegisterNewLocalPositionListener(IListener<Pose> data) {
         this.data = data;
     }
 

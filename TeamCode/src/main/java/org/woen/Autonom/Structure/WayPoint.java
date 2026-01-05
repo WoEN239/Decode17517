@@ -19,7 +19,7 @@ public class WayPoint {
     public final AutonomTask onWay  ;
     public final AutonomTask onPoint;
 
-    private Pose pose = MatchData.start.pose;
+    private Pose pose = MatchData.getStartPose();
     public final Pose[] path;
     private void setPose(Pose pose){this.pose = pose;}
 
@@ -48,7 +48,7 @@ public class WayPoint {
 
     public void update(){
         double dstToEnd = path[path.length-1].vector.minus(pose.vector).length();
-        Telemetry.getInstance().add("dst",dstToEnd);
+        Telemetry.getInstance().add("dst to end in updated waypoint",dstToEnd);
         if(dstToEnd < endDetect){
             if(!isEndNear) {
                 RobotLog.dd("end_of_path_segment", "in waypoint " + name + " end detected (dst to end = " + dstToEnd +

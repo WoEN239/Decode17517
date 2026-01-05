@@ -28,10 +28,9 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Vectors.Pose;
@@ -62,6 +61,9 @@ public class GunImpl implements Gun {
     }
     private void setCommand(GUN_COMMAND command) {
         this.command = command;
+
+        EventBus.getInstance().invoke(new GunAtEatEvent(command==EAT));
+
         switch (command){
             case FULL_FIRE:
                 servoAction = fullFireAction.copy();
@@ -78,8 +80,6 @@ public class GunImpl implements Gun {
                 servoAction = buildColorFireServoAction(getInMotif(),P).copy();
                 break;
             case EAT:
-                EventBus.getInstance().invoke(new GunAtEatEvent(1));
-
                 servoAction = eatAction.copy();
                 break;
         }

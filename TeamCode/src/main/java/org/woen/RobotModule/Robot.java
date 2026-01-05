@@ -28,6 +28,6 @@ public class Robot {
         factory.getModules().forEach(IRobotModule::update);
         factory.getModules().forEach(IRobotModule::lateUpdate);
         factory.getModules().forEach(IRobotModule::deviceSetUpdate);
-        Telemetry.getInstance().loopAnd();
+        Telemetry.getInstance().loopEnd();
     }
 }

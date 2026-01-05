@@ -2,15 +2,15 @@ package org.woen.RobotModule.Modules.Gun.Arcitecture;
 
 import org.woen.Architecture.EventBus.IEvent;
 
-public class GunAtEatEvent implements IEvent<Integer> {
-    private final int data;
+public class GunAtEatEvent implements IEvent<Boolean> {
+    private final Boolean data;
 
-    public Integer getData() {
+    public Boolean getData() {
         return data;
 
     }
 
-    public GunAtEatEvent(int data) {
+    public GunAtEatEvent(Boolean data) {
         this.data = data;
 
     }

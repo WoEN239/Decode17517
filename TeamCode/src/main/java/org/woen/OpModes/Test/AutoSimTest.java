@@ -6,12 +6,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Pools.WaypointPoolNear;
+import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
-import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;
-import org.woen.RobotModule.Modules.Localizer.ActivationConfig.LocalizerActivationConfig;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
@@ -22,24 +22,18 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-@TeleOp(name = "localizer_test")
-public class LocalizerTest extends BaseOpMode {
-
+@TeleOp(name = "auto_sim")
+public class AutoSimTest extends BaseOpMode {
     @Override
     protected void initConfig(){
-        DeviceActivationConfig deviceConfig = new DeviceActivationConfig();
-        deviceConfig.motors.set(false);
-        deviceConfig.servos.set(false);
-        deviceConfig.odometers.set(true);
+        DeviceActivationConfig deviceConfig = DeviceActivationConfig.getAllOff();
         deviceActivationConfig = deviceConfig;
 
-        ModulesActivateConfig moduleConfig = new ModulesActivateConfig();
-        moduleConfig.localizer = LocalizerActivationConfig.getAllOn();
-        moduleConfig.driveTrain = DriveTrainActivationConfig.getAllOff();
-        moduleConfig.camera.set(false);
-        moduleConfig.gun.set(false);
-        moduleConfig.autonomTaskManager.set(false);
+        ModulesActivateConfig moduleConfig = ModulesActivateConfig.getAllOff();
+        moduleConfig.autonomTaskManager.set(true);
+        moduleConfig.driveTrain.trajectoryFollower.set(true);
         modulesActivationConfig = moduleConfig;
+        MatchData.setStartPose(MatchData.start.pose);
     }
 
     DatagramSocket socket = null;
@@ -47,7 +41,31 @@ public class LocalizerTest extends BaseOpMode {
     int port = 5005;
 
     @Override
-    public void initRun(){
+    protected void initRun() {
+        WaypointPoolNear poolNear = new WaypointPoolNear();
+        EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+                poolNear.aim1.copy(),
+                poolNear.fire1.copy(),
+                poolNear.rotate1.copy(),
+                poolNear.eat1.copy().setVel(150),
+                poolNear.aim2.copy().setVel(100),
+                poolNear.fire2.copy(),
+                poolNear.rotate2.copy(),
+                poolNear.eat2.copy().setVel(150),
+                poolNear.aim3.copy().setVel(150),
+                poolNear.fire3.copy(),
+                poolNear.rotate3.copy(),
+                poolNear.eat3.copy().setVel(150),
+                poolNear.aim4.copy().setVel(150),
+                poolNear.fire4.copy(),
+                poolNear.rotate4.copy(),
+                poolNear.eat4.copy().setVel(150),
+                poolNear.aim5.copy().setVel(150),
+                poolNear.fire5.copy(),
+                poolNear.park.copy().setVel(220)
+
+        ));
+
         try {
             socket = new DatagramSocket();
             address = InetAddress.getByName("192.168.43.170");
@@ -61,11 +79,10 @@ public class LocalizerTest extends BaseOpMode {
 
     private Pose pose = MatchData.getStartPose();
     private void setPose(Pose pose) {this.pose = pose;}
-
     ElapsedTime timer = new ElapsedTime();
     @Override
     protected void loopRun() {
-        if(timer.seconds()>0.25) {
+        if(timer.seconds()>0.1) {
             timer.reset();
 
             @SuppressLint("DefaultLocale") String data = String.format("%f,%f,%f", pose.h, pose.x, pose.y);
@@ -83,4 +100,5 @@ public class LocalizerTest extends BaseOpMode {
             }
         }
     }
+
 }

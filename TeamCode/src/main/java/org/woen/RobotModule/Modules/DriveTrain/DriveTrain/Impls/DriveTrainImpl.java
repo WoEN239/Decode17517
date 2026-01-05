@@ -9,8 +9,8 @@ import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.Hol
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedforwardController.FeedforwardController;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelsVoltageObserver;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
@@ -23,7 +23,7 @@ public class DriveTrainImpl implements DriveTrain {
     private FeedbackReference feedbackReference       = new FeedbackReference(new Pose(0,0,0),
                                                                               new Pose(0,0,0));
 
-    private Pose position = MatchData.start.pose;
+    private Pose position = MatchData.getStartPose();
     private Pose velocity = new Pose(0,0,0);
 
     public void setPosition(Pose position) {

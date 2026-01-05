@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Telemetry.ModulesInterfacesTelemetry.ModulesInterfacesTelemetry;
 
@@ -39,7 +39,7 @@ public class Telemetry {
 
     private final ArrayList<Runnable> configUpdates = new ArrayList<>();
 
-    public void loopAnd() {
+    public void loopEnd() {
         configUpdates.forEach(Runnable::run);
 
         if(target.get()){

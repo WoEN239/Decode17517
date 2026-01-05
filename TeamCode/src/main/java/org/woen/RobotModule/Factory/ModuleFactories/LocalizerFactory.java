@@ -6,9 +6,9 @@ import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerImpl;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerMoc;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Interface.LocalizerDeviceListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Impls.LocalizerImpl;
-import org.woen.RobotModule.Modules.Localizer.Position.Impls.PositionLocalizerMoc;
-import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
+import org.woen.RobotModule.Modules.Localizer.LocalizerImpl;
+import org.woen.RobotModule.Modules.Localizer.Impls.PositionLocalizerMoc;
+import org.woen.RobotModule.Modules.Localizer.Interface.PositionLocalizer;
 
 public class LocalizerFactory implements IRobotModuleFactory {
     private ModulesActivateConfig config;

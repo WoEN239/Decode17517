@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.Localizer.Position.Architecture;
+package org.woen.RobotModule.Modules.Localizer.Architecture;
 
 import org.woen.Architecture.EventBus.IEvent;
 import org.woen.Architecture.Observers.IListener;

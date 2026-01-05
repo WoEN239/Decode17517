@@ -1,10 +1,10 @@
-package org.woen.RobotModule.Modules.Localizer.Position.Impls;
+package org.woen.RobotModule.Modules.Localizer;
 
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.PositionObserver;
-import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.VelocityObserver;
+import org.woen.RobotModule.Modules.Localizer.Architecture.PositionObserver;
+import org.woen.RobotModule.Modules.Localizer.Interface.PositionLocalizer;
+import org.woen.RobotModule.Modules.Localizer.Architecture.VelocityObserver;
 import org.woen.Util.Vectors.Pose;
 
 public class LocalizerImpl implements PositionLocalizer {

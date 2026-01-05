@@ -7,10 +7,10 @@ import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.Re
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
 import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewLocalVelocityListener;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewLocalPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewLocalVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
@@ -37,8 +37,6 @@ public class ModulesInterfacesTelemetry {
         packet.put("robot pos",robotPos.toString());
         packet.put("robot vel",robotVel.toString());
 
-        packet.put("robot local pos",robotLocalPos.toString());
-        packet.put("robot local vel",robotLocalVel.toString());
     }
 
     public void addGyroToPacket(TelemetryPacket packet){

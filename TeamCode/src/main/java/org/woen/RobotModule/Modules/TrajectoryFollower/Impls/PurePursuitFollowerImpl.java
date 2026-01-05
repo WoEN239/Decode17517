@@ -2,7 +2,6 @@ package org.woen.RobotModule.Modules.TrajectoryFollower.Impls;
 
 import static org.woen.Util.Trajectory.Math.Line.LineSegment.lineFromTwoPoint;
 
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 import static java.lang.Math.sqrt;
@@ -12,7 +11,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
-import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
@@ -37,7 +36,7 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
     private boolean isReverse = false;
     private boolean isEndNear = false;
 
-    private Pose pose =  MatchData.start.pose;
+    private Pose pose =  MatchData.getStartPose();
     private void setPose(Pose pose) {this.pose = pose;}
 
     @Override
