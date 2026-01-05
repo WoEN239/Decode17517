@@ -9,9 +9,6 @@ import org.woen.RobotModule.Modules.Localizer.DeviceListener.Interface.Localizer
 import org.woen.RobotModule.Modules.Localizer.Position.Impls.LocalizerImpl;
 import org.woen.RobotModule.Modules.Localizer.Position.Impls.PositionLocalizerMoc;
 import org.woen.RobotModule.Modules.Localizer.Position.Interface.PositionLocalizer;
-import org.woen.RobotModule.Modules.Localizer.Velocity.Impls.VelocityLocalizerImpl;
-import org.woen.RobotModule.Modules.Localizer.Velocity.Impls.VelocityLocalizerMoc;
-import org.woen.RobotModule.Modules.Localizer.Velocity.Interface.VelocityLocalizer;
 
 public class LocalizerFactory implements IRobotModuleFactory {
     private ModulesActivateConfig config;
@@ -23,7 +20,7 @@ public class LocalizerFactory implements IRobotModuleFactory {
     @Override
     public IRobotModule[] create(){
         return new IRobotModule[]{
-                createDeviceListener(), createPositionLocalizer(), createVelocityLocalizer()
+                createDeviceListener(), createPositionLocalizer()
         };
     }
 
@@ -32,14 +29,6 @@ public class LocalizerFactory implements IRobotModuleFactory {
             return new LocalizerImpl();
         }else{
             return new PositionLocalizerMoc();
-        }
-    }
-
-    public VelocityLocalizer createVelocityLocalizer(){
-        if(config.localizer.velocity.get()){
-            return new VelocityLocalizerImpl();
-        }else{
-            return new VelocityLocalizerMoc();
         }
     }
 
