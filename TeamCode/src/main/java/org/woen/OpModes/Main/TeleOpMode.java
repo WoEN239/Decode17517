@@ -56,6 +56,10 @@ public class TeleOpMode extends BaseOpMode {
     private final BorderButton ptoButt = new BorderButton();
     private final BorderButton fireButt = new BorderButton();
     private final BorderButton patternFireButt = new BorderButton();
+    private final BorderButton purpleFireButt = new BorderButton();
+    private final BorderButton greenFireButt = new BorderButton();
+    private final BorderButton cancelFireButt = new BorderButton();
+
     private boolean isFarAim = false;
     private boolean isPtoActive = false;
     private int dir = 1;
@@ -100,6 +104,19 @@ public class TeleOpMode extends BaseOpMode {
         if (patternFireButt.get(gamepad1.dpad_right)) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
         }
+
+        if(greenFireButt.get(gamepad1.triangle)){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.G_FIRE));
+        }
+
+        if(purpleFireButt.get(gamepad1.square)){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.P_FIRE));
+        }
+
+        if(cancelFireButt.get(gamepad1.right_trigger>0.1)){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
+        }
+
 
         if (ptoButt.get(gamepad1.ps)) {
             isPtoActive = !isPtoActive;
