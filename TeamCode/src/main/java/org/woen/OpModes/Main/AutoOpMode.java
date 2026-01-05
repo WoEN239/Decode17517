@@ -41,7 +41,7 @@ public class AutoOpMode extends BaseOpMode {
                     poolFar.secondAim.copy().setVel(80),
                     poolFar.fire2.copy(),
                     poolFar.rotate2.copy(),
-                    poolFar.secondEat.copy().setVel(120).setEndDetect(20),
+                    poolFar.secondEat.copy().setVel(120),
                     poolFar.thirdAim.copy().setVel(80),
                     poolFar.fire3.copy(),
                     poolFar.rotate3.copy(),

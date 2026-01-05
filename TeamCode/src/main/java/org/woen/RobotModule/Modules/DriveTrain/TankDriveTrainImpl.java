@@ -13,7 +13,7 @@ import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelsVoltageObserver;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;

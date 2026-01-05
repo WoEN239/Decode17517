@@ -7,7 +7,7 @@ import org.woen.Config.MatchData;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Velocity.Architecture.RegisterNewVelocityListener;
+import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Robot;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.Util.Vectors.Pose;

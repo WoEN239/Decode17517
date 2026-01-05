@@ -14,10 +14,6 @@ public class GunServoPositions {
     public static double eatLPos = 0.307;
     public static double shotLPos = 0.545;
 
-    public static double open = 0.2;
-    public static double close = 0.7;
-    public static double halfClose = 0.5;  ;
-
     public static double aimRFar = 0.3;
     public static double aimRNear = 0.2;
 

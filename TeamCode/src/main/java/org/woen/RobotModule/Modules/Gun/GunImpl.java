@@ -1,6 +1,8 @@
 package org.woen.RobotModule.Modules.Gun;
 
 import static org.woen.Config.ControlSystemConstant.gunConfig;
+import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.G;
+import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.P;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
@@ -26,6 +28,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.RobotModule.Modules.Localizer.Position.Architecture.RegisterNewPositionListener;
@@ -68,6 +71,12 @@ public class GunImpl implements Gun {
                 break;
             case OFF:
                 break;
+            case G_FIRE:
+                servoAction = buildColorFireServoAction(getInMotif(),G).copy();
+                break;
+            case P_FIRE:
+                servoAction = buildColorFireServoAction(getInMotif(),P).copy();
+                break;
             case EAT:
                 EventBus.getInstance().invoke(new GunAtEatEvent(1));
 
@@ -95,9 +104,9 @@ public class GunImpl implements Gun {
     private double gunVelCenter = gunConfig.shootVelC;
     private double brushPower = 1;
 
-    PredominantColorProcessor.Swatch center = null;
-    PredominantColorProcessor.Swatch left = null;
-    PredominantColorProcessor.Swatch right = null;
+    private PredominantColorProcessor.Swatch center = null;
+    private PredominantColorProcessor.Swatch left = null;
+    private PredominantColorProcessor.Swatch right = null;
 
 
     private MOTIF getInMotif() {
@@ -268,7 +277,16 @@ public class GunImpl implements Gun {
             new BooleanSupplier[]{()->true},
             new Runnable[]{()->{servoL.setTarget(eatLPos);servoR.setTarget(eatRPos);servoC.setTarget(eatCPos);}});
 
-   
+    private ServoAction buildColorFireServoAction(MOTIF in,BALL_COLOR outColor){
+        Runnable servo  = this::shotLeft;
+        if(in.colors[1] == outColor){
+            servo = this::shotCenter;
+        }
+        if(in.colors[2] == outColor){
+            servo = this::shotRight;
+        }
+        return new ServoAction(servo::run);
+    }
     private ServoAction buildPatternFireAction(MOTIF in, MOTIF out) {
         Runnable[] servos = new Runnable[4];
         servos[3] = ()->setCommand(EAT);
@@ -326,4 +344,5 @@ public class GunImpl implements Gun {
                         () -> true
                 }, servos);
     }
+
 }
