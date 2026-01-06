@@ -3,6 +3,7 @@ package org.woen.RobotModule.Modules.Gun;
 import static org.woen.Config.ControlSystemConstant.gunConfig;
 import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.G;
 import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.P;
+import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PPG;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
@@ -17,12 +18,13 @@ import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.DevicePool.Devices.Servo.ServoWithFeedback;
+import org.woen.RobotModule.Modules.Battery.NewVoltageAvailable;
 import org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
-import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
@@ -83,7 +85,6 @@ public class GunImpl implements Gun {
                 servoAction = eatAction.copy();
                 break;
         }
-
     }
 
     private GUN_COMMAND command = EAT;
@@ -91,37 +92,38 @@ public class GunImpl implements Gun {
     private boolean isFarAim = false;
     private boolean isBrushRevers = false;
     private final Vector2d goal = MatchData.team.goalPose;
+    private double voltage = 12;
+
+    private void newVoltageOnEvent(NewVoltageAvailable e) {
+        this.voltage = e.getData();
+    }
 
     private void setAimCommand(NewAimEvent event) {isFarAim = event.getData();}
     private void setBrushReversCommand(NewBrushReversEvent event) {isBrushRevers = event.getData();}
 
-    private MOTIF targetMotif = MOTIF.PPG;
-    public void setTargetMotif(NewMotifEvent e) {
+    private MOTIF targetMotif = PPG;
+    public void setTargetMotif(NewTargetMotifEvent e) {
         this.targetMotif = e.getData();
     }
 
-    private double gunVelSide = gunConfig.shootVelSide;
-    private double gunVelCenter = gunConfig.shootVelC;
+    private double gunVelSide = gunConfig.shootVelSideFar;
+    private double gunVelCenter = gunConfig.shootVelCFar;
     private double brushPower = 1;
 
-    private PredominantColorProcessor.Swatch center = null;
-    private PredominantColorProcessor.Swatch left = null;
-    private PredominantColorProcessor.Swatch right = null;
+    private PredominantColorProcessor.Swatch center = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
+    private PredominantColorProcessor.Swatch left   = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
+    private PredominantColorProcessor.Swatch right = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
 
 
     private MOTIF getInMotif() {
-        MOTIF inMouth = null;
+        MOTIF inMouth = PPG;
         if (left == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-            inMouth = MOTIF.PPG;
-        else {
-            if (center == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-                inMouth = MOTIF.PGP;
-            else {
-                if (right == PredominantColorProcessor.Swatch.ARTIFACT_GREEN) {
-                    inMouth = MOTIF.GPP;
-                }
-            }
-        }
+            inMouth = PPG;
+        else if (center == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+            inMouth = MOTIF.PGP;
+        else if (right == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+            inMouth = MOTIF.GPP;
+
         return inMouth;
     }
 
@@ -159,10 +161,11 @@ public class GunImpl implements Gun {
         EventBus.getInstance().subscribe(NewGunCommandAvailable.class, this::setCommand);
         EventBus.getInstance().subscribe(NewAimEvent.class, this::setAimCommand);
         EventBus.getInstance().subscribe(NewBrushReversEvent.class, this::setBrushReversCommand);
-        EventBus.getInstance().subscribe(NewMotifEvent.class, this::setTargetMotif);
+        EventBus.getInstance().subscribe(NewTargetMotifEvent.class, this::setTargetMotif);
         EventBus.getInstance().subscribe(NewDetectionBallsRightEvent.class, this::setRightOnEvent);
         EventBus.getInstance().subscribe(NewDetectionBallsLeftEvent.class, this::setLeftOnEvent);
         EventBus.getInstance().subscribe(NewDetectionBallsCenterEvent.class, this::setCenterOnEvent);
+        EventBus.getInstance().subscribe(NewVoltageAvailable.class,this::newVoltageOnEvent);
 
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
     }
@@ -170,8 +173,12 @@ public class GunImpl implements Gun {
     @Override
     public void lateUpdate() {
         double dist = pose.vector.minus(goal).length();
+        gunVelSide   = gunConfig.shootVelSideNear;
+        gunVelCenter = gunConfig.shootVelCNear;
 
         if (isFarAim) {
+            gunVelSide   = gunConfig.shootVelSideFar;
+            gunVelCenter = gunConfig.shootVelCFar;
             farAim();
         } else {
             nearAim(dist);
@@ -205,9 +212,9 @@ public class GunImpl implements Gun {
             gunL.setPower(0);
             gunC.setPower(0);
         } else {
-            gunR.setPower(pidR.getU());
-            gunL.setPower(pidL.getU());
-            gunC.setPower(pidC.getU());
+            gunR.setPower(pidR.getU()*12/voltage);
+            gunL.setPower(pidL.getU()*12/voltage);
+            gunC.setPower(pidC.getU()*12/voltage);
         }
 
         servoAction.update();
@@ -216,7 +223,7 @@ public class GunImpl implements Gun {
 
     private void farAim() {
         setAimServoPos(aimLFar, aimCFar, aimRFar);
-        gunVelCenter = gunConfig.shootVelC;
+        gunVelCenter = gunConfig.shootVelCFar;
     }
 
     private void nearAim(double dist) {

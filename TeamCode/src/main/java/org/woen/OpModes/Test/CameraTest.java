@@ -8,7 +8,7 @@ import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
-import org.woen.RobotModule.Modules.Camera.Events.NewMotifEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
 import org.woen.Telemetry.Telemetry;
 
 @Disabled
@@ -26,7 +26,7 @@ public class CameraTest extends BaseOpMode {
         moduleConfig.camera.set(true);
         modulesActivationConfig = moduleConfig;
 
-        EventBus.getInstance().subscribe(NewMotifEvent.class,this::setMotif);
+        EventBus.getInstance().subscribe(NewTargetMotifEvent.class,this::setMotif);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class CameraTest extends BaseOpMode {
     }
 
     private MOTIF motif = MOTIF.PGP;
-    private void setMotif(NewMotifEvent event){
+    private void setMotif(NewTargetMotifEvent event){
         this.motif = event.getData();
     }
 }
