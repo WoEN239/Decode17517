@@ -1,5 +1,6 @@
 package org.woen.OpModes.Main;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
@@ -22,9 +23,32 @@ import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
 
+@Config
 @TeleOp(name = "teleOp")
 public class TeleOpMode extends BaseOpMode {
     private final FeedforwardReferenceObserver feedforwardReferenceObserver = new FeedforwardReferenceObserver();
+
+    public static PidStatus velPidStatusForward = new PidStatus(0.05, 0, 0., 0, 0, 0, 0);
+    Pid velForwardPid = new Pid(velPidStatusForward);
+    {
+        velForwardPid.isNormolized = false;
+        velForwardPid.isDAccessible = false;
+    }
+
+    public static PidStatus velAnglePidStatus = new PidStatus(0.1, 0, 0., 0, 0, 0, 0);
+    Pid velAnglePid = new Pid(velAnglePidStatus);
+    {
+        velAnglePid.isNormolized = false;
+        velAnglePid.isDAccessible = false;
+    }
+
+    public static PidStatus anglePidStatus = new PidStatus(10, 10, 1, 0, 0, 0.02, 0);
+    Pid anglePid = new Pid(anglePidStatus);
+    {
+        anglePid.isNormolized = true;
+        anglePid.isDAccessible = false;
+    }
+
 
     @Override
     protected void initConfig() {
@@ -50,6 +74,7 @@ public class TeleOpMode extends BaseOpMode {
     }
 
     private final BorderButton hiAimButt = new BorderButton();
+    private final BorderButton lowAimButt = new BorderButton();
     private final BorderButton dirReverseButt = new BorderButton();
     private final BorderButton brushReverseButt = new BorderButton();
     private final BorderButton brushReverseButt1 = new BorderButton();
@@ -60,16 +85,14 @@ public class TeleOpMode extends BaseOpMode {
     private final BorderButton greenFireButt = new BorderButton();
     private final BorderButton cancelFireButt = new BorderButton();
 
-    private boolean isFarAim = false;
     private boolean isPtoActive = false;
-    private int dir = 1;
 
     private Pose targetVelocity = new Pose(0,0,0);
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
-                -      (gamepad1.right_stick_x * Math.abs(gamepad1.right_stick_x)) * 8,
-                -dir * (gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y)    * 180),
+                -(gamepad1.right_stick_x * Math.abs(gamepad1.right_stick_x)) * 6,
+                   -(gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y)    * 180),
                 0
         );
 
@@ -85,23 +108,21 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewBrushReversEvent(false));
         }
 
-        if (dirReverseButt.get(gamepad1.left_bumper)) {
-            dir = -dir;
+        if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
+            EventBus.getInstance().invoke(new NewAimEvent(false));
         }
 
-        if (hiAimButt.get(gamepad1.dpad_up)) {
-            isFarAim = !isFarAim;
-            EventBus.getInstance().invoke(new NewAimEvent(isFarAim));
-        }
+        if (hiAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()>320)) {
+            EventBus.getInstance().invoke(new NewAimEvent(true));
+         }
 
-        isAngleControl = gamepad1.right_bumper;
+        isAngleControl = gamepad1.right_trigger>0.1;
 
-        if (fireButt.get(gamepad1.cross)) {
+        if (fireButt.get(gamepad1.left_bumper)) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
-            isAngleControl = false;
         }
 
-        if (patternFireButt.get(gamepad1.dpad_right)) {
+        if (patternFireButt.get(gamepad1.square)) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
         }
 
@@ -109,16 +130,12 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.G_FIRE));
         }
 
-        if(purpleFireButt.get(gamepad1.square)){
+        if(purpleFireButt.get(gamepad1.circle)){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.P_FIRE));
         }
 
-        if(cancelFireButt.get(gamepad1.right_trigger>0.1)){
+        if(cancelFireButt.get(gamepad1.cross)){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
-        }
-
-        if(gamepad1.circleWasPressed()){
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
         }
 
 
@@ -134,7 +151,6 @@ public class TeleOpMode extends BaseOpMode {
                 EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
             }
         }
-
 
     }
 
@@ -152,19 +168,6 @@ public class TeleOpMode extends BaseOpMode {
                   new PidStatus(0, 0, 0, 0, 0, 0, 0)
             );
         }
-        PidStatus anglePidStatus = new PidStatus(1.5, 10, 0.05, 0, 0, 0.02, 0);
-        Pid anglePid = new Pid(anglePidStatus);
-        {
-            anglePid.isNormolized = true;
-            anglePid.isDAccessible = false;
-        }
-        PidStatus velPidStatus = new PidStatus(0., 0, 0., 0, 0, 0, 0);
-        Pid velPid = new Pid(velPidStatus);
-        {
-            velPid.isNormolized = false;
-            velPid.isDAccessible = false;
-        }
-
         @Override
         public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
             if(isAngleControl) {
@@ -173,10 +176,15 @@ public class TeleOpMode extends BaseOpMode {
                 anglePid.update();
                 return new Pose(anglePid.getU(), 0, 0);
             } else {
-                velPid.setTarget(targetVelocity.h);
-                velPid.setPos(velocity.h);
-                velPid.update();
-                return new Pose(velPid.getU(), 0, 0);
+                velAnglePid.setTarget(targetVelocity.h);
+                velAnglePid.setPos(velocity.h);
+                velAnglePid.update();
+
+                velForwardPid.setTarget(targetVelocity.x);
+                velForwardPid.setPos(velocity.vector.rotate(-pose.h).x);
+                velForwardPid.update();
+
+                return new Pose(velAnglePid.getU(), velForwardPid.getU(), 0);
             }
         }
     }

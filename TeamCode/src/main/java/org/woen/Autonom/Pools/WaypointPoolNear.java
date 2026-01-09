@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Structure.AutonomTask;
 import org.woen.Autonom.Structure.WayPoint;
+import org.woen.Config.MatchData;
+import org.woen.Config.Team;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
@@ -45,22 +47,6 @@ public class WaypointPoolNear extends WaypointPool{
             ),
             false, pool.fireFar
     ).setName("fire3").setEndDetect(30).setEndAngle(this::angleToGoal);
-    public WayPoint fire4 = new WayPoint(
-            new AutonomTask(
-                    () -> isGunEat,
-                    () -> RobotLog.dd("auto", "fire4"),
-                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
-            ),
-            false, pool.fireNear
-    ).setName("fire4").setEndDetect(30).setEndAngle(this::angleToGoal);
-    public WayPoint fire5 = new WayPoint(
-            new AutonomTask(
-                    () -> isGunEat,
-                    () -> RobotLog.dd("auto", "fire5"),
-                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
-            ),
-            false, pool.fireNear
-    ).setName("fire5").setEndDetect(30).setEndAngle(this::angleToGoal);
 
     public WayPoint rotate1 = new WayPoint(
             new Runnable[]{
@@ -152,6 +138,17 @@ public class WaypointPoolNear extends WaypointPool{
 
 }
 class PositionPoolNear {
+    public PositionPoolNear(){
+        if(MatchData.team == Team.RED){
+            fireFar = fireFar.teamReverse();
+            fireNear = fireNear.teamReverse();
+            eat1 = eat1.teamReverse();
+            eat2 = eat2.teamReverse();
+            eat3 = eat3.teamReverse();
+            eat4 = eat4.teamReverse();
+            park = park.teamReverse();
+        }
+    }
     public Pose fireFar  = new Pose(0,140,-57);
     public Pose fireNear  = new Pose(0,-25,-25);
     public Pose eat1 = new Pose(-0.5*PI,160,-148);

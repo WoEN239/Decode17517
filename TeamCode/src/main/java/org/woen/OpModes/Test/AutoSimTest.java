@@ -56,13 +56,8 @@ public class AutoSimTest extends BaseOpMode {
                 poolNear.fire3.copy(),
                 poolNear.rotate3.copy(),
                 poolNear.eat3.copy().setVel(150),
-                poolNear.aim4.copy().setVel(150),
-                poolNear.fire4.copy(),
-                poolNear.rotate4.copy(),
-                poolNear.eat4.copy().setVel(150),
-                poolNear.aim5.copy().setVel(150),
-                poolNear.fire5.copy(),
-                poolNear.park.copy().setVel(220)
+                poolNear.aim4.copy().setVel(150)
+
 
         ));
 

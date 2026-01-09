@@ -32,32 +32,32 @@ public class AutoOpMode extends BaseOpMode {
     @Override
     protected void initRun() {
 
-        if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
-            EventBus.getInstance().invoke(new NewAimEvent(true));
-            WaypointPoolFar poolFar = new WaypointPoolFar();
-            EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
-                poolFar.firstAim.copy().setVel(70),
-                poolFar.fire1.copy(),
-                poolFar.rotate1.copy(),
-                poolFar.firstEat.copy().setVel(120),
-                poolFar.secondAim.copy().setVel(80),
-                poolFar.fire2.copy(),
-                poolFar.rotate2.copy(),
-                poolFar.secondEat.copy().setVel(120),
-                poolFar.thirdAim.copy().setVel(80),
-                poolFar.fire3.copy(),
-                poolFar.rotate3.copy(),
-                poolFar.thirdEat.copy().setVel(150),
-                poolFar.thirdEatRotate.copy(),
-                poolFar.forthAim.copy().setVel(110),
-                poolFar.fire4.copy(),
-                poolFar.rotate4.copy(),
-                poolFar.forthEat.copy().setVel(150),
-                poolFar.fiveAim.copy().setVel(110),
-                poolFar.fire5.copy(),
-                poolFar.park.copy()
-        ));
-        }
+//        if(MatchData.start == Start.FAR_BLUE || MatchData.start == Start.FAR_RED){
+//            EventBus.getInstance().invoke(new NewAimEvent(true));
+//            WaypointPoolFar poolFar = new WaypointPoolFar();
+//            EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+//                poolFar.firstAim.copy().setVel(70),
+//                poolFar.fire1.copy(),
+//                poolFar.rotate1.copy(),
+//                poolFar.firstEat.copy().setVel(120),
+//                poolFar.secondAim.copy().setVel(80),
+//                poolFar.fire2.copy(),
+//                poolFar.rotate2.copy(),
+//                poolFar.secondEat.copy().setVel(120),
+//                poolFar.thirdAim.copy().setVel(80),
+//                poolFar.fire3.copy(),
+//                poolFar.rotate3.copy(),
+//                poolFar.thirdEat.copy().setVel(150),
+//                poolFar.thirdEatRotate.copy(),
+//                poolFar.forthAim.copy().setVel(110),
+//                poolFar.fire4.copy(),
+//                poolFar.rotate4.copy(),
+//                poolFar.forthEat.copy().setVel(150),
+//                poolFar.fiveAim.copy().setVel(110),
+//                poolFar.fire5.copy(),
+//                poolFar.park.copy()
+//        ));
+//        }
 
         if(MatchData.start == Start.NEAR_BLUE || MatchData.start == Start.NEAR_RED){
             EventBus.getInstance().invoke(new NewAimEvent(false));
@@ -73,14 +73,6 @@ public class AutoOpMode extends BaseOpMode {
                     poolNear.eat2.copy().setVel(150),
                     poolNear.aim3.copy().setVel(150),
                     poolNear.fire3.copy(),
-                    poolNear.rotate3.copy(),
-                    poolNear.eat3.copy().setVel(150),
-                    poolNear.aim4.copy().setVel(150),
-                    poolNear.fire4.copy(),
-                    poolNear.rotate4.copy(),
-                    poolNear.eat4.copy().setVel(150),
-                    poolNear.aim5.copy().setVel(150),
-                    poolNear.fire5.copy(),
                     poolNear.park.copy().setVel(220)
 
             ));
