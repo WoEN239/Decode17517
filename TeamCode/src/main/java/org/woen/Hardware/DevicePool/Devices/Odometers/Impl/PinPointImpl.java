@@ -19,9 +19,10 @@ public class PinPointImpl implements PinPoint {
     }
 
     public void init(){
-        pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        pinpointDriver.setOffsets(12.589,0, DistanceUnit.CM);
+        pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+        pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        pinpointDriver.setOffsets(-12.5,-20, DistanceUnit.CM);
         pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.getStartPose().x, MatchData.getStartPose().y,
                 AngleUnit.RADIANS,MatchData.getStartPose().h));
         pinpointDriver.recalibrateIMU();

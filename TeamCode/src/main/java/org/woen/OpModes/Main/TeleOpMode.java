@@ -68,8 +68,8 @@ public class TeleOpMode extends BaseOpMode {
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
-                -      (gamepad1.right_stick_x * Math.abs(gamepad1.right_stick_x)) * 7.5,
-                -dir * (gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y)    * 220),
+                -      (gamepad1.right_stick_x * Math.abs(gamepad1.right_stick_x)) * 8,
+                -dir * (gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y)    * 180),
                 0
         );
 
@@ -117,6 +117,10 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
+        if(gamepad1.circleWasPressed()){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
+        }
+
 
         if (ptoButt.get(gamepad1.ps)) {
             isPtoActive = !isPtoActive;
@@ -154,7 +158,7 @@ public class TeleOpMode extends BaseOpMode {
             anglePid.isNormolized = true;
             anglePid.isDAccessible = false;
         }
-        PidStatus velPidStatus = new PidStatus(0, 0, 0, 0, 0, 0, 0);
+        PidStatus velPidStatus = new PidStatus(0., 0, 0., 0, 0, 0, 0);
         Pid velPid = new Pid(velPidStatus);
         {
             velPid.isNormolized = false;

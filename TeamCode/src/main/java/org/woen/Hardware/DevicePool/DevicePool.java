@@ -32,6 +32,7 @@ public class DevicePool {
     public Motor gunC;
     public Motor gunL;
     public Motor brush;
+    public Motor light;
 
     public ServoMotor shotR;
     public ServoMotor shotL;
@@ -98,6 +99,8 @@ public class DevicePool {
         gunR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         gunC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        light = factory.createDcMotor("light",new Provider<>(0d), new Provider<>(0d));
 
         brush.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 

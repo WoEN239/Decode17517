@@ -54,6 +54,7 @@ public class GunImpl implements Gun {
     private Motor gunC;
 
     private Motor brush;
+    private Motor light;
 
     private final Pid pidR = new Pid(gunConfig.rightPidStatus);
     private final Pid pidL = new Pid(gunConfig.leftPidStatus);
@@ -140,15 +141,16 @@ public class GunImpl implements Gun {
 
     @Override
     public void init() {
-        servoR = new ServoWithFeedback(DevicePool.getInstance().shotR);
-        servoC = new ServoWithFeedback(DevicePool.getInstance().shotC);
-        servoL = new ServoWithFeedback(DevicePool.getInstance().shotL);
+        servoR = new ServoWithFeedback(DevicePool.getInstance().shotR,eatRPos);
+        servoC = new ServoWithFeedback(DevicePool.getInstance().shotC,eatCPos);
+        servoL = new ServoWithFeedback(DevicePool.getInstance().shotL,eatLPos);
 
         gunR = DevicePool.getInstance().gunR;
         gunL = DevicePool.getInstance().gunL;
         gunC = DevicePool.getInstance().gunC;
 
         brush = DevicePool.getInstance().brush;
+        light = DevicePool.getInstance().light;
 
         aimR = DevicePool.getInstance().aimR;
         aimC = DevicePool.getInstance().aimC;
@@ -203,8 +205,9 @@ public class GunImpl implements Gun {
         pidC.update();
 
 
-        Telemetry.getInstance().add("target   motif", getInMotif());
+        Telemetry.getInstance().add("target   motif", targetMotif);
         Telemetry.getInstance().add("in robot motif", getInMotif());
+        Telemetry.getInstance().add("gun case", command);
 
 
         if (command == OFF) {
@@ -218,7 +221,11 @@ public class GunImpl implements Gun {
         }
 
         servoAction.update();
+        servoR.update();
+        servoC.update();
+        servoL.update();
         brush.setPower(brushPower);
+        light.setPower(1);
     }
 
     private void farAim() {
@@ -295,8 +302,7 @@ public class GunImpl implements Gun {
         return new ServoAction(servo::run);
     }
     private ServoAction buildPatternFireAction(MOTIF in, MOTIF out) {
-        Runnable[] servos = new Runnable[4];
-        servos[3] = ()->setCommand(EAT);
+        Runnable[] servos = new Runnable[3];
 
         boolean[] servosBusy = new boolean[]{true, true, true};
         if (out.colors[0] == in.colors[0] && servosBusy[0]) {
@@ -342,14 +348,20 @@ public class GunImpl implements Gun {
         }
 
         ElapsedTime patterFireTimer = new ElapsedTime();
-
         return new ServoAction(
                 new BooleanSupplier[]{
-                        () -> true,
+                        () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                         () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                         () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                         () -> true
-                }, servos);
+                },
+                new Runnable[]{
+                        ()->{servos[0].run();patterFireTimer.reset();},
+                        ()->{servos[1].run();patterFireTimer.reset();},
+                        ()->{servos[2].run();patterFireTimer.reset();},
+                        ()->setCommand(EAT),
+
+                });
     }
 
 }

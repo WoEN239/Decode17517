@@ -37,19 +37,19 @@ public class CameraImpl implements Camera {
 
     /// left
     public static double leftL = -0.6;
-    public static double topL = 0.9;
+    public static double topL = 1;
     public static double rightL = -0.5;
-    public static double bottomL = 0.7;
+    public static double bottomL = 0.8;
     /// center
     public static double   leftC = -0.25;
-    public static double    topC = 0.9;
+    public static double    topC = 1;
     public static double  rightC = -0.1;
-    public static double bottomC = 0.7;
+    public static double bottomC = 0.8;
     /// right
     public static double   leftR = 0.8;
-    public static double    topR = 0.9;
+    public static double    topR = 1;
     public static double  rightR = 1;
-    public static double bottomR = 0.7;
+    public static double bottomR = 0.8;
     PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
             .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
             .setSwatches(
@@ -124,8 +124,8 @@ public class CameraImpl implements Camera {
             latterTargetMotif = motif;
         }
 
-        PredominantColorProcessor.Result resultL = leftDetection.getAnalysis();
-        PredominantColorProcessor.Result resultR = rightDetection.getAnalysis();
+        PredominantColorProcessor.Result resultL = rightDetection.getAnalysis();
+        PredominantColorProcessor.Result resultR = leftDetection.getAnalysis();
         PredominantColorProcessor.Result resultC = centerDetection.getAnalysis();
 
 

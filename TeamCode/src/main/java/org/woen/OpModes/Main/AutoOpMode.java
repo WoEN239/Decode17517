@@ -23,7 +23,7 @@ public class AutoOpMode extends BaseOpMode {
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
-        modConfig.camera.set(false);
+        modConfig.camera.set(true);
         modulesActivationConfig = modConfig;
 
         MatchData.setStartPose(MatchData.start.pose);
@@ -90,7 +90,5 @@ public class AutoOpMode extends BaseOpMode {
     protected void loopRun() {}
 
     @Override
-    protected void lastRun() {
-        OpModeManagerImpl.getOpModeManagerOfActivity(AppUtil.getInstance().getActivity()).initOpMode("teleOp");
-    }
+    protected void lastRun() {}
 }

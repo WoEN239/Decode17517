@@ -41,13 +41,13 @@ public class ControlSystemConstant {
 
     public static class GunConfig {
         public double velTol = 60;
-        public double patternFireDelay = 0.2;
+        public double patternFireDelay = 1.5;
 
-        public double shootVelSideFar = 2000;
-        public double shootVelSideNear = 1800;
+        public double shootVelSideFar = 1840;
+        public double shootVelSideNear = 1600;
 
-        public double shootVelCFar = 1700;
-        public double shootVelCNear = 1600;
+        public double shootVelCFar = 1880;
+        public double shootVelCNear = 1640;
 
         public double deltaPosC = 0.;
         public double deltaPosS = 0.;

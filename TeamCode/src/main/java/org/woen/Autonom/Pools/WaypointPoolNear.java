@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Structure.AutonomTask;
 import org.woen.Autonom.Structure.WayPoint;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
@@ -15,6 +16,7 @@ public class WaypointPoolNear extends WaypointPool{
     PositionPoolNear pool = new PositionPoolNear();
     public WayPoint aim1 = new WayPoint(
             new Runnable[]{
+                    () -> EventBus.getInstance().invoke(new NewAimEvent(true)),
                     () -> RobotLog.dd("auto", "aim1")
             }, true, pool.fireFar.plus(new Pose(0, 5, 0))
     ).setName("aim1").setEndAngle(this::angleToGoal);
@@ -23,7 +25,7 @@ public class WaypointPoolNear extends WaypointPool{
             new AutonomTask(
                     () -> isGunEat,
                     () -> RobotLog.dd("auto", "fire1"),
-                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
+                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
             ),
             false, pool.fireFar
     ).setName("fire1").setEndDetect(30).setEndAngle(this::angleToGoal);
@@ -31,7 +33,7 @@ public class WaypointPoolNear extends WaypointPool{
             new AutonomTask(
                     () -> isGunEat,
                     () -> RobotLog.dd("auto", "fire2"),
-                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
+                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
             ),
             false, pool.fireFar
     ).setName("fire2").setEndDetect(30).setEndAngle(this::angleToGoal);
@@ -39,9 +41,9 @@ public class WaypointPoolNear extends WaypointPool{
             new AutonomTask(
                     () -> isGunEat,
                     () -> RobotLog.dd("auto", "fire3"),
-                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
+                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
             ),
-            false, pool.fireNear
+            false, pool.fireFar
     ).setName("fire3").setEndDetect(30).setEndAngle(this::angleToGoal);
     public WayPoint fire4 = new WayPoint(
             new AutonomTask(
@@ -84,26 +86,26 @@ public class WaypointPoolNear extends WaypointPool{
             new Runnable[]{
                     () -> RobotLog.dd("auto", "rotate2")
             }, false,  pool.fireFar
-    ).setName("rotate2").setEndDetect(30).setEndAngle(()->angleTo(pool.eat2[0].vector));
+    ).setName("rotate2").setEndDetect(30).setEndAngle(()->angleTo(pool.eat2.vector));
 
     public WayPoint eat2 = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "eat2")
             },
             false, pool.eat2
-    ).setName("eat2").setEndDetect(10).setEndAngle(()->PI+angleTo(pool.fireNear.vector));
+    ).setName("eat2").setEndDetect(10).setEndAngle(()->angleTo(pool.fireFar.vector)).setLookAheadRadius(40);
 
     public WayPoint aim3 = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "aim3")
             },
-            true, pool.fireNear
-    ).setName("aim3").setEndAngle(this::angleToGoal).setEndDetect(10);
+            false, pool.fireFar
+    ).setName("aim3").setEndAngle(this::angleToGoal).setEndDetect(30);
 
     public WayPoint rotate3 = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "rotate3")
-            }, false,  pool.fireNear
+            }, false,  pool.fireFar
     ).setName("rotate3").setEndDetect(30).setEndAngle(()->angleTo(pool.eat3.vector));
 
     public WayPoint eat3 = new WayPoint(
@@ -111,7 +113,7 @@ public class WaypointPoolNear extends WaypointPool{
                     () -> RobotLog.dd("auto", "eat3")
             },
             false, pool.eat3
-    ).setName("eat3").setEndDetect(10).setEndAngle(()->PI+angleTo(pool.fireNear.vector));
+    ).setName("eat3").setEndDetect(10).setEndAngle(()->PI+angleTo(pool.fireFar.vector));
 
     public WayPoint aim4 = new WayPoint(
             new Runnable[]{
@@ -153,8 +155,8 @@ class PositionPoolNear {
     public Pose fireFar  = new Pose(0,140,-57);
     public Pose fireNear  = new Pose(0,-25,-25);
     public Pose eat1 = new Pose(-0.5*PI,160,-148);
-    public Pose[] eat2 = new Pose[]{new Pose(0,50,-57),new Pose(0,50,-110)};
-    public Pose eat3 = new Pose(0,-25,-110);
+    public Pose eat2 = new Pose(0,87,-120);
+    public Pose eat3 = new Pose(0,-60,-130);
     public Pose eat4 = new Pose(0,98,-103);
 
     public Pose park = new Pose(0,-150,-50);
