@@ -15,12 +15,15 @@ public class GunServoPositions {
     public static double shotLPos = 0.48;
 
     public static double aimRFar = 0.425;
+    public static double aimRPat = 0.425;
     public static double aimRNear = 0.625;
 
     public static double aimCFar = 0.3;
+    public static double aimCPat = 0.3;
     public static double aimCNear = 0.6;
 
     public static double aimLFar = 0.175;
+    public static double aimLPat = 0.175;
     public static double aimLNear = 0.375;
 
     public static double ptoROpen = 0.8;

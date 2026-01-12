@@ -11,6 +11,7 @@ import org.woen.Config.MatchData;
 import org.woen.Config.Team;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
+import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
@@ -18,7 +19,7 @@ public class Far9PatternPool extends WaypointPool{
     PositionPoolNear pool = new PositionPoolNear();
     public WayPoint aim1 = new WayPoint(
             new Runnable[]{
-                    () -> EventBus.getInstance().invoke(new NewAimEvent(true)),
+                    () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.PATTERN)),
                     () -> RobotLog.dd("auto", "aim1")
             }, true, pool.fireFar.plus(new Pose(0, 0, 0))
     ).setName("aim1").setEndAngle(this::angleToGoal);

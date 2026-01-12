@@ -6,6 +6,9 @@ import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.P;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.GPP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PGP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PPG;
+import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.FAR;
+import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.NEAR;
+import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.PATTERN;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
@@ -32,6 +35,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
+import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
@@ -95,7 +99,7 @@ public class GunImpl implements Gun {
 
     private GUN_COMMAND command = EAT;
     private ServoAction servoAction = new ServoAction();
-    private boolean isFarAim = false;
+    private AIM_COMMAND aimCommand = FAR;
     private boolean isBrushRevers = false;
     private final Vector2d goal = MatchData.team.goalPose;
     private double voltage = 12;
@@ -104,7 +108,7 @@ public class GunImpl implements Gun {
         this.voltage = e.getData();
     }
 
-    private void setAimCommand(NewAimEvent event) {isFarAim = event.getData();}
+    private void setAimCommand(NewAimEvent event) {aimCommand = event.getData();}
     private void setBrushReversCommand(NewBrushReversEvent event) {isBrushRevers = event.getData();}
 
     private MOTIF targetMotif = PPG;
@@ -180,15 +184,20 @@ public class GunImpl implements Gun {
     @Override
     public void lateUpdate() {
         double dist = pose.vector.minus(goal).length();
-        gunVelSide   = gunConfig.shootVelSideNear;
-        gunVelCenter = gunConfig.shootVelCNear;
 
-        if (isFarAim) {
+
+        if (aimCommand == FAR) {
             gunVelSide   = gunConfig.shootVelSideFar;
             gunVelCenter = gunConfig.shootVelCFar;
             farAim();
-        } else {
+        } else if (aimCommand == NEAR){
+            gunVelSide   = gunConfig.shootVelSideNear;
+            gunVelCenter = gunConfig.shootVelCNear;
             nearAim(dist);
+        } else if(aimCommand == PATTERN){
+            gunVelSide   = gunConfig.shootVelSidePattern;
+            gunVelCenter = gunConfig.shootVelCPattern;
+            patternAim();
         }
 
         if(isBrushRevers){
@@ -213,6 +222,7 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("target   motif", targetMotif);
         Telemetry.getInstance().add("in robot motif", getInMotif());
         Telemetry.getInstance().add("gun case", command);
+        Telemetry.getInstance().add("dist to goal", dist);
 
 
         if (command == OFF) {
@@ -235,19 +245,18 @@ public class GunImpl implements Gun {
 
     private void farAim() {
         setAimServoPos(aimLFar, aimCFar, aimRFar);
-        gunVelCenter = gunConfig.shootVelCFar;
+    }
+    private void patternAim() {
+        setAimServoPos(aimLPat, aimCPat, aimRPat);
     }
 
     private void nearAim(double dist) {
-
         double deltaC = (dist - gunConfig.distLow) * gunConfig.deltaPosC / (gunConfig.distHi - gunConfig.distLow);
         double deltaS = (dist - gunConfig.distLow) * gunConfig.deltaPosS / (gunConfig.distHi - gunConfig.distLow);
         Telemetry.getInstance().add("deltaC", deltaC);
         Telemetry.getInstance().add("deltaS", deltaS);
 
         setAimServoPos(aimLNear + deltaS, aimCNear + deltaC, aimRNear + deltaS);
-        gunVelCenter = gunConfig.shootVelCNear;
-        gunVelSide = gunConfig.shootVelSideNear;
     }
 
     private void setAimServoPos(double l, double c, double r) {

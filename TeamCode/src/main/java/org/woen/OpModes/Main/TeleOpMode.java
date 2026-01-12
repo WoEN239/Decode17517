@@ -21,6 +21,7 @@ import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.Tan
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
+import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
@@ -125,11 +126,11 @@ public class TeleOpMode extends BaseOpMode {
         }
 
         if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
-            EventBus.getInstance().invoke(new NewAimEvent(false));
+            EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR));
         }
 
         if (hiAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()>320)) {
-            EventBus.getInstance().invoke(new NewAimEvent(true));
+            EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR));
          }
 
         isAngleControl = gamepad1.right_trigger>0.1;

@@ -45,7 +45,9 @@ public class ControlSystemConstant {
 
         public double shootVelSideFar = 1860;
         public double shootVelSideNear = 1600;
+        public double shootVelSidePattern = 1600;
 
+        public double shootVelCPattern = 1860;
         public double shootVelCFar = 1860;
         public double shootVelCNear = 1640;
 
