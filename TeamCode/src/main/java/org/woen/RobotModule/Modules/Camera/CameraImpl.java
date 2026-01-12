@@ -16,6 +16,7 @@ import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
+import org.woen.OpModes.EndOfOpModeEvent;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
@@ -37,19 +38,19 @@ public class CameraImpl implements Camera {
 
     /// left
     public static double leftL = -0.6;
-    public static double topL = -0.2;
+    public static double topL = 0.9;
     public static double rightL = -0.5;
-    public static double bottomL = -0.4;
+    public static double bottomL = 0.65;
     /// center
     public static double   leftC = -0.25;
-    public static double    topC = -0.2;
+    public static double    topC = 1;
     public static double  rightC = -0.15;
-    public static double bottomC = -0.4;
+    public static double bottomC = 0.8;
     /// right
     public static double   leftR = 0.8;
-    public static double    topR = -0.1;
+    public static double    topR = 0.9;
     public static double  rightR = 1;
-    public static double bottomR = -0.2;
+    public static double bottomR = 0.8;
     PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
             .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
             .setSwatches(
@@ -77,6 +78,11 @@ public class CameraImpl implements Camera {
 
     private VisionPortal visionPortal;
 
+    @Override
+    public void subscribeInit(){
+        EventBus.getInstance().subscribe(EndOfOpModeEvent.class,this::end);
+    }
+    private void end(EndOfOpModeEvent e){visionPortal.close();}
     @Override
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;

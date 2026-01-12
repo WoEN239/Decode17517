@@ -13,7 +13,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
-public class WaypointPoolFar extends WaypointPool {
+public class Far15BallPool extends WaypointPool {
     PositionPoolFar pool = new PositionPoolFar();
     public WayPoint firstAim = new WayPoint(
             new Runnable[]{
@@ -159,6 +159,32 @@ public class WaypointPoolFar extends WaypointPool {
             AutonomTask.Stub,
             true, new Pose(0, 0, -70)
     ).setVel(200);
+
+    @Override
+    public WayPoint[] getPool() {
+        return new WayPoint[]{
+            firstAim.copy().setVel(70),
+            fire1.copy(),
+            rotate1.copy(),
+            firstEat.copy().setVel(120),
+            secondAim.copy().setVel(80),
+            fire2.copy(),
+            rotate2.copy(),
+            secondEat.copy().setVel(120),
+            thirdAim.copy().setVel(80),
+            fire3.copy(),
+            rotate3.copy(),
+            thirdEat.copy().setVel(150),
+            thirdEatRotate.copy(),
+            forthAim.copy().setVel(110),
+            fire4.copy(),
+            rotate4.copy(),
+            forthEat.copy().setVel(150),
+            fiveAim.copy().setVel(110),
+            fire5.copy(),
+            park.copy()
+        };
+    }
 }
 class PositionPoolFar {
     public Pose fire = new Pose(0.324,140,-57);

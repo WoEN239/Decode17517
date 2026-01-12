@@ -1,10 +1,17 @@
 package org.woen.OpModes.Main;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Structure.AutonomTask;
+import org.woen.Autonom.Structure.WayPoint;
+import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
+import org.woen.Config.Team;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.BaseOpMode;
@@ -18,7 +25,7 @@ import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.SetNewTargetTrajectorySegmentEvent;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
@@ -28,14 +35,14 @@ import org.woen.Util.Vectors.Pose;
 public class TeleOpMode extends BaseOpMode {
     private final FeedforwardReferenceObserver feedforwardReferenceObserver = new FeedforwardReferenceObserver();
 
-    public static PidStatus velPidStatusForward = new PidStatus(0.05, 0, 0., 0, 0, 0, 0);
+    public static PidStatus velPidStatusForward = new PidStatus(0.0141, 0, 0., 0, 0, 0, 0);
     Pid velForwardPid = new Pid(velPidStatusForward);
     {
         velForwardPid.isNormolized = false;
         velForwardPid.isDAccessible = false;
     }
 
-    public static PidStatus velAnglePidStatus = new PidStatus(0.1, 0, 0., 0, 0, 0, 0);
+    public static PidStatus velAnglePidStatus = new PidStatus(0.635, 0, 0., 0, 0, 0, 0);
     Pid velAnglePid = new Pid(velAnglePidStatus);
     {
         velAnglePid.isNormolized = false;
@@ -49,6 +56,11 @@ public class TeleOpMode extends BaseOpMode {
         anglePid.isDAccessible = false;
     }
 
+    public static Pose park = new Pose(0,102,85);
+
+    private TankFeedbackController tankFeedbackController = new TankFeedbackController(
+            ControlSystemConstant.feedbackConfig.xPid,
+            ControlSystemConstant.feedbackConfig.hPid);
 
     @Override
     protected void initConfig() {
@@ -59,17 +71,21 @@ public class TeleOpMode extends BaseOpMode {
         deviceActivationConfig = devConfig;
 
         ModulesActivateConfig modConfig = ModulesActivateConfig.getAllOn();
-        modConfig.driveTrain.trajectoryFollower.set(false);
+        modConfig.driveTrain.trajectoryFollower.set(true);
         modConfig.driveTrain.voltageController.set(true);
         modConfig.gun.set(true);
         modConfig.camera.set(true);
         modConfig.autonomTaskManager.set(false);
         modulesActivationConfig = modConfig;
+
+        if(MatchData.team == Team.RED){
+            park = park.teamReverse();
+        }
     }
 
     @Override
     protected void modulesReplace() {
-        robot.getFactory().replace(TrajectoryFollower.class, new TrajectoryFollower() {});
+        //robot.getFactory().replace(TrajectoryFollower.class, new TrajectoryFollower() {});
         EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new TeleOpFeedback()));
     }
 
@@ -91,8 +107,8 @@ public class TeleOpMode extends BaseOpMode {
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
-                -(gamepad1.right_stick_x * Math.abs(gamepad1.right_stick_x)) * 6,
-                   -(gamepad1.left_stick_y * Math.abs(gamepad1.left_stick_y)    * 180),
+                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * 7.8 ,
+                   -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y)    * 180),
                 0
         );
 
@@ -138,22 +154,43 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
+        if(gamepad1.psWasPressed()){
+            DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOffPos);
+            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
 
-        if (ptoButt.get(gamepad1.ps)) {
-            isPtoActive = !isPtoActive;
-            if(isPtoActive) {
-                DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
-                DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
-                EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
-            }else{
-                DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-                DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
-                EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
-            }
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
+
+        }
+
+        if(ptoButt.get(gamepad1.dpad_up)){
+            isAngleControl = false;
+            EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(
+                        wayPoint
+            ));
+
+            isPtoActive = true;
+        }
+        if(isPtoActive && pose.vector.minus(park.vector).length()<10 ){
+            isAngleControl = true;
+            angleToControl = PI;
+        }
+
+        if(isPtoActive && pose.vector.minus(park.vector).length()<10 && abs(pose.h-PI)<0.015 ){
+            DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOnPos);
+            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
+            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
+
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
         }
 
     }
-
+    private WayPoint wayPoint = new WayPoint(
+            AutonomTask.Stub,
+            true,park
+    ).setEndAngle(()->park.h).setVel(120);
+    private BorderButton goButt = new BorderButton();
+    private BorderButton upButt = new BorderButton();
     @Override
     protected void initRun() {
         DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);

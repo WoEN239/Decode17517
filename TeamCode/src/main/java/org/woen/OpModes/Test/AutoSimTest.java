@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.Pools.WaypointPoolNear;
+import org.woen.Autonom.Pools.Far9PatternPool;
 import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
@@ -42,7 +42,7 @@ public class AutoSimTest extends BaseOpMode {
 
     @Override
     protected void initRun() {
-        WaypointPoolNear poolNear = new WaypointPoolNear();
+        Far9PatternPool poolNear = new Far9PatternPool();
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 poolNear.aim1.copy(),
                 poolNear.fire1.copy(),

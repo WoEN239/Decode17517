@@ -25,6 +25,8 @@ public class GunServoPositions {
 
     public static double ptoROpen = 0.8;
     public static double ptoLOpen = 0;
+    public static double brakePadOnPos = 0;
+    public static double  brakePadOffPos = 0.35;
 
     public static double ptoRClose = 0.5;
     public static double ptoLClose = 1;

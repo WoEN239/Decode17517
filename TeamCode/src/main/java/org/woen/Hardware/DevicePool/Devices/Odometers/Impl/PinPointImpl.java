@@ -11,7 +11,7 @@ import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
 import org.woen.Util.Vectors.Pose;
 
 public class PinPointImpl implements PinPoint {
-
+    public static boolean isInitBefore = false;
     private final GoBildaPinpointDriver pinpointDriver;
 
     public PinPointImpl(GoBildaPinpointDriver pinpointDriver) {
@@ -19,13 +19,15 @@ public class PinPointImpl implements PinPoint {
     }
 
     public void init(){
+        if(isInitBefore) return;
+        isInitBefore = true;
+
         pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        pinpointDriver.setOffsets(-12.5,-20, DistanceUnit.CM);
+        pinpointDriver.setOffsets(-12,-20, DistanceUnit.CM);
         pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.getStartPose().x, MatchData.getStartPose().y,
                 AngleUnit.RADIANS,MatchData.getStartPose().h));
-        pinpointDriver.recalibrateIMU();
     }
 
     public void update(){
@@ -42,6 +44,5 @@ public class PinPointImpl implements PinPoint {
                         pinpointDriver.getVelX(DistanceUnit.CM),
                         pinpointDriver.getVelY(DistanceUnit.CM));
     }
-
 
 }

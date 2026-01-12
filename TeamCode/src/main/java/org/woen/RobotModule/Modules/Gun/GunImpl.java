@@ -3,6 +3,8 @@ package org.woen.RobotModule.Modules.Gun;
 import static org.woen.Config.ControlSystemConstant.gunConfig;
 import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.G;
 import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.P;
+import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.GPP;
+import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PGP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PPG;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
@@ -74,6 +76,9 @@ public class GunImpl implements Gun {
             case PATTERN_FIRE:
                 servoAction = buildPatternFireAction(getInMotif(),targetMotif).copy();
                 break;
+            case FAST_PATTERN_FIRE:
+                servoAction = buildFastPatternFireAction(getInMotif(),targetMotif).copy();
+                break;
             case OFF:
                 break;
             case G_FIRE:
@@ -121,9 +126,9 @@ public class GunImpl implements Gun {
         if (left == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
             inMouth = PPG;
         else if (center == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-            inMouth = MOTIF.PGP;
+            inMouth = PGP;
         else if (right == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-            inMouth = MOTIF.GPP;
+            inMouth = GPP;
 
         return inMouth;
     }
@@ -352,7 +357,7 @@ public class GunImpl implements Gun {
                 new BooleanSupplier[]{
                         () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                         () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
-                        () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
+                        () -> true,//patterFireTimer.seconds() > gunConfig.patternFireDelay,
                         () -> true
                 },
                 new Runnable[]{
@@ -360,7 +365,88 @@ public class GunImpl implements Gun {
                         ()->{servos[1].run();patterFireTimer.reset();},
                         ()->{servos[2].run();patterFireTimer.reset();},
                         ()->setCommand(EAT),
+                });
+    }
 
+    private ServoAction buildFastPatternFireAction(MOTIF in, MOTIF out) {
+        Runnable[] servos = new Runnable[3];
+        BooleanSupplier[] isDone = new BooleanSupplier[3];
+
+        boolean[] servosBusy = new boolean[]{true, true, true};
+        if (out.colors[0] == in.colors[0] && servosBusy[0]) {
+            //0-l
+            servos[0] = this::shotLeft;
+            servosBusy[0] = false;
+        } else if (out.colors[0] == in.colors[1] && servosBusy[1]) {
+            //0 - c
+            servos[0] = this::shotCenter;
+            servosBusy[1] = false;
+        } else if (out.colors[0] == in.colors[2] && servosBusy[2]) {
+            //0 - r
+            servos[0] = this::shotRight;
+            servosBusy[2] = false;
+        }
+
+        if (out.colors[1] == in.colors[0] && servosBusy[0]) {
+            //1-l
+            servos[1] = this::shotLeft;
+            servosBusy[0] = false;
+        } else if (out.colors[1] == in.colors[1] && servosBusy[1]) {
+            //1 - c
+            servos[1] = this::shotCenter;
+            servosBusy[1] = false;
+        } else if (out.colors[1] == in.colors[2] && servosBusy[2]) {
+            //1 - r
+            servos[1] = this::shotRight;
+            servosBusy[2] = false;
+        }
+
+        if (out.colors[2] == in.colors[0] && servosBusy[0]) {
+            //2-l
+            servos[2] = this::shotLeft;
+            servosBusy[0] = false;
+        } else if (out.colors[2] == in.colors[1] && servosBusy[1]) {
+            //2 - c
+            servos[2] = this::shotCenter;
+            servosBusy[1] = false;
+        } else if (out.colors[2] == in.colors[2] && servosBusy[2]) {
+            //2 - r
+            servos[2] = this::shotRight;
+            servosBusy[2] = false;
+        }
+
+        ElapsedTime patterFireTimer = new ElapsedTime();
+        if(out == PGP){
+            isDone = new BooleanSupplier[]{
+                    () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
+                    () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
+                    () -> true,
+                    () -> true
+            };
+        }
+        if(out == PPG){
+            isDone = new BooleanSupplier[]{
+                    () -> true,
+                    () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
+                    () -> true,
+                    () -> true
+            };
+        }
+        if(out == GPP){
+            isDone = new BooleanSupplier[]{
+                    () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
+                    () -> true,
+                    () -> true,
+                    () -> true
+            };
+        }
+        return new ServoAction(
+                isDone,
+                new Runnable[]{
+                        () -> {servos[0].run();patterFireTimer.reset();},
+                        () -> {servos[1].run();patterFireTimer.reset();},
+                        () -> {servos[2].run();patterFireTimer.reset();},
+                        () -> setCommand(EAT),
                 });
     }
 

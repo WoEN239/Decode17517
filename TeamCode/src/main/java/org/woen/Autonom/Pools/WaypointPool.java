@@ -1,6 +1,7 @@
 package org.woen.Autonom.Pools;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Structure.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
@@ -14,6 +15,8 @@ public abstract class WaypointPool {
     protected Double angleTo(Vector2d p){return p.minus(pose.vector).getAngle();}
     public void setGunIsEat(GunAtEatEvent event){isGunEat = event.getData();}
     protected Boolean isGunEat = false;
+
+    public abstract WayPoint[] getPool();
     public WaypointPool() {
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
         EventBus.getInstance().subscribe(GunAtEatEvent.class,this::setGunIsEat);

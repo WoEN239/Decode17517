@@ -54,6 +54,7 @@ public abstract class BaseOpMode extends LinearOpMode {
             robot.update();
         }
         lastRun();
+        EventBus.getInstance().invoke(new EndOfOpModeEvent());
         MatchData.setStartPose(pose);
     }
 }

@@ -27,6 +27,7 @@ public class DevicePool {
 
     public ServoMotor ptoR;
     public ServoMotor ptoL;
+    public ServoMotor brakePad;
 
     public Motor gunR;
     public Motor gunC;
@@ -92,6 +93,7 @@ public class DevicePool {
 
         ptoL = factory.createServoMotor("ptoL");
         ptoR = factory.createServoMotor("ptoR");
+        brakePad = factory.createServoMotor("brakePad");
 
         motorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

@@ -89,7 +89,7 @@ public class WayPoint {
     public WayPoint(Runnable[] run, boolean isReverse, Pose... path){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
         this.endAngle = ()->path[path.length-1].h;
-        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<0.015,run);
+        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<0.025,run);
         this.onWay = AutonomTask.Stub;
         this.path = path;
         this.isReverse = isReverse;

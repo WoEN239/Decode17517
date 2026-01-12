@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class PurePursuitFollowerImpl implements TrajectoryFollower {
-    private ArrayList<LineSegment> targetPath;
+    private ArrayList<LineSegment> targetPath = new ArrayList<>();
     private double localRadius = ControlSystemConstant.feedbackConfig.PPLocalR;
 
     private double transVelocity = ControlSystemConstant.feedbackConfig.PPTransVel;

@@ -11,7 +11,7 @@ public class ControlSystemConstant {
         public double PPLocalR   = 30;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
-        public PidStatus hPid = new PidStatus(1.5,10,0.05,0,0,0.02,0);
+        public PidStatus hPid = new PidStatus(2.5,10,0.05,0,0,0.02,0);
     }
     public static FeedbackConfig feedbackConfig = new FeedbackConfig();
 
@@ -43,10 +43,10 @@ public class ControlSystemConstant {
         public double velTol = 60;
         public double patternFireDelay = 1.5;
 
-        public double shootVelSideFar = 1840;
+        public double shootVelSideFar = 1860;
         public double shootVelSideNear = 1600;
 
-        public double shootVelCFar = 1880;
+        public double shootVelCFar = 1860;
         public double shootVelCNear = 1640;
 
         public double deltaPosC = 0.;
