@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Pools.Far15BallPool;
+import org.woen.Autonom.Pools.Far9Pattern3Ball;
 import org.woen.Autonom.Pools.Far9PatternPool;
 import org.woen.Autonom.Pools.WaypointPool;
 import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
@@ -45,6 +46,8 @@ public class AutoOpMode extends BaseOpMode {
             pool = new Far9PatternPool();
         } else if (MatchData.auto.equals("far15ball")) {
             pool = new Far15BallPool();
+        } else if (MatchData.auto.equals("far9pattern3ball")) {
+            pool = new Far9Pattern3Ball();
         }
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 pool.getPool()
