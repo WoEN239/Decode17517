@@ -19,7 +19,7 @@ public class PinPointImpl implements PinPoint {
     }
 
     public void init(){
-        if(isInitBefore) return;
+        //if(isInitBefore) return;
         isInitBefore = true;
 
         pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
@@ -29,7 +29,6 @@ public class PinPointImpl implements PinPoint {
         pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.getStartPose().x, MatchData.getStartPose().y,
                 AngleUnit.RADIANS,MatchData.getStartPose().h));
     }
-
     public void update(){
         pinpointDriver.update();
     }

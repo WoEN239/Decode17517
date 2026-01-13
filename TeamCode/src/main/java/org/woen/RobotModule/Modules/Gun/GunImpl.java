@@ -14,10 +14,12 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
@@ -60,7 +62,7 @@ public class GunImpl implements Gun {
     private Motor gunC;
 
     private Motor brush;
-    private Motor light;
+    private DcMotor light;
 
     private final Pid pidR = new Pid(gunConfig.rightPidStatus);
     private final Pid pidL = new Pid(gunConfig.leftPidStatus);
@@ -240,7 +242,7 @@ public class GunImpl implements Gun {
         servoC.update();
         servoL.update();
         brush.setPower(brushPower);
-        light.setPower(1);
+        light.setPower(gunConfig.lightPower);
     }
 
     private void farAim() {
@@ -429,7 +431,7 @@ public class GunImpl implements Gun {
             isDone = new BooleanSupplier[]{
                     () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                     () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
-                    () -> true,
+                    () -> patterFireTimer.seconds() > 0.3,
                     () -> true
             };
         }
@@ -437,7 +439,7 @@ public class GunImpl implements Gun {
             isDone = new BooleanSupplier[]{
                     () -> true,
                     () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
-                    () -> true,
+                    () -> patterFireTimer.seconds() > 0.3,
                     () -> true
             };
         }
@@ -445,7 +447,7 @@ public class GunImpl implements Gun {
             isDone = new BooleanSupplier[]{
                     () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                     () -> true,
-                    () -> true,
+                    () -> patterFireTimer.seconds() > 0.3,
                     () -> true
             };
         }

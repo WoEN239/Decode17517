@@ -41,7 +41,7 @@ public class ControlSystemConstant {
 
     public static class GunConfig {
         public double velTol = 60;
-        public double patternFireDelay = 1.5;
+        public double patternFireDelay = 1;
 
         public double shootVelSideFar = 1860;
         public double shootVelSideNear = 1600;
@@ -56,6 +56,8 @@ public class ControlSystemConstant {
 
         public double distLow = 186;
         public double distHi = 268;
+
+        public double lightPower = 1;
 
         public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.00037, 0, 0, 0,40);
         public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00042, 0, 0, 0,40);

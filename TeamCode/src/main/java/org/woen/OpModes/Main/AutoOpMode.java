@@ -5,8 +5,11 @@ import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PGP;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Pools.Far15BallPool;
 import org.woen.Autonom.Pools.Far9PatternPool;
+import org.woen.Autonom.Pools.WaypointPool;
 import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
+import org.woen.Autonom.Structure.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.Config.Start;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
@@ -36,7 +39,17 @@ public class AutoOpMode extends BaseOpMode {
     }
     private MOTIF motif = PGP;
     @Override
-    protected void initRun() {}
+    protected void initRun() {
+        WaypointPool pool = null;
+        if(MatchData.auto.equals("far9pattern")){
+            pool = new Far9PatternPool();
+        } else if (MatchData.auto.equals("far15ball")) {
+            pool = new Far15BallPool();
+        }
+        EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
+                pool.getPool()
+        ));
+    }
 
     protected void loopRun() {
         telemetry.addData("target motif",motif);

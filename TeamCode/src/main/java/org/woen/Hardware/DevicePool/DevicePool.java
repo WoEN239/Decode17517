@@ -33,7 +33,7 @@ public class DevicePool {
     public Motor gunC;
     public Motor gunL;
     public Motor brush;
-    public Motor light;
+    public DcMotor light;
 
     public ServoMotor shotR;
     public ServoMotor shotL;
@@ -102,8 +102,6 @@ public class DevicePool {
         gunL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         gunC.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-        light = factory.createDcMotor("light",new Provider<>(0d), new Provider<>(0d));
-
         brush.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         motorL.setDir(-1);
@@ -113,6 +111,8 @@ public class DevicePool {
         motorR.reset();
 
         revVoltageSensor = factory.createVoltageSensor();
+
+        light = hardwareMap.get(DcMotor.class, "light");
     }
 
 }

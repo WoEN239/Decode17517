@@ -42,10 +42,10 @@ public class CameraImpl implements Camera {
     public static double rightL = -0.5;
     public static double bottomL = 0.65;
     /// center
-    public static double   leftC = -0.25;
-    public static double    topC = 1;
-    public static double  rightC = -0.15;
-    public static double bottomC = 0.8;
+    public static double   leftC = -0.2;
+    public static double    topC = 0.8;
+    public static double  rightC = -0.1;
+    public static double bottomC = 0.55;
     /// right
     public static double   leftR = 0.8;
     public static double    topR = 0.9;
