@@ -6,18 +6,21 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.woen.Config.MatchData;
 import org.woen.Config.Team;
 
 @Autonomous(group = "boot")
 public class BootLoader extends LinearOpMode {
     private String[] auto = new String[]{
-            "far9pattern","far15ball", "far9pattern3ball"
+            "far9pattern","far15ball", "far9pattern3ball", "near9pattern6ball"
     };
     private int i = 0;
     @Override
     public void runOpMode() throws InterruptedException {
-        GoBildaPinpointDriver odo = hardwareMap.get(GoBildaPinpointDriver.class, "odometerComputer");
+        GoBildaPinpointDriver pinpointDriver = hardwareMap.get(GoBildaPinpointDriver.class, "odometerComputer");
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -34,7 +37,14 @@ public class BootLoader extends LinearOpMode {
             }
 
             if (gamepad1.dpadDownWasPressed()) {
-                odo.resetPosAndIMU();
+                pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
+                pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
+                        GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                pinpointDriver.setOffsets(-12,-20, DistanceUnit.CM);
+                pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.start.pose.x, MatchData.start.pose.y,
+                        AngleUnit.RADIANS,MatchData.start.pose.h));
+
+                pinpointDriver.recalibrateIMU();
             }
 
             if (gamepad1.triangleWasPressed()) {

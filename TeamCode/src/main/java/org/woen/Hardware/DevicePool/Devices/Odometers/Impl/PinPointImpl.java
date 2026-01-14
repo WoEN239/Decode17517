@@ -18,17 +18,8 @@ public class PinPointImpl implements PinPoint {
         this.pinpointDriver = pinpointDriver;
     }
 
-    public void init(){
-        //if(isInitBefore) return;
-        isInitBefore = true;
+    public void init(){}
 
-        pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-        pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        pinpointDriver.setOffsets(-12,-20, DistanceUnit.CM);
-        pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.getStartPose().x, MatchData.getStartPose().y,
-                AngleUnit.RADIANS,MatchData.getStartPose().h));
-    }
     public void update(){
         pinpointDriver.update();
     }

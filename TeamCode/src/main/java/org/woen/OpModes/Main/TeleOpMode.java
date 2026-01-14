@@ -125,13 +125,19 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewBrushReversEvent(false));
         }
 
-        if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
+        /*    if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR));
         }
 
         if (hiAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()>320)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR));
          }
+
+         */
+
+        if (gamepad1.dpadRightWasPressed()) {
+            EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL));
+        }
 
         isAngleControl = gamepad1.right_trigger>0.1;
 
@@ -140,7 +146,7 @@ public class TeleOpMode extends BaseOpMode {
         }
 
         if (patternFireButt.get(gamepad1.square)) {
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FAST_PATTERN_FIRE));
         }
 
         if(greenFireButt.get(gamepad1.triangle)){

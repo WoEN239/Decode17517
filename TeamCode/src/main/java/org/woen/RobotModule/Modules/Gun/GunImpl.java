@@ -8,6 +8,7 @@ import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PGP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PPG;
 import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.FAR;
 import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.NEAR;
+import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.NEAR_GOAL;
 import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.PATTERN;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
@@ -39,6 +40,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
+import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
@@ -200,6 +202,10 @@ public class GunImpl implements Gun {
             gunVelSide   = gunConfig.shootVelSidePattern;
             gunVelCenter = gunConfig.shootVelCPattern;
             patternAim();
+        } else if (aimCommand == NEAR_GOAL) {
+            gunVelSide   = gunConfig.shootVelSideGoalNear;
+            gunVelCenter = gunConfig.shootVelCGoalNear;
+            setAimServoPos(aimLGoalNear, aimCGoalNear, aimRGoalNear);
         }
 
         if(isBrushRevers){
@@ -251,6 +257,7 @@ public class GunImpl implements Gun {
     private void patternAim() {
         setAimServoPos(aimLPat, aimCPat, aimRPat);
     }
+
 
     private void nearAim(double dist) {
         double deltaC = (dist - gunConfig.distLow) * gunConfig.deltaPosC / (gunConfig.distHi - gunConfig.distLow);
@@ -368,7 +375,7 @@ public class GunImpl implements Gun {
                 new BooleanSupplier[]{
                         () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
                         () -> patterFireTimer.seconds() > gunConfig.patternFireDelay,
-                        () -> true,//patterFireTimer.seconds() > gunConfig.patternFireDelay,
+                        () -> patterFireTimer.seconds() > 0.3,
                         () -> true
                 },
                 new Runnable[]{

@@ -43,16 +43,20 @@ public class ControlSystemConstant {
         public double velTol = 60;
         public double patternFireDelay = 1;
 
+        public double shootVelSidePattern = 1860;
         public double shootVelSideFar = 1860;
         public double shootVelSideNear = 1600;
-        public double shootVelSidePattern = 1600;
 
         public double shootVelCPattern = 1860;
         public double shootVelCFar = 1860;
-        public double shootVelCNear = 1640;
+        public double shootVelCNear = 1600;
 
-        public double deltaPosC = 0.;
-        public double deltaPosS = 0.;
+        public double shootVelCGoalNear = 1470;
+
+        public double shootVelSideGoalNear = 1470;
+
+        public double deltaPosC = 0;
+        public double deltaPosS = 0;
 
         public double distLow = 186;
         public double distHi = 268;

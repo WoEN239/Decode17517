@@ -7,18 +7,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Pools.Far15BallPool;
 import org.woen.Autonom.Pools.Far9Pattern3Ball;
+import org.woen.Autonom.Pools.Near9Pattern6Ball;
 import org.woen.Autonom.Pools.Far9PatternPool;
 import org.woen.Autonom.Pools.WaypointPool;
 import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
-import org.woen.Autonom.Structure.WayPoint;
 import org.woen.Config.MatchData;
-import org.woen.Config.Start;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
-import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 
 @Autonomous
 public class AutoOpMode extends BaseOpMode {
@@ -48,6 +46,8 @@ public class AutoOpMode extends BaseOpMode {
             pool = new Far15BallPool();
         } else if (MatchData.auto.equals("far9pattern3ball")) {
             pool = new Far9Pattern3Ball();
+        } else if (MatchData.auto.equals("near9pattern6ball")) {
+            pool = new Near9Pattern6Ball();
         }
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 pool.getPool()
