@@ -105,10 +105,12 @@ public class TeleOpMode extends BaseOpMode {
     private boolean isPtoActive = false;
 
     private Pose targetVelocity = new Pose(0,0,0);
+
+    public static double yawSens = 7.4;
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
-                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * 7.8 ,
+                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * yawSens ,
                    -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y)    * 180),
                 0
         );
@@ -125,19 +127,19 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewBrushReversEvent(false));
         }
 
-        /*    if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
+        if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR));
         }
 
         if (hiAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()>320)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR));
-         }
-
-         */
-
-        if (gamepad1.dpadRightWasPressed()) {
-            EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL));
         }
+
+
+
+//        if (gamepad1.dpadRightWasPressed()) {
+//            EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL));
+//        }
 
         isAngleControl = gamepad1.right_trigger>0.1;
 

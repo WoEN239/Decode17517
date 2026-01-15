@@ -28,7 +28,7 @@ public class Near9Pattern6Ball extends WaypointPool {
                     ()->true,
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL))),
             false, pool.fireNear
-    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(30);
+    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(10);
 
     public WayPoint fire1 = new WayPoint(
             new AutonomTask(
@@ -45,6 +45,14 @@ public class Near9Pattern6Ball extends WaypointPool {
             }, false, pool.fireNear
     ).setName("rotate1").setEndDetect(30).setEndAngle(() -> angleTo(pool.eat1.vector));
 
+    private ElapsedTime lookTimer = new ElapsedTime();
+    public WayPoint lookTimerReset = new WayPoint(
+            new AutonomTask(()->true,()->lookTimer.reset()), false, pool.fireNear
+    ).setName("eat3").setEndDetect(50).setEndAngle(()-> 0d);
+    public WayPoint look = new WayPoint(
+            new AutonomTask(()->lookTimer.seconds()>1), false, pool.fireNear
+    ).setName("rotate1").setEndDetect(50).setEndAngle(() -> 0.0 );
+
     public WayPoint eat1 = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "eat3")
@@ -57,7 +65,7 @@ public class Near9Pattern6Ball extends WaypointPool {
             false, pool.eat1
     ).setName("eat3").setEndDetect(50).setEndAngle(()-> pool.eat1R.h);
     public WayPoint rampTimerWait = new WayPoint(
-            new AutonomTask(()->rampTimer.seconds()>2.5),
+            new AutonomTask(()->rampTimer.seconds()>1.5),
             false, pool.eat1
     ).setName("eat3").setEndDetect(50).setEndAngle(()-> pool.eat1R.h);;
 
@@ -66,7 +74,7 @@ public class Near9Pattern6Ball extends WaypointPool {
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL)),
                     () -> RobotLog.dd("auto", "aim2")
             }, true, pool.fireNear
-    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(30);
+    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(10);
 
     public WayPoint fire2 = new WayPoint(
             new AutonomTask(
@@ -89,14 +97,14 @@ public class Near9Pattern6Ball extends WaypointPool {
                     () -> RobotLog.dd("auto", "eat3")
             },
             false, pool.eat2
-    ).setName("eat3").setEndDetect(30).setVel(150).setEndAngle(()-> PI+angleTo(pool.fireNear.vector));
+    ).setName("eat3").setEndDetect(10).setVel(150).setEndAngle(()-> PI+angleTo(pool.fireNear.vector));
 
     public WayPoint aim3 = new WayPoint(
             new Runnable[]{
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL)),
                     () -> RobotLog.dd("auto", "aim2")
             }, true, pool.fireNear
-    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(30);
+    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(10);
 
     public WayPoint fire3 = new WayPoint(
             new AutonomTask(
@@ -119,14 +127,14 @@ public class Near9Pattern6Ball extends WaypointPool {
                     () -> RobotLog.dd("auto", "eat3")
             },
             false, pool.eat3
-    ).setName("eat3").setEndDetect(20).setVel(150).setEndAngle(()-> PI+angleTo(pool.fireNear.vector));
+    ).setName("eat3").setEndDetect(10).setVel(150).setEndAngle(()-> PI+angleTo(pool.fireNear.vector));
 
 
     public WayPoint aim4 = new WayPoint(
             new Runnable[]{
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL)),
                     () -> RobotLog.dd("auto", "aim4")
-            }, true, pool.fireNear.plus(new Pose(0,-30,0))
+            }, true, pool.fireNearPark
     ).setName("aim4").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(30);
 
     public WayPoint fire4 = new WayPoint(
@@ -135,7 +143,7 @@ public class Near9Pattern6Ball extends WaypointPool {
                     () -> RobotLog.dd("auto", "fire4"),
                     () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FAST_PATTERN_FIRE))
             ),
-            false, pool.fireNear.plus(new Pose(0,-30,0))
+            false, pool.fireNearPark
     ).setName("fire4").setEndDetect(30).setEndAngle(this::angleToGoal);
 
 
@@ -153,6 +161,8 @@ public class Near9Pattern6Ball extends WaypointPool {
         return new WayPoint[]{
                 aim1.copy(),
                 fire1.copy(),
+                lookTimerReset.copy(),
+                look.copy(),
                 rotate1.copy(),
                 eat1.copy().setVel(150),
                 rampTimerReset.copy(),
@@ -183,6 +193,7 @@ class PositionPool4 {
     public PositionPool4() {
         if (MatchData.team == Team.RED) {
             fireNear = fireNear.teamReverse();
+            fireNearPark = fireNearPark.teamReverse();
             goal = goal.teamReverse();
             eat1 = eat1.teamReverse();
             eat2 = eat2.teamReverse();
@@ -193,6 +204,7 @@ class PositionPool4 {
     }
 
     public Pose fireNear = new Pose(0, -54, -38);
+    public Pose fireNearPark = new Pose(0, -90, -31);
 
     public Pose goal = new Pose(0,-180,-180);
     public Pose eat1 = new Pose(-0.5 * PI, -18, -146);

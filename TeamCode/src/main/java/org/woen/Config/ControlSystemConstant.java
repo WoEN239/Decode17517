@@ -8,10 +8,10 @@ import org.woen.Util.Pid.PidStatus;
 public class ControlSystemConstant {
 
     public static class FeedbackConfig {
-        public double PPLocalR   = 30;
+        public double PPLocalR   = 50;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
-        public PidStatus hPid = new PidStatus(2.5,10,0.05,0,0,0.02,0);
+        public PidStatus hPid = new PidStatus(1-  .5,10,0.05,0,0,0.02,0);
     }
     public static FeedbackConfig feedbackConfig = new FeedbackConfig();
 
