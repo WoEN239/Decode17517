@@ -12,6 +12,7 @@ import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
@@ -38,6 +39,8 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
 
     private Pose pose =  MatchData.getStartPose();
     private void setPose(Pose pose) {this.pose = pose;}
+    private Pose velocity =  new Pose(0,0,0);
+    private void setVelocity(Pose velocity) {this.velocity = velocity;}
 
     @Override
     public void update() {
@@ -105,10 +108,17 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
                         new Pose(0,0,0)
                 )
         );
-        observerPos.notifyListeners(new FeedbackReference(
-                new Pose(targetPos.h,0,0),
-                new Pose(0,0,0)
-        ));
+        if(!isEndNear) {
+            observerPos.notifyListeners(new FeedbackReference(
+                    new Pose(targetPos.h, 0, 0),
+                    new Pose(angleVel, transVelocity, 0)
+            ));
+        }else{
+            observerPos.notifyListeners(new FeedbackReference(
+                    new Pose(targetPos.h, 0, 0),
+                    new Pose(velocity.h, velocity.vector.rotate(-pose.h).x, 0)
+            ));
+        }
 
         for(LineSegment i: targetPath) {
             Telemetry.getInstance().getField().line(i.start, i.end);
@@ -154,6 +164,7 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
     @Override
     public void init() {
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        EventBus.getListenersRegistration().invoke(new RegisterNewVelocityListener(this::setVelocity));
     }
 
 }

@@ -27,6 +27,7 @@ import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.SetNewTargetTrajectorySegmentEvent;
+import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
@@ -43,14 +44,14 @@ public class TeleOpMode extends BaseOpMode {
         velForwardPid.isDAccessible = false;
     }
 
-    public static PidStatus velAnglePidStatus = new PidStatus(0.635, 0, 0., 0, 0, 0, 0);
+    public static PidStatus velAnglePidStatus = new PidStatus(0.635, 0, 0., 0, 0, 0, 0.1,0);
     Pid velAnglePid = new Pid(velAnglePidStatus);
     {
         velAnglePid.isNormolized = false;
         velAnglePid.isDAccessible = false;
     }
 
-    public static PidStatus anglePidStatus = new PidStatus(10, 10, 1, 0, 0, 0.02, 0);
+    public static PidStatus anglePidStatus = new PidStatus(10, 10, 1, 0, 0, 0.2, 0.3,0.015);
     Pid anglePid = new Pid(anglePidStatus);
     {
         anglePid.isNormolized = true;
@@ -61,7 +62,9 @@ public class TeleOpMode extends BaseOpMode {
 
     private TankFeedbackController tankFeedbackController = new TankFeedbackController(
             ControlSystemConstant.feedbackConfig.xPid,
-            ControlSystemConstant.feedbackConfig.hPid);
+            ControlSystemConstant.feedbackConfig.hPid,
+            new PidStatus(0,0,0,0,0,0,0,0),
+            new PidStatus(0,0,0,0,0,0,0,0));
 
     @Override
     protected void initConfig() {
@@ -106,12 +109,13 @@ public class TeleOpMode extends BaseOpMode {
 
     private Pose targetVelocity = new Pose(0,0,0);
 
-    public static double yawSens = 7.4;
+    public static double yawSens = 6.8;
+    public static double transSens = 180;
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
                 -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * yawSens ,
-                   -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y)    * 180),
+                   -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y)    * transSens),
                 0
         );
 
@@ -147,9 +151,9 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
         }
 
-        if (patternFireButt.get(gamepad1.square)) {
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FAST_PATTERN_FIRE));
-        }
+//        if (patternFireButt.get(gamepad1.square)) {
+//            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FAST_PATTERN_FIRE));
+//        }
 
         if(greenFireButt.get(gamepad1.triangle)){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.G_FIRE));
@@ -185,7 +189,7 @@ public class TeleOpMode extends BaseOpMode {
             angleToControl = PI;
         }
 
-        if(isPtoActive && pose.vector.minus(park.vector).length()<10 && abs(pose.h-PI)<0.015 ){
+        if(isPtoActive && pose.vector.minus(park.vector).length()<10 && AngleUtil.normalize(abs(pose.h-PI))<0.015 ){
             DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOnPos);
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
@@ -211,6 +215,8 @@ public class TeleOpMode extends BaseOpMode {
     private class TeleOpFeedback extends TankFeedbackController {
         public TeleOpFeedback() {
             super(new PidStatus(0, 0, 0, 0, 0, 0, 0),
+                  new PidStatus(0, 0, 0, 0, 0, 0, 0),
+                  new PidStatus(0, 0, 0, 0, 0, 0, 0),
                   new PidStatus(0, 0, 0, 0, 0, 0, 0)
             );
         }

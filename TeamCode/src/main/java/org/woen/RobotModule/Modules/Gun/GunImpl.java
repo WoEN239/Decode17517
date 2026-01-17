@@ -300,8 +300,8 @@ public class GunImpl implements Gun {
     private final ElapsedTime fireTimer = new ElapsedTime();
     private final ServoAction fullFireAction = new ServoAction(
             new BooleanSupplier[]{
-                    ()->rightGunAtVel()&&leftGunAtVel(),
-                    ()->fireTimer.seconds()>0.1&&centerGunAtVel(),
+                    ()->true,//rightGunAtVel()&&leftGunAtVel(),
+                    ()->fireTimer.seconds()>0.1,//&&centerGunAtVel(),
                     ()->servoC.isAtTarget(),
                     ()->true},
             new Runnable[]{

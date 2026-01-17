@@ -75,13 +75,16 @@ public class TankDriveTrainImpl implements DriveTrain {
         this.pose = pose;
     }
 
-    public void setLocalVelocity(Pose velocity) {
+    public void seVel(Pose velocity) {
         this.velocity = velocity;
     }
 
     private TankFeedbackController feedbackController = new TankFeedbackController(
             ControlSystemConstant.feedbackConfig.xPid,
-            ControlSystemConstant.feedbackConfig.hPid);
+            ControlSystemConstant.feedbackConfig.hPid,
+            ControlSystemConstant.feedbackConfig.hPidVel,
+            ControlSystemConstant.feedbackConfig.xPidVel
+            );
 
     private void replaceFeedbackController(ReplaceFeedbackControllerEvent event){
         feedbackController = event.getData();
@@ -107,7 +110,7 @@ public class TankDriveTrainImpl implements DriveTrain {
         EventBus.getListenersRegistration().invoke(
                 new RegisterNewPositionListener(this::setPose));
         EventBus.getListenersRegistration().invoke(
-                new RegisterNewVelocityListener(this::setLocalVelocity));
+                new RegisterNewVelocityListener(this::seVel));
 
         EventBus.getInstance().subscribe(ReplaceFeedbackControllerEvent.class,this::replaceFeedbackController);
 
