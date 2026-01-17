@@ -209,7 +209,7 @@ public class GunImpl implements Gun {
         }
 
         if(isBrushRevers){
-            brushPower = -1;
+            brushPower = -0.5;
         }else{
             brushPower = 1;
         }
@@ -300,12 +300,10 @@ public class GunImpl implements Gun {
     private final ElapsedTime fireTimer = new ElapsedTime();
     private final ServoAction fullFireAction = new ServoAction(
             new BooleanSupplier[]{
-                    ()->rightGunAtVel()&&leftGunAtVel(),
-                    ()->fireTimer.seconds()>0.1&&centerGunAtVel(),
+                    ()->fireTimer.seconds()>0.02,
                     ()->servoC.isAtTarget(),
                     ()->true},
             new Runnable[]{
-                    ()->{},
                     ()->{servoL.setTarget(shotLPos);servoR.setTarget(shotRPos);fireTimer.reset();},
                     ()->servoC.setTarget(shotCPos),
                     ()->setCommand(EAT)});

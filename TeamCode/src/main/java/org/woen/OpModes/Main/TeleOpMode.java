@@ -137,9 +137,6 @@ public class TeleOpMode extends BaseOpMode {
 
 
 
-//        if (gamepad1.dpadRightWasPressed()) {
-//            EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL));
-//        }
 
         isAngleControl = gamepad1.right_trigger>0.1;
 
