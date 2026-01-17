@@ -15,7 +15,7 @@ import org.woen.Config.Team;
 @Autonomous(group = "boot")
 public class BootLoader extends LinearOpMode {
     private String[] auto = new String[]{
-            "far9pattern","far15ball", "far9pattern3ball", "near9pattern6ball"
+            "far9pattern","far15ball", "far9pattern3ball", "near9pattern6ball", "heaveyballsauto"
     };
     private int i = 0;
     @Override
