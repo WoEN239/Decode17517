@@ -194,6 +194,13 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
         }
 
+        if(gamepad1.dpad_down){
+            if(MatchData.team == Team.BLUE)
+             DevicePool.getInstance().pinPoint.setPose(148,142, -1.5 * PI);
+            else
+                DevicePool.getInstance().pinPoint.setPose(148,-142, 1.5 * PI);
+        }
+
     }
     private WayPoint wayPoint = new WayPoint(
             AutonomTask.Stub,
