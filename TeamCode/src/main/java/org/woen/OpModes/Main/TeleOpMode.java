@@ -184,7 +184,7 @@ public class TeleOpMode extends BaseOpMode {
 
         if(gamepad1.dpad_down){
             if(MatchData.team == Team.BLUE)
-             DevicePool.getInstance().pinPoint.setPose(148,142, -1.5 * PI);
+                DevicePool.getInstance().pinPoint.setPose(148,142, -1.5 * PI);
             else
                 DevicePool.getInstance().pinPoint.setPose(148,-142, 1.5 * PI);
         }
@@ -224,7 +224,8 @@ public class TeleOpMode extends BaseOpMode {
                 velAnglePid.update();
 
                 velForwardPid.setTarget(targetVelocity.x);
-                velForwardPid.setPos(velocity.vector.rotate(-pose.h).x);
+                double dir = Math.signum(velocity.vector.rotate(-pose.h).x);
+                velForwardPid.setPos(dir*velocity.vector.length());
                 velForwardPid.update();
 
                 return new Pose(velAnglePid.getU(), velForwardPid.getU(), 0);

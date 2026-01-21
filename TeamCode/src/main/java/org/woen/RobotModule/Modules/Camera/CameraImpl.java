@@ -39,13 +39,13 @@ public class CameraImpl implements Camera {
     /// left
     public static double leftL = -0.6;
     public static double topL = 0.9;
-    public static double rightL = -0.5;
-    public static double bottomL = 0.65;
+    public static double rightL = -0.4;
+    public static double bottomL = 0.7;
     /// center
     public static double   leftC = -0.2;
-    public static double    topC = 0.8;
+    public static double    topC = 0.9;
     public static double  rightC = -0.1;
-    public static double bottomC = 0.55;
+    public static double bottomC = 0.7;
     /// right
     public static double   leftR = 0.8;
     public static double    topR = 0.9;
@@ -130,8 +130,8 @@ public class CameraImpl implements Camera {
             latterTargetMotif = motif;
         }
 
-        PredominantColorProcessor.Result resultL = rightDetection.getAnalysis();
-        PredominantColorProcessor.Result resultR = leftDetection.getAnalysis();
+        PredominantColorProcessor.Result resultL = leftDetection.getAnalysis();
+        PredominantColorProcessor.Result resultR = rightDetection.getAnalysis();
         PredominantColorProcessor.Result resultC = centerDetection.getAnalysis();
 
 
