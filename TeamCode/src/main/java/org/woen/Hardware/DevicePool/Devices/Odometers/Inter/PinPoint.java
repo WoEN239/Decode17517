@@ -7,4 +7,6 @@ public interface PinPoint {
     Pose getVel();
     default void init(){}
     default void update(){}
+
+    default void setPose(double x, double y, double h){}
 }
