@@ -20,14 +20,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.DevicePool.Devices.Servo.ServoWithFeedback;
 import org.woen.RobotModule.Modules.Battery.NewVoltageAvailable;
-import org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
@@ -40,7 +38,6 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
-import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
@@ -90,10 +87,10 @@ public class GunImpl implements Gun {
             case OFF:
                 break;
             case G_FIRE:
-                servoAction = buildColorFireServoAction(getInMotif(),G).copy();
+                servoAction = buildGFireServoAction().copy();
                 break;
             case P_FIRE:
-                servoAction = buildColorFireServoAction(getInMotif(),P).copy();
+                servoAction = buildPFireServoAction().copy();
                 break;
             case EAT:
                 servoAction = eatAction.copy();
@@ -124,31 +121,29 @@ public class GunImpl implements Gun {
     private double gunVelCenter = gunConfig.shootVelCFar;
     private double brushPower = 1;
 
-    private PredominantColorProcessor.Swatch center = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
-    private PredominantColorProcessor.Swatch left   = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
-    private PredominantColorProcessor.Swatch right = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
+    private PredominantColorProcessor.Swatch centerColor = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
+    private PredominantColorProcessor.Swatch leftColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
+    private PredominantColorProcessor.Swatch rightColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
 
 
     private MOTIF getInMotif() {
         MOTIF inMouth = PPG;
-        if (left == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-            inMouth = PPG;
-        else if (center == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+        if (centerColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
             inMouth = PGP;
-        else if (right == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+        else if (rightColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
             inMouth = GPP;
 
         return inMouth;
     }
 
     private void setLeftOnEvent(NewDetectionBallsLeftEvent event) {
-        left = event.getData();
+        leftColor = event.getData();
     }
     private void setRightOnEvent(NewDetectionBallsRightEvent event) {
-        right = event.getData();
+        rightColor = event.getData();
     }
     private void setCenterOnEvent(NewDetectionBallsCenterEvent event) {
-        center = event.getData();
+        centerColor = event.getData();
     }
 
 
@@ -212,6 +207,9 @@ public class GunImpl implements Gun {
             brushPower = -1;
         }else{
             brushPower = 1;
+        }
+        if(command == OFF){
+            brushPower = 0;
         }
 
         pidR.setTarget(gunVelSide);
@@ -300,8 +298,8 @@ public class GunImpl implements Gun {
     private final ElapsedTime fireTimer = new ElapsedTime();
     private final ServoAction fullFireAction = new ServoAction(
             new BooleanSupplier[]{
-                    ()->true,//rightGunAtVel()&&leftGunAtVel(),
-                    ()->fireTimer.seconds()>0.1,//&&centerGunAtVel(),
+                    ()->true,
+                    ()->fireTimer.seconds()>0.1,
                     ()->servoC.isAtTarget(),
                     ()->true},
             new Runnable[]{
@@ -314,13 +312,29 @@ public class GunImpl implements Gun {
             new BooleanSupplier[]{()->true},
             new Runnable[]{()->{servoL.setTarget(eatLPos);servoR.setTarget(eatRPos);servoC.setTarget(eatCPos);}});
 
-    private ServoAction buildColorFireServoAction(MOTIF in,BALL_COLOR outColor){
-        Runnable servo  = this::shotLeft;
-        if(in.colors[1] == outColor){
+    private ServoAction buildPFireServoAction(){
+        Runnable servo  = ()->{};
+        if(centerColor == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
             servo = this::shotCenter;
         }
-        if(in.colors[2] == outColor){
+        if(rightColor == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
             servo = this::shotRight;
+        }
+        if(leftColor == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            servo = this::shotLeft;
+        }
+        return new ServoAction(servo::run);
+    }
+    private ServoAction buildGFireServoAction(){
+        Runnable servo  = ()->{};
+        if(centerColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN){
+            servo = this::shotCenter;
+        }
+        if(rightColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN){
+            servo = this::shotRight;
+        }
+        if(leftColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN){
+            servo = this::shotLeft;
         }
         return new ServoAction(servo::run);
     }

@@ -59,13 +59,11 @@ public class TeleOpMode extends BaseOpMode {
     }
 
     public static Pose park = new Pose(0,102,85);
-
-    private TankFeedbackController tankFeedbackController = new TankFeedbackController(
-            ControlSystemConstant.feedbackConfig.xPid,
-            ControlSystemConstant.feedbackConfig.hPid,
-            new PidStatus(0,0,0,0,0,0,0,0),
-            new PidStatus(0,0,0,0,0,0,0,0));
-
+    static {
+        if(MatchData.team == Team.RED){
+            park = park.teamReverse();
+        }
+    }
     @Override
     protected void initConfig() {
         DeviceActivationConfig devConfig = DeviceActivationConfig.getAllOn();
@@ -89,18 +87,15 @@ public class TeleOpMode extends BaseOpMode {
 
     @Override
     protected void modulesReplace() {
-        //robot.getFactory().replace(TrajectoryFollower.class, new TrajectoryFollower() {});
         EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new TeleOpFeedback()));
     }
 
     private final BorderButton hiAimButt = new BorderButton();
     private final BorderButton lowAimButt = new BorderButton();
-    private final BorderButton dirReverseButt = new BorderButton();
     private final BorderButton brushReverseButt = new BorderButton();
     private final BorderButton brushReverseButt1 = new BorderButton();
     private final BorderButton ptoButt = new BorderButton();
     private final BorderButton fireButt = new BorderButton();
-    private final BorderButton patternFireButt = new BorderButton();
     private final BorderButton purpleFireButt = new BorderButton();
     private final BorderButton greenFireButt = new BorderButton();
     private final BorderButton cancelFireButt = new BorderButton();
@@ -114,7 +109,7 @@ public class TeleOpMode extends BaseOpMode {
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
-                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * yawSens ,
+                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * yawSens   ,
                    -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y)    * transSens),
                 0
         );
@@ -139,18 +134,11 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR));
         }
 
-
-
-
         isAngleControl = gamepad1.right_trigger>0.1;
 
         if (fireButt.get(gamepad1.left_bumper)) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
         }
-
-//        if (patternFireButt.get(gamepad1.square)) {
-//            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FAST_PATTERN_FIRE));
-//        }
 
         if(greenFireButt.get(gamepad1.triangle)){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.G_FIRE));
@@ -199,8 +187,7 @@ public class TeleOpMode extends BaseOpMode {
             AutonomTask.Stub,
             true,park
     ).setEndAngle(()->park.h).setVel(120);
-    private BorderButton goButt = new BorderButton();
-    private BorderButton upButt = new BorderButton();
+
     @Override
     protected void initRun() {
         DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);

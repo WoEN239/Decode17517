@@ -108,17 +108,12 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
                         new Pose(0,0,0)
                 )
         );
-        if(!isEndNear) {
-            observerPos.notifyListeners(new FeedbackReference(
-                    new Pose(targetPos.h, 0, 0),
-                    new Pose(angleVel, transVelocity, 0)
-            ));
-        }else{
-            observerPos.notifyListeners(new FeedbackReference(
-                    new Pose(targetPos.h, 0, 0),
-                    new Pose(velocity.h, velocity.vector.rotate(-pose.h).x, 0)
-            ));
-        }
+
+        observerPos.notifyListeners(new FeedbackReference(
+                new Pose(targetPos.h, 0, 0),
+                new Pose(angleVel, transVelocity, 0)
+        ));
+
 
         for(LineSegment i: targetPath) {
             Telemetry.getInstance().getField().line(i.start, i.end);
