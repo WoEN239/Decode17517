@@ -58,7 +58,7 @@ public class Near9Pattern6Ball extends WaypointPool {
                     () -> RobotLog.dd("auto", "eat3")
             },
             false, pool.eat1
-    ).setName("eat3").setEndDetect(30).setVel(150);
+    ).setName("eat3").setEndDetect(30).setVel(160);
     private ElapsedTime rampTimer = new ElapsedTime();
     public WayPoint rampTimerReset = new WayPoint(
             new AutonomTask(()->true,()->rampTimer.reset()),
@@ -203,11 +203,11 @@ class PositionPool4 {
         }
     }
 
-    public Pose fireNear = new Pose(0, -54, -38);
+    public Pose fireNear = new Pose(0, -50, -33);
     public Pose fireNearPark = new Pose(0, -60, -31);
 
     public Pose goal = new Pose(0,-180,-180);
-    public Pose eat1 = new Pose(-0.5 * PI, -15, -155);
+    public Pose eat1 = new Pose(-0.5 * PI, -13, -155);
     public Pose eat1R = new Pose(-0.51 * PI , -18, -146);
     public Pose eat2 = new Pose(-0.5 * PI, 32, -125);
     public Pose eat3 = new Pose(-0.5 * PI,90,-125);

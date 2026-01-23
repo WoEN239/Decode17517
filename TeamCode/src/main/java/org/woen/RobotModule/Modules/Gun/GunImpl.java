@@ -14,6 +14,7 @@ import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.signum;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -127,11 +128,11 @@ public class GunImpl implements Gun {
 
 
     private MOTIF getInMotif() {
-        MOTIF inMouth = PPG;
+        MOTIF inMouth = GPP;
         if (centerColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
             inMouth = PGP;
         else if (rightColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-            inMouth = GPP;
+            inMouth = PPG;
 
         return inMouth;
     }
@@ -231,15 +232,9 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("dist to goal", dist);
 
 
-        if (command == OFF) {
-            gunR.setPower(0);
-            gunL.setPower(0);
-            gunC.setPower(0);
-        } else {
             gunR.setPower(pidR.getU()*12/voltage);
             gunL.setPower(pidL.getU()*12/voltage);
             gunC.setPower(pidC.getU()*12/voltage);
-        }
 
         servoAction.update();
         servoR.update();
@@ -260,6 +255,12 @@ public class GunImpl implements Gun {
     private void nearAim(double dist) {
         double deltaC = (dist - gunConfig.distLow) * gunConfig.deltaPosC / (gunConfig.distHi - gunConfig.distLow);
         double deltaS = (dist - gunConfig.distLow) * gunConfig.deltaPosS / (gunConfig.distHi - gunConfig.distLow);
+        if(abs(deltaC) > gunConfig.deltaPosC){
+            deltaC = gunConfig.deltaPosC * signum(deltaC);
+        }
+        if(abs(deltaS) > gunConfig.deltaPosS){
+            deltaS = gunConfig.deltaPosS * signum(deltaS);
+        }
         Telemetry.getInstance().add("deltaC", deltaC);
         Telemetry.getInstance().add("deltaS", deltaS);
 

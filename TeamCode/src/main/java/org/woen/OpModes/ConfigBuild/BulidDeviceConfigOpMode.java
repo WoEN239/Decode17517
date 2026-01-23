@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 
-@TeleOp(name = "build device")
+@TeleOp(name = "build device",group = "test")
 public class BulidDeviceConfigOpMode extends BaseOpMode {
     @Override
     protected void loopRun() {

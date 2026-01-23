@@ -22,7 +22,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-@TeleOp(name = "auto_sim")
+@TeleOp(name = "auto_sim",group = "test")
 public class AutoSimTest extends BaseOpMode {
     @Override
     protected void initConfig(){

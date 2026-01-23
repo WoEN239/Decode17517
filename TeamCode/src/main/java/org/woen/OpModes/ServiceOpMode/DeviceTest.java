@@ -47,7 +47,7 @@ import java.util.Arrays;
  */
 
 @Config
-@TeleOp(name = "device_test")
+@TeleOp(name = "device_test",group = "test")
 //@Disabled
 public class DeviceTest extends LinearOpMode {
 

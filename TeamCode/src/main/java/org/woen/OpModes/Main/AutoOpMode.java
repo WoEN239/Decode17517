@@ -13,6 +13,7 @@ import org.woen.Autonom.Pools.Far9PatternPool;
 import org.woen.Autonom.Pools.WaypointPool;
 import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
+import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
@@ -59,7 +60,12 @@ public class AutoOpMode extends BaseOpMode {
 
     protected void loopRun() {
         telemetry.addData("target motif",motif);
+        telemetry.addData("gunR",DevicePool.getInstance().gunR.getVel());
+        telemetry.addData("gunL",DevicePool.getInstance().gunL.getVel());
+        telemetry.addData("gunC",DevicePool.getInstance().gunC.getVel());
+
         telemetry.update();
+
     }
 
     @Override

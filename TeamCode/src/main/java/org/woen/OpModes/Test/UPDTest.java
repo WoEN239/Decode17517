@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 @Disabled
-@TeleOp(name = "upd_test")
+@TeleOp(name = "upd_test",group = "test")
 public class UPDTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

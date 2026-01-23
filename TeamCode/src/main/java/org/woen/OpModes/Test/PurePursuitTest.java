@@ -12,7 +12,7 @@ import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.Util.Vectors.Pose;
 @Disabled
-@TeleOp(name = "pure_pursuit_test")
+@TeleOp(name = "pure_pursuit_test",group = "test")
 public class PurePursuitTest extends BaseOpMode {
 
     @Override

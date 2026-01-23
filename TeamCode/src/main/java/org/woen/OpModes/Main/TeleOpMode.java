@@ -5,6 +5,7 @@ import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Structure.AutonomTask;
@@ -33,7 +34,7 @@ import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
 
 @Config
-@TeleOp(name = "teleOp")
+@TeleOp(name = "teleOp", group = "A1")
 public class TeleOpMode extends BaseOpMode {
     private final FeedforwardReferenceObserver feedforwardReferenceObserver = new FeedforwardReferenceObserver();
 
@@ -58,7 +59,7 @@ public class TeleOpMode extends BaseOpMode {
         anglePid.isDAccessible = false;
     }
 
-    public static Pose park = new Pose(0,102,85);
+    public static Pose park = new Pose(0,82,75);
     static {
         if(MatchData.team == Team.RED){
             park = park.teamReverse();
@@ -106,6 +107,9 @@ public class TeleOpMode extends BaseOpMode {
 
     public static double yawSens = 6.8;
     public static double transSens = 180;
+
+    private int colorShootCounter = 0;
+    private ElapsedTime colorShootTimer = new ElapsedTime();
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
@@ -126,11 +130,11 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewBrushReversEvent(false));
         }
 
-        if (lowAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()<320)) {
+        if (lowAimButt.get(pose.vector.x<60)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR));
         }
 
-        if (hiAimButt.get(pose.vector.minus(MatchData.team.goalPose).length()>320)) {
+        if (lowAimButt.get(pose.vector.x>60)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR));
         }
 
@@ -141,16 +145,26 @@ public class TeleOpMode extends BaseOpMode {
         }
 
         if(greenFireButt.get(gamepad1.triangle)){
+            colorShootCounter += 1;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.G_FIRE));
         }
 
         if(purpleFireButt.get(gamepad1.circle)){
+            colorShootCounter += 1;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.P_FIRE));
         }
-
-        if(cancelFireButt.get(gamepad1.cross)){
+        if(colorShootCounter < 3){
+            colorShootTimer.reset();
+        }
+        if(colorShootTimer.seconds()>0.5){
+            colorShootCounter = 0;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
+        if(cancelFireButt.get(gamepad1.cross)){
+            colorShootCounter = 0;
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
+        }
+
 
         if(gamepad1.psWasPressed()){
             DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOffPos);
@@ -161,26 +175,13 @@ public class TeleOpMode extends BaseOpMode {
 
         }
 
-        if(ptoButt.get(gamepad1.dpad_up)){
-            isAngleControl = false;
-            EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(
-                        wayPoint
-            ));
+       if(gamepad1.dpad_up){
+           DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOnPos);
+           DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
+           DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
 
-            isPtoActive = true;
-        }
-        if(isPtoActive && pose.vector.minus(park.vector).length()<10 ){
-            isAngleControl = true;
-            angleToControl = PI;
-        }
-
-        if(isPtoActive && pose.vector.minus(park.vector).length()<10 && AngleUtil.normalize(abs(pose.h-PI))<0.015 ){
-            DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOnPos);
-            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
-            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
-
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
-        }
+           EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
+       }
 
         if(gamepad1.dpad_down){
             if(MatchData.team == Team.BLUE)

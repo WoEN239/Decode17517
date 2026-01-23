@@ -15,6 +15,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
+import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
 
 
@@ -23,10 +24,10 @@ public class HeaveyBallsAuto extends WaypointPool {
     PositionPool5 pool = new PositionPool5();
     public WayPoint aim1 = new WayPoint(
             new Runnable[]{
-                    () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR)),
+                    () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL)),
                     () -> RobotLog.dd("auto", "aim1")
-            }, true, pool.fireFar.plus(new Pose(0,10,0))
-    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100);
+            }, false, pool.fireNear
+    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(30);
 
     public WayPoint fire1 = new WayPoint(
             new AutonomTask(
@@ -34,12 +35,12 @@ public class HeaveyBallsAuto extends WaypointPool {
                     () -> RobotLog.dd("auto", "fire1"),
                     () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
             ),
-            false, pool.fireFar
+            false, pool.fireNear
     ).setName("fire1").setEndDetect(30).setEndAngle(this::angleToGoal);
     public WayPoint rotate1 = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "rotate1")
-            }, false,  pool.fireFar
+            }, false,  pool.fireNear
     ).setName("rotate1").setEndDetect(30).setEndAngle(()->angleTo(pool.eat1.vector));
 
     public WayPoint eat1 = new WayPoint(
@@ -52,9 +53,9 @@ public class HeaveyBallsAuto extends WaypointPool {
 
     public WayPoint aim2 = new WayPoint(
             new Runnable[]{
-                    () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR)),
+                    () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL)),
                     () -> RobotLog.dd("auto", "aim2")
-            }, true, pool.fireFar
+            }, true, pool.fireNear
     ).setName("aim1").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(30);
 
     public WayPoint fire2 = new WayPoint(
@@ -63,20 +64,15 @@ public class HeaveyBallsAuto extends WaypointPool {
                     () -> RobotLog.dd("auto", "fire2"),
                     () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
             ),
-            false, pool.fireFar
+            false, pool.fireNear
     ).setName("fire1").setEndDetect(30).setEndAngle(this::angleToGoal);
 
-    public WayPoint to2ndBalls = new WayPoint(
-            new Runnable[]{
-                    () -> RobotLog.dd("auto", "aim2")
-            }, true, pool.park
-    ).setName("aim1").setVel(100).setEndDetect(30);
 
 
     public WayPoint rotate2 = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "rotate1")
-            }, false, pool.park
+            }, false, pool.fireNear
     ).setName("rotate1").setEndDetect(30).setEndAngle(() -> angleTo(pool.eat2.vector));
 
     public WayPoint eat2 = new WayPoint(
@@ -86,7 +82,7 @@ public class HeaveyBallsAuto extends WaypointPool {
             false, pool.eat2
     ).setName("eat3").setEndDetect(30).setVel(150).setEndAngle(()-> PI+angleTo(pool.fireNear.vector));
 
-  /*  public WayPoint aimR = new WayPoint(
+    public WayPoint aimR = new WayPoint(
             new Runnable[]{
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR_GOAL)),
                     () -> RobotLog.dd("auto", "aim1")
@@ -173,7 +169,7 @@ public class HeaveyBallsAuto extends WaypointPool {
             new Runnable[]{
                     () -> RobotLog.dd("auto", "eat3")
             },
-            false, pool.eat4
+            false, pool.park, pool.eat4
     ).setName("eat3").setEndDetect(20).setVel(150).setEndAngle(()-> PI+angleTo(pool.fireNear.vector));
 
 
@@ -195,7 +191,6 @@ public class HeaveyBallsAuto extends WaypointPool {
 
 
 
-   */
 
 
     public WayPoint park = new WayPoint(
@@ -209,19 +204,16 @@ public class HeaveyBallsAuto extends WaypointPool {
     @Override
     public WayPoint[] getPool() {
         return new WayPoint[]{
-                aim1.copy(),
+                aim1.copy().setVel(170),
                 fire1.copy(),
                 rotate1.copy(),
 
                 eat1.copy().setVel(170),
-
-                aim2.copy(),
+                aim2.copy().setVel(170),
                 fire2.copy(),
-                to2ndBalls.copy(),
 
                 rotate2.copy(),
-                eat2.copy()
-             /*   eat2.copy().setVel(170),
+                eat2.copy().setVel(100),
                 aimR.copy(),
                 rampTimerReset.copy(),
                 rampTimerWait.copy(),
@@ -234,13 +226,11 @@ public class HeaveyBallsAuto extends WaypointPool {
                 fire4.copy(),
 
                 rotate4.copy(),
-                aimToEat.copy(),
                 eat4.copy().setVel(170),
                 aim5.copy().setVel(170),
                 fire5.copy(),
 
 
-              */
 
         };
     }
@@ -265,6 +255,7 @@ class PositionPool5 {
             eat1R = eat1R.teamReverse();
             park = park.teamReverse();
             longPose = longPose.teamReverse();
+            gate = gate.teamReverse();
         }
     }
 
@@ -273,21 +264,16 @@ class PositionPool5 {
     public Pose fireNear = new Pose(0, -54, -38);
 
     public Pose goal = new Pose(0,-180,-180);
-   // public Pose eat1 = new Pose(-0.5 * PI, -25, -120);
+    public Pose eat1 = new Pose(-0.5 * PI, -35, -110);
     public Pose eat1R = new Pose(0.51 * PI , 0, -130);
-   // public Pose eat2 = new Pose(-0.5 * PI, 40, -125);
-   // public Pose eat3 = new Pose(-0.5 * PI,90,-125);
-    public Pose longPose = new Pose(0,127, -70);
-    //public Pose eat4 = new Pose(-0.5 * PI, 135.1, -130);
-    public Pose park = new Pose(0, 40, -65.5);
+    public Pose eat2 = new Pose(-0.5 * PI, 40, -125);
+    public Pose eat3 = new Pose(-0.5 * PI,90,-125);
+    public Pose longPose = new Pose(0,130, -70);
+    public Pose eat4 = new Pose(0.5*PI,151.1,-159.2);;
+    public Pose park = new Pose(0, 100, -65.5);
 
+    public Pose gate = new Pose(-2 * PI + PI, 26, -150);
 
-
-
-    public Pose eat1 = new Pose(-0.5*PI,151.1,-159.2);
-    public Pose eat2 = new Pose(-2 * PI,30,-126);
-    public Pose eat3 = new Pose(0,-60,-130);
-    public Pose eat4 = new Pose(0,7.0,-142.2);
 }
 
 

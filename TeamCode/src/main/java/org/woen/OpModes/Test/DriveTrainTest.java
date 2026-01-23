@@ -6,7 +6,7 @@ import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 
-@TeleOp(name = "drive_train_test")
+@TeleOp(name = "drive_train_test",group = "test")
 public class DriveTrainTest extends BaseOpMode {
     @Override
     protected void initConfig(){
