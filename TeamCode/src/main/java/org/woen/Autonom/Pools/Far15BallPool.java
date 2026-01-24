@@ -13,7 +13,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
-public class Far15BallPool extends WaypointPool {
+public class Far15BallPool extends WayPointPool {
     PositionPoolFar pool = new PositionPoolFar();
     public WayPoint firstAim = new WayPoint(
             new Runnable[]{

@@ -15,7 +15,7 @@ import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
-public class Far9PatternPool extends WaypointPool{
+public class Far9PatternPool extends WayPointPool {
     PositionPoolNear pool = new PositionPoolNear();
     public WayPoint aim1 = new WayPoint(
             new Runnable[]{

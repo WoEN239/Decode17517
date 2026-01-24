@@ -10,7 +10,7 @@ import org.woen.Autonom.Pools.Far9Pattern3Ball;
 import org.woen.Autonom.Pools.HeaveyBallsAuto;
 import org.woen.Autonom.Pools.Near9Pattern6Ball;
 import org.woen.Autonom.Pools.Far9PatternPool;
-import org.woen.Autonom.Pools.WaypointPool;
+import org.woen.Autonom.Pools.WayPointPool;
 import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
@@ -40,7 +40,7 @@ public class AutoOpMode extends BaseOpMode {
     private MOTIF motif = PGP;
     @Override
     protected void initRun() {
-        WaypointPool pool = null;
+        WayPointPool pool = null;
         if(MatchData.auto.equals("far9pattern")){
             pool = new Far9PatternPool();
         } else if (MatchData.auto.equals("far15ball")) {

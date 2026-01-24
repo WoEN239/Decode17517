@@ -14,25 +14,27 @@ public class GunServoPositions {
     public static double eatLPos = 0.31;
     public static double shotLPos = 0.48;
 
-    public static double aimRFar = 0.425;
-    public static double aimRPat = 0.425;
-    public static double aimRNear = 0.625;
-    public static double aimRGoalNear = 0.95;
+    public static Double aimCFar = 0.3;
+    public static Double aimCPat = 0.3;
+    public static Double aimCNear = 0.6;
+    public static Double aimCGoalNear = 0.85;
 
-    public static double aimCFar = 0.3;
-    public static double aimCPat = 0.3;
-    public static double aimCNear = 0.6;
-    public static double aimCGoalNear = 0.85;
+    public static Double servoDeltaR = 0.125;
+    public static Double aimRFar = aimCFar+servoDeltaR;
+    public static Double aimRPat = aimCPat+servoDeltaR;
+    public static Double aimRNear = aimCNear+servoDeltaR;
+    public static Double aimRGoalNear = aimCGoalNear+servoDeltaR;
 
-    public static double aimLFar = 0.175;
-    public static double aimLPat = 0.175;
-    public static double aimLNear = 0.375;
-    public static double aimLGoalNear = 0.76;
+    public static Double servoDeltaL = -0.125;
+    public static Double aimLFar = aimCFar+servoDeltaL;
+    public static Double aimLPat = aimCPat+servoDeltaL;
+    public static Double aimLNear = aimCNear+servoDeltaL;
+    public static Double aimLGoalNear = aimCGoalNear+servoDeltaL;
 
     public static double ptoROpen = 0.8;
     public static double ptoLOpen = 0;
     public static double brakePadOnPos = 0;
-    public static double  brakePadOffPos = 0.35;
+    public static double brakePadOffPos = 0.35;
 
     public static double ptoRClose = 0.5;
     public static double ptoLClose = 1;

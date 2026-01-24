@@ -1,7 +1,6 @@
 package org.woen.Autonom.Pools;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.log;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
@@ -19,7 +18,7 @@ import org.woen.Util.Vectors.Pose;
 
 
 
-public class HeaveyBallsAuto extends WaypointPool {
+public class HeaveyBallsAuto extends WayPointPool {
     PositionPool5 pool = new PositionPool5();
     public WayPoint aim1 = new WayPoint(
             new Runnable[]{
