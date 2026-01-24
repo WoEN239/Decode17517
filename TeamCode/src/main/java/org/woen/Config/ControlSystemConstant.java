@@ -46,6 +46,8 @@ public class ControlSystemConstant {
         public double velTol = 60;
         public double patternFireDelay = 1;
 
+
+
         public double shootVelSidePattern = 1860;
         public double shootVelSideFar = 1860;
         public double shootVelSideNear = 1630;
@@ -66,7 +68,7 @@ public class ControlSystemConstant {
 
         public double lightPower = 0.7;
 
-        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.00037, 0, 0, 0,40);
+        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.000385, 0, 0, 0,40);
         public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00042, 0, 0, 0,40);
         public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00046, 0, 0, 0,40);
     }

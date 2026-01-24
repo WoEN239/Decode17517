@@ -14,7 +14,7 @@ import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
 import org.woen.Telemetry.Telemetry;
 
 
-@TeleOp(name = "camera_test")
+@TeleOp(name = "camera_test",group = "test")
 @Config
 public class CameraTest extends BaseOpMode {
     @Override

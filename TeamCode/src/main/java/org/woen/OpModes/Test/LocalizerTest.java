@@ -22,7 +22,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 
-@TeleOp(name = "localizer_test")
+@TeleOp(name = "localizer_test",group = "test")
 public class LocalizerTest extends BaseOpMode {
 
     @Override

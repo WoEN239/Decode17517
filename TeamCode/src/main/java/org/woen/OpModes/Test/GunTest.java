@@ -16,7 +16,7 @@ import org.woen.Util.Pid.PidStatus;
 
 @Config
 @Disabled
-@TeleOp(name = "gun_test")
+@TeleOp(name = "gun_test",group = "test")
 public class GunTest extends BaseOpMode {
     Motor motor;
     public static PidStatus status = new PidStatus(0,0,0,0,0,0,0,0);
