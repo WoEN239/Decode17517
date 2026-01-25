@@ -48,6 +48,7 @@ public abstract class BaseOpMode extends LinearOpMode {
         robotInit();
         modulesReplace();
         initRun();
+        robot.update();
         waitForStart();
         while (opModeIsActive()) {
             loopRun();

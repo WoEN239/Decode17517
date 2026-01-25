@@ -2,17 +2,19 @@ package org.woen.Hardware.DevicePool.Devices.Servo;
 
 import static java.lang.Math.abs;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
 
+@Config
 public class ServoWithFeedback {
     private final ElapsedTime timer = new ElapsedTime();
     private final ServoMotor servo;
     public TrapezoidMotionProfile motionProfile = new TrapezoidMotionProfile(accel,velocity,0,0,0);
-    private final static double accel = 24;
-    private final static double velocity = 40;
+    private final static double accel = 12;
+    private final static double velocity = 20;
     private double latterTarget = -1;
 
     public void setTarget(double pos){
