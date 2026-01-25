@@ -1,7 +1,5 @@
 package org.woen.OpModes.Test;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
@@ -15,7 +13,7 @@ import org.woen.Telemetry.Telemetry;
 
 
 @TeleOp(name = "camera_test",group = "test")
-@Config
+
 public class CameraTest extends BaseOpMode {
     @Override
     protected void initConfig(){
@@ -34,6 +32,7 @@ public class CameraTest extends BaseOpMode {
 
 
     public static double lightPower = 0.6;
+
 
     @Override
     protected void loopRun() {

@@ -47,7 +47,6 @@ public class ControlSystemConstant {
         public double patternFireDelay = 1;
 
 
-
         public double shootVelSidePattern = 1860;
         public double shootVelSideFar = 1860;
         public double shootVelSideNear = 1630;
@@ -60,9 +59,7 @@ public class ControlSystemConstant {
 
         public double shootVelSideGoalNear = 1470;
 
-        public double deltaPosC = 0;
-        public double deltaPosS = 0;
-
+        public double adaptiveDeltaPos = 0;
         public double distLow = 186;
         public double distHi = 268;
 

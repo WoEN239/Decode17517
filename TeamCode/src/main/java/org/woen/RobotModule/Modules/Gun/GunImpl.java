@@ -201,7 +201,7 @@ public class GunImpl implements Gun {
         } else if (aimCommand == NEAR_GOAL) {
             gunVelSide   = gunConfig.shootVelSideGoalNear;
             gunVelCenter = gunConfig.shootVelCGoalNear;
-            setAimServoPos(aimLGoalNear, aimCGoalNear, aimRGoalNear);
+            setAimServoPos(aimCGoalNear);
         }
 
         if(isBrushRevers){
@@ -209,7 +209,7 @@ public class GunImpl implements Gun {
         }else{
             brushPower = 1;
         }
-        if(command == OFF){
+        if(command != EAT){
             brushPower = 0;
         }
 
@@ -231,10 +231,15 @@ public class GunImpl implements Gun {
         Telemetry.getInstance().add("gun case", command);
         Telemetry.getInstance().add("dist to goal", dist);
 
-
-            gunR.setPower(pidR.getU()*12/voltage);
-            gunL.setPower(pidL.getU()*12/voltage);
-            gunC.setPower(pidC.getU()*12/voltage);
+        if(command == OFF){
+            gunR.setPower(0);
+            gunL.setPower(0);
+            gunC.setPower(0);
+        }else {
+            gunR.setPower(pidR.getU() * 12 / voltage);
+            gunL.setPower(pidL.getU() * 12 / voltage);
+            gunC.setPower(pidC.getU() * 12 / voltage);
+        }
 
         servoAction.update();
         servoR.update();
@@ -245,32 +250,33 @@ public class GunImpl implements Gun {
     }
 
     private void farAim() {
-        setAimServoPos(aimLFar, aimCFar, aimRFar);
+        setAimServoPos( aimCFar);
     }
     private void patternAim() {
-        setAimServoPos(aimLPat, aimCPat, aimRPat);
+        setAimServoPos(aimCPat);
     }
 
 
     private void nearAim(double dist) {
-        double deltaC = (dist - gunConfig.distLow) * gunConfig.deltaPosC / (gunConfig.distHi - gunConfig.distLow);
-        double deltaS = (dist - gunConfig.distLow) * gunConfig.deltaPosS / (gunConfig.distHi - gunConfig.distLow);
-        if(abs(deltaC) > gunConfig.deltaPosC){
-            deltaC = gunConfig.deltaPosC * signum(deltaC);
-        }
-        if(abs(deltaS) > gunConfig.deltaPosS){
-            deltaS = gunConfig.deltaPosS * signum(deltaS);
-        }
-        Telemetry.getInstance().add("deltaC", deltaC);
-        Telemetry.getInstance().add("deltaS", deltaS);
+        double delta = (dist - gunConfig.distLow) * gunConfig.adaptiveDeltaPos / (gunConfig.distHi - gunConfig.distLow);
 
-        setAimServoPos(aimLNear + deltaS, aimCNear + deltaC, aimRNear + deltaS);
+        if(abs(delta) > gunConfig.adaptiveDeltaPos){
+            delta = gunConfig.adaptiveDeltaPos * signum(delta);
+        }
+        Telemetry.getInstance().add("adaptiveDeltaPos", delta);
+
+        setAimServoPos(aimCNear);
     }
 
     private void setAimServoPos(double l, double c, double r) {
         aimR.setPos(r);
         aimC.setPos(c);
         aimL.setPos(l);
+    }
+    private void setAimServoPos(double c) {
+        aimR.setPos(c+servoDeltaR);
+        aimC.setPos(c);
+        aimL.setPos(c+servoDeltaL);
     }
 
     private Pose pose = new Pose(0, 0, 0);

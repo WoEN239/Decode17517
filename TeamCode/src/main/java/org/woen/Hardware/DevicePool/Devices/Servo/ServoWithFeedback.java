@@ -11,8 +11,8 @@ public class ServoWithFeedback {
     private final ElapsedTime timer = new ElapsedTime();
     private final ServoMotor servo;
     public TrapezoidMotionProfile motionProfile = new TrapezoidMotionProfile(accel,velocity,0,0,0);
-    private final static double accel = 12;
-    private final static double velocity = 20;
+    private final static double accel = 24;
+    private final static double velocity = 40;
     private double latterTarget = -1;
 
     public void setTarget(double pos){
