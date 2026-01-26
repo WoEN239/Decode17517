@@ -85,7 +85,6 @@ public class TeleOpMode extends BaseOpMode {
             park = park.teamReverse();
         }
     }
-
     @Override
     protected void modulesReplace() {
         EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new TeleOpFeedback()));
@@ -198,9 +197,10 @@ public class TeleOpMode extends BaseOpMode {
 
     @Override
     protected void initRun() {
+        DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOffPos);
+        
         DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-        DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
-    }
+        DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);}
 
     private double angleToControl = 0;
     private boolean isAngleControl = false;

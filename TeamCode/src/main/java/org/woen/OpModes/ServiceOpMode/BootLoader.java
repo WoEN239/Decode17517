@@ -40,7 +40,7 @@ public class BootLoader extends LinearOpMode {
                 pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
                 pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
                         GoBildaPinpointDriver.EncoderDirection.FORWARD);
-                pinpointDriver.setOffsets(-12,-20, DistanceUnit.CM);
+                pinpointDriver.setOffsets(-18.29 ,-10.72, DistanceUnit.CM);
                 pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.start.pose.x, MatchData.start.pose.y,
                         AngleUnit.RADIANS,MatchData.start.pose.h));
 

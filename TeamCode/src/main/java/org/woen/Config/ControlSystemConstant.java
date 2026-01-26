@@ -65,9 +65,9 @@ public class ControlSystemConstant {
 
         public double lightPower = 0.7;
 
-        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.000385, 0, 0, 0,40);
-        public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00042, 0, 0, 0,40);
-        public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00046, 0, 0, 0,40);
+        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.000456, 0, 0, 0,40);
+        public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00039, 0, 0, 0,40);
+        public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00043, 0, 0, 0,40);
     }
     public static GunConfig gunConfig = new GunConfig();
 
