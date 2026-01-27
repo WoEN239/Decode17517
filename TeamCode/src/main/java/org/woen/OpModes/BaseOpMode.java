@@ -30,7 +30,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected void modulesReplace(){}
     protected void initRun(){}
     protected void lastRun(){}
-    protected abstract void loopRun();
+    protected abstract void  loopRun();
 
     private void robotInit(){
         robot = new Robot();
@@ -48,7 +48,6 @@ public abstract class BaseOpMode extends LinearOpMode {
         robotInit();
         modulesReplace();
         initRun();
-        robot.update();
         waitForStart();
         while (opModeIsActive()) {
             loopRun();

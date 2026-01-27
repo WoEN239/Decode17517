@@ -38,9 +38,9 @@ public class BootLoader extends LinearOpMode {
 
             if (gamepad1.dpadDownWasPressed()) {
                 pinpointDriver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-                pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
+                pinpointDriver.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
                         GoBildaPinpointDriver.EncoderDirection.FORWARD);
-                pinpointDriver.setOffsets(-18.29 ,-10.72, DistanceUnit.CM);
+                pinpointDriver.setOffsets(-10.85 ,-18.24, DistanceUnit.CM);
                 pinpointDriver.setPosition(new Pose2D(DistanceUnit.CM, MatchData.start.pose.x, MatchData.start.pose.y,
                         AngleUnit.RADIANS,MatchData.start.pose.h));
 

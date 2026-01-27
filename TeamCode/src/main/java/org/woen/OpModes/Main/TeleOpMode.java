@@ -104,8 +104,8 @@ public class TeleOpMode extends BaseOpMode {
 
     private Pose targetVelocity = new Pose(0,0,0);
 
-    public static double yawSens = 6.8;
-    public static double transSens = 180;
+    public static double yawSens = 8;
+    public static double transSens = 200;
 
     private int colorShootCounter = 0;
     private ElapsedTime colorShootTimer = new ElapsedTime();
