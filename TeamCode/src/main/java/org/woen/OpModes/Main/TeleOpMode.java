@@ -38,21 +38,21 @@ import org.woen.Util.Vectors.Pose;
 public class TeleOpMode extends BaseOpMode {
     private final FeedforwardReferenceObserver feedforwardReferenceObserver = new FeedforwardReferenceObserver();
 
-    public static PidStatus velPidStatusForward = new PidStatus(0.0141, 0, 0., 0, 0, 0, 0);
+    public static PidStatus velPidStatusForward = new PidStatus(0.0141, 0, 0., 0, 0, 0, 5);
     Pid velForwardPid = new Pid(velPidStatusForward);
     {
         velForwardPid.isNormolized = false;
         velForwardPid.isDAccessible = false;
     }
 
-    public static PidStatus velAnglePidStatus = new PidStatus(0.635, 0, 0., 0, 0, 0, 0.1,0);
+    public static PidStatus velAnglePidStatus = new PidStatus(10, 0, 0., 0, 0, 0, 1,0.4);
     Pid velAnglePid = new Pid(velAnglePidStatus);
     {
         velAnglePid.isNormolized = false;
         velAnglePid.isDAccessible = false;
     }
 
-    public static PidStatus anglePidStatus = new PidStatus(10, 10, 1, 0, 0, 0.2, 0.3,0.015);
+    public static PidStatus anglePidStatus = new PidStatus(15, 10, 1, 0, 0, 0.2, 0.5,0.015);
     Pid anglePid = new Pid(anglePidStatus);
     {
         anglePid.isNormolized = true;
@@ -100,11 +100,13 @@ public class TeleOpMode extends BaseOpMode {
     private final BorderButton greenFireButt = new BorderButton();
     private final BorderButton cancelFireButt = new BorderButton();
 
+    private boolean isDpadUp = false;
+
     private boolean isPtoActive = false;
 
     private Pose targetVelocity = new Pose(0,0,0);
 
-    public static double yawSens = 8;
+    public static double yawSens = 7;
     public static double transSens = 200;
 
     private int colorShootCounter = 0;
@@ -166,18 +168,16 @@ public class TeleOpMode extends BaseOpMode {
 
 
         if(gamepad1.psWasPressed()){
-            DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOffPos);
-            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+         //   DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+           // DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
 
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
 
         }
 
        if(gamepad1.dpad_up){
-           DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOnPos);
-           DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
-           DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
+           // DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
+        //  DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
 
            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
        }
@@ -197,10 +197,9 @@ public class TeleOpMode extends BaseOpMode {
 
     @Override
     protected void initRun() {
-        DevicePool.getInstance().brakePad.setPos(GunServoPositions.brakePadOffPos);
-        
-        DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-        DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);}
+        //DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+        //DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+     }
 
     private double angleToControl = 0;
     private boolean isAngleControl = false;

@@ -11,7 +11,7 @@ import org.woen.Util.Arrays.ArrayExtra;
 public class Battery implements IRobotModule {
     private RevVoltageSensor revVoltageSensor;
     private final ElapsedTime timer = new ElapsedTime();
-    private final double[] reads = new double[5];
+    private final double[] reads = new double[]{12,12,12,12,12};
 
     @Override
     public void init(){

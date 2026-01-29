@@ -29,7 +29,7 @@ public class VoltageControllerImpl implements VoltageController {
     private Motor lb;
 
     @Override
-    public void deviceSetUpdate() {
+    public void lateUpdate () {
 
         WheelValueMap power = target;
 
@@ -45,9 +45,9 @@ public class VoltageControllerImpl implements VoltageController {
                 power.lb+ offset *Math.signum(power.lb)
         );
 
-        power = power.border(new WheelValueMap(
-                offset +0.05, offset +0.05,
-                offset +0.05, offset +0.05));
+//        power = power.border(new WheelValueMap(
+//                offset +0.05, offset +0.05,
+//                offset +0.05, offset +0.05));
 
         power = power.multiply(1d/voltage);
 

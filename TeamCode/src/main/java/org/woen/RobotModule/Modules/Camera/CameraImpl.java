@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -37,20 +38,20 @@ public class CameraImpl implements Camera {
     public static int width = 640;
 
     /// left
-    public static double leftL = -0.6;
-    public static double topL = 0.9;
-    public static double rightL = -0.4;
-    public static double bottomL = 0.7;
+    public static double leftL = -0.85;
+    public static double topL = 0.78;
+    public static double rightL = -0.65;
+    public static double bottomL = 0.74;
     /// center
-    public static double   leftC = -0.2;
-    public static double    topC = 0.9;
-    public static double  rightC = -0.1;
-    public static double bottomC = 0.7;
+    public static double   leftC = 0.1;
+    public static double    topC = 0.85;
+    public static double  rightC = 0.15;
+    public static double bottomC = 0.74;
     /// right
-    public static double   leftR = 0.8;
-    public static double    topR = 0.9;
+    public static double   leftR = 0.9;
+    public static double    topR = 1;
     public static double  rightR = 1;
-    public static double bottomR = 0.8;
+    public static double bottomR = 0.7;
     PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
             .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
             .setSwatches(
@@ -88,7 +89,7 @@ public class CameraImpl implements Camera {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .build();
+                 .build();
 
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -102,7 +103,9 @@ public class CameraImpl implements Camera {
                 .addProcessor(rightDetection)
                 .addProcessor(centerDetection);
 
+
         visionPortal = builder.build();
+
     }
 
     private MOTIF latterTargetMotif = null;

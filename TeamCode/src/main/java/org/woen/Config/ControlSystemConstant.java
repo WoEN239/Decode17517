@@ -11,7 +11,7 @@ public class ControlSystemConstant {
         public double PPLocalR   = 50;
         public double PPTransVel = 30;
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
-        public PidStatus hPid = new PidStatus(2,10,0.05,0,0,0.02,0);
+        public PidStatus hPid = new PidStatus(1.5,10,0.05,0,0,0.02,0.05,0.005);
 
         public PidStatus xPidVel = new PidStatus(0.635, 0, 0., 0, 0, 0, 0.1,0);
         public PidStatus hPidVel = new PidStatus(0.0141, 0, 0., 0, 0, 0, 0);;
@@ -49,15 +49,15 @@ public class ControlSystemConstant {
 
         public double shootVelSidePattern = 1860;
         public double shootVelSideFar = 1860;
-        public double shootVelSideNear = 1630;
+        public double shootVelSideNear = 1600;
 
         public double shootVelCPattern = 1860;
         public double shootVelCFar = 1860;
         public double shootVelCNear = 1600;
 
-        public double shootVelCGoalNear = 1470;
+        public double shootVelCGoalNear = 1450;
 
-        public double shootVelSideGoalNear = 1470;
+        public double shootVelSideGoalNear = 1450;
 
         public double adaptiveDeltaPos = 0;
         public double distLow = 186;
@@ -65,9 +65,9 @@ public class ControlSystemConstant {
 
         public double lightPower = 0.7;
 
-        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.000456, 0, 0, 0,40);
-        public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00039, 0, 0, 0,40);
-        public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00043, 0, 0, 0,40);
+        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.00041, 0, 0, 0,10);
+        public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00039, 0, 0, 0,10);
+        public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00043, 0, 0, 0,10);
     }
     public static GunConfig gunConfig = new GunConfig();
 

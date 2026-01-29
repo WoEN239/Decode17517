@@ -105,7 +105,7 @@ public class DevicePool {
         brush.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         motorL.setDir(-1);
-        motorR.setDir(1);
+        motorR.setDir(- 1);
 
         motorL.reset();
         motorR.reset();
