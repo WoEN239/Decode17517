@@ -234,6 +234,8 @@ class PositionPool4 {
             eat3 = eat3.teamReverse();
             eat1R = eat1R.teamReverse();
             park = park.teamReverse();
+            eat10 = eat10.teamReverse();
+            eat12 = eat12.teamReverse();
         }
     }
 
