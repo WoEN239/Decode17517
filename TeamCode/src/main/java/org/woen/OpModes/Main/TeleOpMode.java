@@ -45,14 +45,14 @@ public class TeleOpMode extends BaseOpMode {
         velForwardPid.isDAccessible = false;
     }
 
-    public static PidStatus velAnglePidStatus = new PidStatus(10, 0, 0., 0, 0, 0, 1,0.4);
+    public static PidStatus velAnglePidStatus = new PidStatus(2.5, 0, 0., 0, 0, 0, 1.5,0.4);
     Pid velAnglePid = new Pid(velAnglePidStatus);
     {
         velAnglePid.isNormolized = false;
         velAnglePid.isDAccessible = false;
     }
 
-    public static PidStatus anglePidStatus = new PidStatus(15, 10, 1, 0, 0, 0.2, 0.5,0.015);
+    public static PidStatus anglePidStatus = new PidStatus(15, 0, 1.5, 0, 0, 0.2, 0.6 ,0.015);
     Pid anglePid = new Pid(anglePidStatus);
     {
         anglePid.isNormolized = true;
@@ -89,8 +89,6 @@ public class TeleOpMode extends BaseOpMode {
     protected void modulesReplace() {
         EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new TeleOpFeedback()));
     }
-
-    private final BorderButton hiAimButt = new BorderButton();
     private final BorderButton lowAimButt = new BorderButton();
     private final BorderButton brushReverseButt = new BorderButton();
     private final BorderButton brushReverseButt1 = new BorderButton();
@@ -104,6 +102,8 @@ public class TeleOpMode extends BaseOpMode {
 
     public static double yawSens = 7;
     public static double transSens = 200;
+
+    private boolean brakePad = false;
 
     private int colorShootCounter = 0;
     private final ElapsedTime colorShootTimer = new ElapsedTime();
@@ -163,6 +163,14 @@ public class TeleOpMode extends BaseOpMode {
         }
 
 
+        if(gamepad1.rightBumperWasPressed()){
+            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLBrakePad);
+            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRBrakePad);
+        } if(gamepad1.rightBumperWasReleased()){
+            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+        }
+
         if(gamepad1.psWasPressed()){
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
@@ -170,7 +178,7 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
-       if(gamepad1.dpad_up){
+       if(gamepad1.dpadUpWasPressed()){
            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
@@ -182,6 +190,12 @@ public class TeleOpMode extends BaseOpMode {
             else
                 DevicePool.getInstance().pinPoint.setPose(148,-142, 1.5 * PI);
         }
+
+        telemetry.addData("gunR",DevicePool.getInstance().gunR.getVel());
+        telemetry.addData("gunL",DevicePool.getInstance().gunL.getVel());
+        telemetry.addData("gunC",DevicePool.getInstance().gunC.getVel());
+
+        telemetry.update();
 
     }
     private WayPoint wayPoint = new WayPoint(
@@ -204,7 +218,7 @@ public class TeleOpMode extends BaseOpMode {
                   new PidStatus(0, 0, 0, 0, 0, 0, 0),
                   new PidStatus(0, 0, 0, 0, 0, 0, 0)
             );
-        }
+         }
         @Override
         public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
             if(isAngleControl) {

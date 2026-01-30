@@ -19,20 +19,12 @@ public class GunServoPositions {
     public static Double aimCGoalNear = 0.8;
 
     public static Double servoDeltaR = 0d;
-    public static Double aimRFar = aimCFar+servoDeltaR;
-    public static Double aimRPat = aimCPat+servoDeltaR;
-    public static Double aimRNear = aimCNear+servoDeltaR;
-    public static Double aimRGoalNear = aimCGoalNear+servoDeltaR;
-    public static Double servoDeltaL = 0.05;
-    public static Double aimLFar = aimCFar+servoDeltaL;
-    public static Double aimLPat = aimCPat+servoDeltaL;
-    public static Double aimLNear = aimCNear+servoDeltaL;
-    public static Double aimLGoalNear = aimCGoalNear+servoDeltaL;
-
-    public static double ptoROpen = 0.8;//0.6;
+    public static Double servoDeltaL = 0d;
+    public static double ptoROpen = 0.67;
     public static double ptoRClose = 0.95;
-    public static double ptoRBrakePad = 0.8;
-    public static double ptoLOpen = 0.2;//0.45;
-    public static double ptoLClose = 0.07;
-    public static double ptoLBrakePad = 0.2;
+    public static double ptoRBrakePad = 0.82;
+
+    public static double ptoLOpen = 0.34;
+    public static double ptoLClose = 0.03;
+    public static double ptoLBrakePad = 0.18;
 }

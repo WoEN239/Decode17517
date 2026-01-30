@@ -36,11 +36,20 @@ public class ControlSystemConstant {
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
     
-    public static class OdometerConstantConfig {
-        public double meterPerAngle = 0.29;
-        public double y_odometer_radius = 0;
+    public static class AdaptiveFireConfig {
+        public double kFarAngle = 0.001969;
+        public double kNearAngle = 0.003150;
+        public double kNearVel   = 2.0833;
+        public double lowAngleFar  = 0.58;
+        public double lowAngleNear = 0;
+        public double lowVelNear   = 1420;
+        public double lowVelFar    = 1840;
+        public double hiDistNear   =  264;
+        public double hiDistFar = 406.5;
+        public double lowDistNear  = 178;
+        public double lowDistFar = 330;
     }
-    public static OdometerConstantConfig odometerConstantConfig = new OdometerConstantConfig();
+    public static AdaptiveFireConfig adaptiveFireConfig = new AdaptiveFireConfig();
 
     public static class GunConfig {
         public double velTol = 60;
@@ -48,11 +57,11 @@ public class ControlSystemConstant {
 
 
         public double shootVelSidePattern = 1860;
-        public double shootVelSideFar = 1860;
+        public double shootVelSideFar = 1840;
         public double shootVelSideNear = 1600;
 
         public double shootVelCPattern = 1860;
-        public double shootVelCFar = 1860;
+        public double shootVelCFar = 1840;
         public double shootVelCNear = 1600;
 
         public double shootVelCGoalNear = 1450;

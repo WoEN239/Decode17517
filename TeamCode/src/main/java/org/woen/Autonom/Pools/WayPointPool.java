@@ -10,7 +10,7 @@ import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
 public abstract class WayPointPool {
-    private Pose pose = new Pose(0,0,0);
+    protected Pose pose = new Pose(0,0,0);
     public void setPose(Pose pose){this.pose = pose;}
     protected Double angleToGoal(){return Math.PI + MatchData.team.goalPose.minus(pose.vector).getAngle();}
     protected Double angleTo(Vector2d p){return p.minus(pose.vector).getAngle();}

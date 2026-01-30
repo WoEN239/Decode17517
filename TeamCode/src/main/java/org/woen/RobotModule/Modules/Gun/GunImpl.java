@@ -1,8 +1,7 @@
 package org.woen.RobotModule.Modules.Gun;
 
+import static org.woen.Config.ControlSystemConstant.adaptiveFireConfig;
 import static org.woen.Config.ControlSystemConstant.gunConfig;
-import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.G;
-import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.P;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.GPP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PGP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PPG;
@@ -189,10 +188,10 @@ public class GunImpl implements Gun {
         if (aimCommand == FAR) {
             gunVelSide   = gunConfig.shootVelSideFar;
             gunVelCenter = gunConfig.shootVelCFar;
-            farAim();
+            farAim(dist);
         } else if (aimCommand == NEAR){
-            gunVelSide   = gunConfig.shootVelSideNear;
-            gunVelCenter = gunConfig.shootVelCNear;
+//            gunVelSide   = gunConfig.shootVelSideNear;
+//            gunVelCenter = gunConfig.shootVelCNear;
             nearAim(dist);
         } else if(aimCommand == PATTERN){
             gunVelSide   = gunConfig.shootVelSidePattern;
@@ -249,8 +248,20 @@ public class GunImpl implements Gun {
         light.setPower(gunConfig.lightPower);
     }
 
-    private void farAim() {
-        setAimServoPos( aimCFar);
+    private void farAim(double dist) {
+        double dist1 = dist;
+        if(dist1>adaptiveFireConfig.hiDistFar){
+            dist1 = adaptiveFireConfig.hiDistFar;
+        }
+
+        double deltaAngle = adaptiveFireConfig.kFarAngle*(dist1-adaptiveFireConfig.lowDistFar);
+
+        if(deltaAngle<0){
+            deltaAngle = 0;
+        }
+
+        setAimServoPos(1-adaptiveFireConfig.lowAngleFar+deltaAngle);
+
     }
     private void patternAim() {
         setAimServoPos(aimCPat);
@@ -258,14 +269,24 @@ public class GunImpl implements Gun {
 
 
     private void nearAim(double dist) {
-        double delta = (dist - gunConfig.distLow) * gunConfig.adaptiveDeltaPos / (gunConfig.distHi - gunConfig.distLow);
-
-        if(abs(delta) > gunConfig.adaptiveDeltaPos){
-            delta = gunConfig.adaptiveDeltaPos * signum(delta);
+        double dist1 =dist;
+        if(dist1>adaptiveFireConfig.hiDistNear){
+            dist1 = adaptiveFireConfig.hiDistNear;
         }
-        Telemetry.getInstance().add("adaptiveDeltaPos", delta);
+        double deltaVel = adaptiveFireConfig.kNearVel*(dist1-adaptiveFireConfig.lowDistNear);
+        if(deltaVel<0){
+            deltaVel = 0;
+        }
+        double deltaAngle = adaptiveFireConfig.kNearAngle*(dist1-adaptiveFireConfig.lowDistNear);
+        if(deltaAngle>0){
+            deltaAngle = 0;
+        }
 
-        setAimServoPos(aimCNear);
+        setAimServoPos(1-adaptiveFireConfig.lowAngleNear+deltaAngle);
+
+        gunVelSide   = adaptiveFireConfig.lowVelNear+deltaVel;
+        gunVelCenter = adaptiveFireConfig.lowVelNear+deltaVel;
+
     }
 
     private void setAimServoPos(double l, double c, double r) {
