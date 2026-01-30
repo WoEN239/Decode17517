@@ -14,8 +14,10 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
+import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
@@ -41,6 +43,7 @@ import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.Telemetry.Telemetry;
+import org.woen.Util.Color.LedDriver;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
@@ -62,6 +65,12 @@ public class GunImpl implements Gun {
 
     private Motor brush;
     private DcMotor light;
+
+    private LedDriver rgb2;
+
+    private LedDriver rgb3;
+
+    private LedDriver rgb4;
 
     private final Pid pidR = new Pid(gunConfig.rightPidStatus);
     private final Pid pidL = new Pid(gunConfig.leftPidStatus);
@@ -164,6 +173,10 @@ public class GunImpl implements Gun {
         aimC = DevicePool.getInstance().aimC;
         aimL = DevicePool.getInstance().aimL;
 
+        rgb2 = DevicePool.getInstance().ledDriver2;
+        rgb3 = DevicePool.getInstance().ledDriver3;
+        rgb4 = DevicePool.getInstance().ledDriver4;
+
     }
 
     @Override
@@ -179,6 +192,22 @@ public class GunImpl implements Gun {
 
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
     }
+
+    private boolean getBalls(PredominantColorProcessor.Swatch swatch){
+        if(swatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN || swatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE)
+            return true;
+        else
+            return false;
+    }
+
+    private boolean artCheck(){
+        if(getBalls(centerColor) && getBalls(rightColor) && getBalls(leftColor)){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 
     @Override
     public void lateUpdate() {
@@ -223,6 +252,16 @@ public class GunImpl implements Gun {
         pidC.setTarget(gunVelCenter);
         pidC.setPos(gunC.getVel());
         pidC.update();
+
+        if(artCheck()){
+            rgb2.setPower(0);
+            rgb3.setPower(0);
+            rgb4.setPower(0);
+        }else{
+            rgb2.setPower(0);
+            rgb3.setPower(1);
+            rgb4.setPower(1);
+        }
 
 
         Telemetry.getInstance().add("target   motif", targetMotif);

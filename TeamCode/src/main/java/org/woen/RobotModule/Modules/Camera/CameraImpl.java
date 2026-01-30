@@ -56,6 +56,7 @@ public class CameraImpl implements Camera {
             .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
                     PredominantColorProcessor.Swatch.YELLOW,
                     PredominantColorProcessor.Swatch.WHITE)

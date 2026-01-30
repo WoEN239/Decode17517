@@ -4,6 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
@@ -13,6 +14,7 @@ import org.woen.Hardware.Factory.HardwareFactory;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.Odometer;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Util.Color.LedDriver;
 
 public class DevicePool {
 
@@ -42,6 +44,10 @@ public class DevicePool {
     public ServoMotor aimR;
     public ServoMotor aimC;
     public ServoMotor aimL;
+
+    public LedDriver ledDriver2;
+    public LedDriver ledDriver3;
+    public LedDriver ledDriver4;
 
     public RevVoltageSensor revVoltageSensor;
 
@@ -113,6 +119,10 @@ public class DevicePool {
         revVoltageSensor = factory.createVoltageSensor();
 
         light = hardwareMap.get(DcMotor.class, "light");
+
+         ledDriver2 = new LedDriver(hardwareMap, "rgb2", LedDriver.SignalPin.MINUS);
+         ledDriver3 = new LedDriver(hardwareMap, "rgb3", LedDriver.SignalPin.MINUS);
+         ledDriver4 = new LedDriver(hardwareMap, "rgb4", LedDriver.SignalPin.MINUS);
     }
 
 }
