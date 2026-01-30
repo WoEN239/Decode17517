@@ -42,7 +42,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException{
         initConfig();
         initOpMode();
         robotInit();

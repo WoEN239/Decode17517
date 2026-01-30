@@ -100,17 +100,13 @@ public class TeleOpMode extends BaseOpMode {
     private final BorderButton greenFireButt = new BorderButton();
     private final BorderButton cancelFireButt = new BorderButton();
 
-    private boolean isDpadUp = false;
-
-    private boolean isPtoActive = false;
-
     private Pose targetVelocity = new Pose(0,0,0);
 
     public static double yawSens = 7;
     public static double transSens = 200;
 
     private int colorShootCounter = 0;
-    private ElapsedTime colorShootTimer = new ElapsedTime();
+    private final ElapsedTime colorShootTimer = new ElapsedTime();
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
@@ -168,17 +164,15 @@ public class TeleOpMode extends BaseOpMode {
 
 
         if(gamepad1.psWasPressed()){
-         //   DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-           // DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
 
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
-
         }
 
        if(gamepad1.dpad_up){
-           // DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
-        //  DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
-
+           DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
+           DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
        }
 
@@ -197,8 +191,8 @@ public class TeleOpMode extends BaseOpMode {
 
     @Override
     protected void initRun() {
-        //DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-        //DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+        DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+        DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
      }
 
     private double angleToControl = 0;

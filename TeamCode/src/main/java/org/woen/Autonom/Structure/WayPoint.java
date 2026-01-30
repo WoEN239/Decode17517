@@ -39,7 +39,7 @@ public class WayPoint {
 
     private boolean isEndNear  = false;
     public boolean isEndNear() {return isEndNear;}
-
+    private Supplier<Boolean> interrupt = ()->false;
     private boolean isDone = false;
     public boolean isDone() {
         return isDone;
@@ -49,7 +49,7 @@ public class WayPoint {
     public void update(){
         double dstToEnd = path[path.length-1].vector.minus(pose.vector).length();
         Telemetry.getInstance().add("dst to end in updated waypoint",dstToEnd);
-        if(dstToEnd < endDetect){
+        if(dstToEnd < endDetect || interrupt.get()){
             if(!isEndNear) {
                 RobotLog.dd("end_of_path_segment", "in waypoint " + name + " end detected (dst to end = " + dstToEnd +
                         "\n" + "end point " + path[path.length-1].toString() + "pose " + pose.toString() );
@@ -139,12 +139,17 @@ public class WayPoint {
         this.endAngle = endAngle;
         return this;
     }
+    public WayPoint setInterrupt(Supplier<Boolean> interrupt){
+        this.interrupt = interrupt;
+        return this;
+    }
     public WayPoint copy(){
         return new WayPoint(onWay,onPoint,isReverse,path)
                     .setVel(vel)
                     .setName(name+"`")
                     .setEndDetect(endDetect)
                     .setLookAheadRadius(lookAheadRadius)
-                    .setEndAngle(endAngle);
+                    .setEndAngle(endAngle)
+                    .setInterrupt(interrupt);
     }
 }
