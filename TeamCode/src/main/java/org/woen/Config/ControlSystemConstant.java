@@ -37,23 +37,25 @@ public class ControlSystemConstant {
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
     
     public static class AdaptiveFireConfig {
-        public double kFarAngle = 0.001969;
-        public double kNearAngle = 0.003150;
-        public double kNearVel   = 2.0833;
-        public double lowAngleFar  = 0.58;
+        public double fullFireDelay = 0;
+        public double kFarAngle = 0.002;
+        public double kFarVel   = 1.3;
+        public double kNearAngle = -0.002;
+        public double kNearVel   = 1.7;
+        public double lowAngleFar  = 0.3;
         public double lowAngleNear = 0;
-        public double lowVelNear   = 1420;
-        public double lowVelFar    = 1840;
+        public double lowVelNear   = 1440;
+        public double lowVelFar    = 1750;
         public double hiDistNear   =  264;
-        public double hiDistFar = 406.5;
+        public double hiDistFar = 394;
         public double lowDistNear  = 178;
-        public double lowDistFar = 330;
+        public double lowDistFar = 315;
     }
     public static AdaptiveFireConfig adaptiveFireConfig = new AdaptiveFireConfig();
 
     public static class GunConfig {
         public double velTol = 60;
-        public double patternFireDelay = 1;
+        public double patternFireDelay = 0.7;
 
 
         public double shootVelSidePattern = 1860;

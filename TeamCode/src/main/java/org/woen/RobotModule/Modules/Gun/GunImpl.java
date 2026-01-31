@@ -299,8 +299,14 @@ public class GunImpl implements Gun {
             deltaAngle = 0;
         }
 
-        setAimServoPos(1-adaptiveFireConfig.lowAngleFar+deltaAngle);
+        double deltaVel = adaptiveFireConfig.kFarVel*(dist1-adaptiveFireConfig.lowDistFar);
+        if(deltaVel<0){
+            deltaVel = 0;
+        }
 
+        setAimServoPos(1-adaptiveFireConfig.lowAngleFar+deltaAngle);
+        gunVelCenter = adaptiveFireConfig.lowVelFar + deltaVel;
+        gunVelSide   = adaptiveFireConfig.lowVelFar + deltaVel;
     }
     private void patternAim() {
         setAimServoPos(aimCPat);
@@ -366,7 +372,7 @@ public class GunImpl implements Gun {
     private final ServoAction fullFireAction = new ServoAction(
             new BooleanSupplier[]{
                     ()->true,
-                    ()->fireTimer.seconds()>0.1,
+                    ()->fireTimer.seconds()>adaptiveFireConfig.fullFireDelay,
                     ()->servoC.isAtTarget(),
                     ()->true},
             new Runnable[]{
