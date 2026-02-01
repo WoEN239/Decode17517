@@ -186,9 +186,9 @@ public class TeleOpMode extends BaseOpMode {
 
         if(gamepad1.dpad_down){
             if(MatchData.team == Team.BLUE)
-                DevicePool.getInstance().pinPoint.setPose(148,142, -1.5 * PI);
+                DevicePool.getInstance().pinPoint.setPose(144.345,157.701, -1.560  * PI);
             else
-                DevicePool.getInstance().pinPoint.setPose(148,-142, 1.5 * PI);
+                DevicePool.getInstance().pinPoint.setPose(144.345,-157.701, 1.560 * PI);
         }
 
         telemetry.addData("gunR",DevicePool.getInstance().gunR.getVel());

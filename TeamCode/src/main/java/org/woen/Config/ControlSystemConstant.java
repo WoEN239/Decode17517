@@ -38,18 +38,10 @@ public class ControlSystemConstant {
     
     public static class AdaptiveFireConfig {
         public double fullFireDelay = 0;
-        public double kFarAngle = 0.002;
-        public double kFarVel   = 1.3;
-        public double kNearAngle = -0.002;
-        public double kNearVel   = 1.7;
-        public double lowAngleFar  = 0.3;
-        public double lowAngleNear = 0;
-        public double lowVelNear   = 1440;
-        public double lowVelFar    = 1750;
-        public double hiDistNear   =  264;
-        public double hiDistFar = 394;
-        public double lowDistNear  = 178;
-        public double lowDistFar = 315;
+        public ValLerp farVel = new ValLerp(315,394,1750,1750);
+        public ValLerp farAngle = new ValLerp(315,394,0.3,0.3);
+        public ValLerp nearVel = new ValLerp(178,315,1440,1440);
+        public ValLerp nearAngle = new ValLerp(178,315,0,0);
     }
     public static AdaptiveFireConfig adaptiveFireConfig = new AdaptiveFireConfig();
 

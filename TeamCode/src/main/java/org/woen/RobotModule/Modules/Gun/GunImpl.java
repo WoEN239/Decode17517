@@ -14,10 +14,8 @@ import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
-import static java.lang.Math.toRadians;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
@@ -126,8 +124,7 @@ public class GunImpl implements Gun {
         this.targetMotif = e.getData();
     }
 
-    private double gunVelSide = gunConfig.shootVelSideFar;
-    private double gunVelCenter = gunConfig.shootVelCFar;
+    private double gunTargetVel = gunConfig.shootVelSideFar;
     private double brushPower = 1;
 
     private PredominantColorProcessor.Swatch centerColor = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
@@ -215,20 +212,16 @@ public class GunImpl implements Gun {
 
 
         if (aimCommand == FAR) {
-            gunVelSide   = gunConfig.shootVelSideFar;
-            gunVelCenter = gunConfig.shootVelCFar;
-            farAim(dist);
+            gunTargetVel = adaptiveFireConfig.farVel.get(dist);
+            setAimServoPos(adaptiveFireConfig.farAngle.get(dist));
         } else if (aimCommand == NEAR){
-//            gunVelSide   = gunConfig.shootVelSideNear;
-//            gunVelCenter = gunConfig.shootVelCNear;
-            nearAim(dist);
+            gunTargetVel = adaptiveFireConfig.nearVel.get(dist);
+            setAimServoPos(adaptiveFireConfig.nearAngle.get(dist));
         } else if(aimCommand == PATTERN){
-            gunVelSide   = gunConfig.shootVelSidePattern;
-            gunVelCenter = gunConfig.shootVelCPattern;
+            gunTargetVel = gunConfig.shootVelSidePattern;
             patternAim();
         } else if (aimCommand == NEAR_GOAL) {
-            gunVelSide   = gunConfig.shootVelSideGoalNear;
-            gunVelCenter = gunConfig.shootVelCGoalNear;
+            gunTargetVel = gunConfig.shootVelSideGoalNear;
             setAimServoPos(aimCGoalNear);
         }
 
@@ -241,15 +234,15 @@ public class GunImpl implements Gun {
             brushPower = 0;
         }
 
-        pidR.setTarget(gunVelSide);
+        pidR.setTarget(gunTargetVel);
         pidR.setPos(gunR.getVel());
         pidR.update();
 
-        pidL.setTarget(gunVelSide);
+        pidL.setTarget(gunTargetVel);
         pidL.setPos(gunL.getVel());
         pidL.update();
 
-        pidC.setTarget(gunVelCenter);
+        pidC.setTarget(gunTargetVel);
         pidC.setPos(gunC.getVel());
         pidC.update();
 
@@ -265,7 +258,8 @@ public class GunImpl implements Gun {
 
 
         Telemetry.getInstance().add("target   motif", targetMotif);
-        Telemetry.getInstance().add("in robot motif", getInMotif());
+        Telemetry.getInstance().add("in robot",
+                leftColor.toString() + " " + centerColor.toString() + " " + rightColor.toString());
         Telemetry.getInstance().add("gun case", command);
         Telemetry.getInstance().add("dist to goal", dist);
 
@@ -287,52 +281,10 @@ public class GunImpl implements Gun {
         light.setPower(gunConfig.lightPower);
     }
 
-    private void farAim(double dist) {
-        double dist1 = dist;
-        if(dist1>adaptiveFireConfig.hiDistFar){
-            dist1 = adaptiveFireConfig.hiDistFar;
-        }
-
-        double deltaAngle = adaptiveFireConfig.kFarAngle*(dist1-adaptiveFireConfig.lowDistFar);
-
-        if(deltaAngle<0){
-            deltaAngle = 0;
-        }
-
-        double deltaVel = adaptiveFireConfig.kFarVel*(dist1-adaptiveFireConfig.lowDistFar);
-        if(deltaVel<0){
-            deltaVel = 0;
-        }
-
-        setAimServoPos(1-adaptiveFireConfig.lowAngleFar+deltaAngle);
-        gunVelCenter = adaptiveFireConfig.lowVelFar + deltaVel;
-        gunVelSide   = adaptiveFireConfig.lowVelFar + deltaVel;
-    }
     private void patternAim() {
         setAimServoPos(aimCPat);
     }
 
-
-    private void nearAim(double dist) {
-        double dist1 =dist;
-        if(dist1>adaptiveFireConfig.hiDistNear){
-            dist1 = adaptiveFireConfig.hiDistNear;
-        }
-        double deltaVel = adaptiveFireConfig.kNearVel*(dist1-adaptiveFireConfig.lowDistNear);
-        if(deltaVel<0){
-            deltaVel = 0;
-        }
-        double deltaAngle = adaptiveFireConfig.kNearAngle*(dist1-adaptiveFireConfig.lowDistNear);
-        if(deltaAngle>0){
-            deltaAngle = 0;
-        }
-
-        setAimServoPos(1-adaptiveFireConfig.lowAngleNear+deltaAngle);
-
-        gunVelSide   = adaptiveFireConfig.lowVelNear+deltaVel;
-        gunVelCenter = adaptiveFireConfig.lowVelNear+deltaVel;
-
-    }
 
     private void setAimServoPos(double l, double c, double r) {
         aimR.setPos(r);
@@ -358,15 +310,6 @@ public class GunImpl implements Gun {
     }
     private void shotLeft (){
         servoL.setTarget(shotLPos);
-    }
-    private boolean rightGunAtVel(){
-        return abs(gunR.getVel()-gunVelSide)<gunConfig.velTol;
-    }
-    private boolean centerGunAtVel(){
-        return abs(gunC.getVel()- gunVelCenter)<gunConfig.velTol;
-    }
-    private boolean leftGunAtVel(){
-        return abs(gunL.getVel()-gunVelSide)<gunConfig.velTol;
     }
     private final ElapsedTime fireTimer = new ElapsedTime();
     private final ServoAction fullFireAction = new ServoAction(

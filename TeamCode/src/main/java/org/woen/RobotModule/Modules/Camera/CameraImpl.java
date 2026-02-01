@@ -38,22 +38,13 @@ public class CameraImpl implements Camera {
     public static int width = 640;
 
     /// left
-    public static double leftL = -0.85;
-    public static double topL = 0.78;
-    public static double rightL = -0.65;
-    public static double bottomL = 0.74;
-    /// center
-    public static double   leftC = 0.1;
-    public static double    topC = 0.85;
-    public static double  rightC = 0.15;
-    public static double bottomC = 0.74;
-    /// right
-    public static double   leftR = 0.9;
-    public static double    topR = 1;
-    public static double  rightR = 1;
-    public static double bottomR = 0.7;
+
+    public static Roi leftRoi = new Roi(-0.85,0.85,-0.65,0.8);
+    public static Roi centerRoi = new Roi(0.1,0.85,0.15,0.74);
+    public static Roi rightRoi = new Roi(0.8,1,0.9,0.7);
+
     PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
-            .setRoi(ImageRegion.asUnityCenterCoordinates(leftL, topL, rightL, bottomL))
+            .setRoi(ImageRegion.asUnityCenterCoordinates(leftRoi.left, leftRoi.top, leftRoi.right, leftRoi.bottom))
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
@@ -62,7 +53,7 @@ public class CameraImpl implements Camera {
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
     PredominantColorProcessor rightDetection = new PredominantColorProcessor.Builder()
-            .setRoi(ImageRegion.asUnityCenterCoordinates(leftR, topR, rightR, bottomR))
+            .setRoi(ImageRegion.asUnityCenterCoordinates(rightRoi.left, rightRoi.top, rightRoi.right, rightRoi.bottom))
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
@@ -70,7 +61,7 @@ public class CameraImpl implements Camera {
                     PredominantColorProcessor.Swatch.WHITE)
             .build();
     PredominantColorProcessor centerDetection = new PredominantColorProcessor.Builder()
-            .setRoi(ImageRegion.asUnityCenterCoordinates(leftC, topC, rightC, bottomC))
+            .setRoi(ImageRegion.asUnityCenterCoordinates(centerRoi.left, centerRoi.top, centerRoi.right, centerRoi  .bottom))
             .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
@@ -134,27 +125,36 @@ public class CameraImpl implements Camera {
             latterTargetMotif = motif;
         }
 
-        PredominantColorProcessor.Result resultL = leftDetection.getAnalysis();
-        PredominantColorProcessor.Result resultR = rightDetection.getAnalysis();
-        PredominantColorProcessor.Result resultC = centerDetection.getAnalysis();
+        PredominantColorProcessor.Swatch resultL = leftDetection.getAnalysis().closestSwatch;
+        PredominantColorProcessor.Swatch resultR = rightDetection.getAnalysis().closestSwatch;
+        PredominantColorProcessor.Swatch resultC = centerDetection.getAnalysis().closestSwatch;
 
-
-        if(latterCenterColor != resultC.closestSwatch) {
-            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(resultC.closestSwatch));
+        if(latterLeftColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && resultL == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            resultL = latterLeftColor;
         }
-        if(latterLeftColor != resultL.closestSwatch) {
-            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL.closestSwatch));
+        if(latterCenterColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && resultC == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            resultC = latterCenterColor;
         }
-        if(latterRightColor != resultR.closestSwatch) {
-            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR.closestSwatch));
+        if(latterRightColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && resultR == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            resultR = latterRightColor;
         }
 
-        Telemetry.getInstance().add("left   ball color", resultL.closestSwatch);
-        Telemetry.getInstance().add("center ball color", resultC.closestSwatch);
-        Telemetry.getInstance().add("right  ball color", resultR.closestSwatch);
+        if(latterCenterColor != resultC) {
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(resultC));
+        }
+        if(latterLeftColor != resultL) {
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL));
+        }
+        if(latterRightColor != resultR) {
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR));
+        }
 
-        latterCenterColor = resultC.closestSwatch;
-        latterLeftColor   = resultL.closestSwatch;
-        latterRightColor  = resultR.closestSwatch;
+        Telemetry.getInstance().add("left   ball color", resultL);
+        Telemetry.getInstance().add("center ball color", resultC);
+        Telemetry.getInstance().add("right  ball color", resultR);
+
+        latterCenterColor = resultC;
+        latterLeftColor   = resultL;
+        latterRightColor  = resultR;
     }
 }
