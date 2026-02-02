@@ -17,6 +17,6 @@ public class ValLerp {
         if(dist<lowDist){ dist = lowDist; }
         if(dist>hiDist){  dist = hiDist; }
 
-        return lowVal + (dist - lowDist) * (hiVal-lowVal);
+        return lowVal + (dist - lowDist) * (hiVal-lowVal)/(hiDist - lowDist);
     }
 }

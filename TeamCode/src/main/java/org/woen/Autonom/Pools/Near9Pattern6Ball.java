@@ -238,16 +238,16 @@ class PositionPool4 {
         }
     }
 
-    public Pose fireNear = new Pose(0, -20, -35);
-    public Pose fireNearPark = new Pose(0,  -20, -35);
+    public Pose fireNear = new Pose(0, -5, -45);
+    public Pose fireNearPark = new Pose(0,  -5, -45);
 
     public Pose goal = new Pose(0,-172,-172);
-    public Pose rotateToEat = new Pose(-0.5*PI, -60, -75);
+    public Pose rotateToEat = new Pose(-0.5*PI, -65, -80);
     public Pose eatNear = new Pose(-0.5*PI, -5, -145);
     public Pose gateOpen = new Pose(-0.5*PI, -5, -180);
     public Pose eatMid = new Pose(-0.5 * PI, 27, -130);
     public Pose eatFar = new Pose(-0.5 * PI,90,-130);
-    public Pose park = new Pose(0 , -130, -60);
+    public Pose park = new Pose(0 , -120, -60);
 
 }
 

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Structure.AutonomTask;
+import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
 import org.woen.Autonom.Structure.WayPoint;
 import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
@@ -45,14 +46,14 @@ public class TeleOpMode extends BaseOpMode {
         velForwardPid.isDAccessible = false;
     }
 
-    public static PidStatus velAnglePidStatus = new PidStatus(2.5, 0, 0., 0, 0, 0, 1.5,0.4);
+    public static PidStatus velAnglePidStatus = new PidStatus(2.5, 0, 0., 0, 0, 0, 0.5,1);
     Pid velAnglePid = new Pid(velAnglePidStatus);
     {
         velAnglePid.isNormolized = false;
         velAnglePid.isDAccessible = false;
     }
 
-    public static PidStatus anglePidStatus = new PidStatus(15, 0, 1.5, 0, 0, 0.2, 0.6 ,0.015);
+    public static PidStatus anglePidStatus = new PidStatus(12, 0, 1, 0, 0, 0, 0.6 ,0.015);
     Pid anglePid = new Pid(anglePidStatus);
     {
         anglePid.isNormolized = true;
@@ -78,7 +79,7 @@ public class TeleOpMode extends BaseOpMode {
         modConfig.driveTrain.voltageController.set(true);
         modConfig.gun.set(true);
         modConfig.camera.set(true);
-        modConfig.autonomTaskManager.set(false);
+        modConfig.autonomTaskManager.set(true);
         modulesActivationConfig = modConfig;
 
         if(MatchData.team == Team.RED){
@@ -166,7 +167,7 @@ public class TeleOpMode extends BaseOpMode {
         if(gamepad1.rightBumperWasPressed()){
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLBrakePad);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRBrakePad);
-        } if(gamepad1.rightBumperWasReleased()){
+        }if(gamepad1.rightBumperWasReleased()){
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
         }
@@ -179,6 +180,9 @@ public class TeleOpMode extends BaseOpMode {
         }
 
        if(gamepad1.dpadUpWasPressed()){
+           //isParking = true;
+           //EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(rotateToPark.copy(),parkWayPoint.copy()));
+
            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
@@ -186,9 +190,9 @@ public class TeleOpMode extends BaseOpMode {
 
         if(gamepad1.dpad_down){
             if(MatchData.team == Team.BLUE)
-                DevicePool.getInstance().pinPoint.setPose(144.345,157.701, -1.560  * PI);
+                DevicePool.getInstance().pinPoint.setPose(167.574 ,157.701, 0.0);
             else
-                DevicePool.getInstance().pinPoint.setPose(144.345,-157.701, 1.560 * PI);
+                DevicePool.getInstance().pinPoint.setPose(167.574,-157.701, 0.0 );
         }
 
         telemetry.addData("gunR",DevicePool.getInstance().gunR.getVel());
@@ -198,10 +202,14 @@ public class TeleOpMode extends BaseOpMode {
         telemetry.update();
 
     }
-    private WayPoint wayPoint = new WayPoint(
+    private WayPoint rotateToPark = new WayPoint(
+            new Runnable[]{},true,park
+    ).setEndAngle( ()-> AngleUtil.normalize(PI + park.vector.minus(pose.vector).getAngle()) ).setEndDetect(200);
+
+    private WayPoint parkWayPoint = new WayPoint(
             AutonomTask.Stub,
             true,park
-    ).setEndAngle(()->park.h).setVel(120);
+    ).setEndAngle(()->park.h).setVel(30).setEndDetect(2).setLookAheadRadius(5);
 
     @Override
     protected void initRun() {
@@ -211,6 +219,7 @@ public class TeleOpMode extends BaseOpMode {
 
     private double angleToControl = 0;
     private boolean isAngleControl = false;
+    private boolean isParking = false;
     private class TeleOpFeedback extends TankFeedbackController {
         public TeleOpFeedback() {
             super(new PidStatus(0, 0, 0, 0, 0, 0, 0),
@@ -221,7 +230,10 @@ public class TeleOpMode extends BaseOpMode {
          }
         @Override
         public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
-            if(isAngleControl) {
+//            if(isParking){
+//                return new Pose(0,0,0);
+//            }
+            if(isAngleControl || isParking) {
                 anglePid.setTarget(angleToControl);
                 anglePid.setPos(pose.h);
                 anglePid.update();

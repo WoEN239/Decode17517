@@ -1,7 +1,5 @@
 package org.woen.Config;
 
-import static java.lang.Math.PI;
-
 import org.woen.Util.Vectors.Pose;
 
 public enum Start {

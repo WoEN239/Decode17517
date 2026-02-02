@@ -18,8 +18,9 @@ public class GunServoPositions {
     public static Double aimCNear = 0.57;
     public static Double aimCGoalNear = 0.8;
 
-    public static Double servoDeltaR = 0d;
-    public static Double servoDeltaL = 0d;
+    public static Double servoDeltaR = 0.;
+    public static Double servoDeltaL = 0.;
+
     public static double ptoROpen = 0.67;
     public static double ptoRClose = 0.95;
     public static double ptoRBrakePad = 0.82;

@@ -37,40 +37,26 @@ public class ControlSystemConstant {
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
     
     public static class AdaptiveFireConfig {
-        public double fullFireDelay = 0;
-        public ValLerp farVel = new ValLerp(315,394,1750,1750);
-        public ValLerp farAngle = new ValLerp(315,394,0.3,0.3);
-        public ValLerp nearVel = new ValLerp(178,315,1440,1440);
-        public ValLerp nearAngle = new ValLerp(178,315,0,0);
+        public double fullFireDelay = 0.025;
+        public ValLerp farVel = new ValLerp(315,370,1700,1750);
+        public ValLerp farAngle = new ValLerp(315,370,0.7,0.8);
+        public ValLerp nearVel = new ValLerp(178,260,1400,1570);
+        public ValLerp nearAngle = new ValLerp(178,260,1,0.9);
     }
     public static AdaptiveFireConfig adaptiveFireConfig = new AdaptiveFireConfig();
 
     public static class GunConfig {
         public double velTol = 60;
         public double patternFireDelay = 0.7;
-
-
         public double shootVelSidePattern = 1860;
         public double shootVelSideFar = 1840;
-        public double shootVelSideNear = 1600;
-
-        public double shootVelCPattern = 1860;
-        public double shootVelCFar = 1840;
-        public double shootVelCNear = 1600;
-
-        public double shootVelCGoalNear = 1450;
-
         public double shootVelSideGoalNear = 1450;
-
-        public double adaptiveDeltaPos = 0;
-        public double distLow = 186;
-        public double distHi = 268;
 
         public double lightPower = 0.7;
 
-        public PidStatus rightPidStatus = new PidStatus(0.001, 0, 0, 0.00041, 0, 0, 0,10);
-        public PidStatus leftPidStatus = new PidStatus(0.001, 0, 0, 0.00039, 0, 0, 0,10);
-        public PidStatus centerPidStatus = new PidStatus(0.001, 0, 0, 0.00043, 0, 0, 0,10);
+        public PidStatus rightPidStatus = new PidStatus(0.005, 0, 0, 0.00041, 0, 0, 0,10);
+        public PidStatus leftPidStatus = new PidStatus(0.005, 0, 0, 0.00039, 0, 0, 0,10);
+        public PidStatus centerPidStatus = new PidStatus(0.005, 0, 0, 0.00043, 0, 0, 0,10);
     }
     public static GunConfig gunConfig = new GunConfig();
 
