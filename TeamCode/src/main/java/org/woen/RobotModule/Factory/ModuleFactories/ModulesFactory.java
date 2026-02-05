@@ -8,6 +8,7 @@ import org.woen.Autonom.Structure.WaypointsManagerImpl;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
+import org.woen.RobotModule.Modules.Camera.CameraLimeLightImpl;
 import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
 import org.woen.RobotModule.Modules.Camera.CameraImpl;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
@@ -48,7 +49,7 @@ public class ModulesFactory implements IRobotModuleFactory {
 
     private Camera createCamera(){
         if(config.camera.get()){
-            return new CameraImpl();
+            return new CameraLimeLightImpl();
         }else{
             return new Camera() {};
         }

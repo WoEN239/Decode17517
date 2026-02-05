@@ -79,7 +79,7 @@ public class TeleOpMode extends BaseOpMode {
         modConfig.driveTrain.voltageController.set(true);
         modConfig.gun.set(true);
         modConfig.camera.set(true);
-        modConfig.autonomTaskManager.set(true);
+        modConfig.autonomTaskManager.set(false);
         modulesActivationConfig = modConfig;
 
         if(MatchData.team == Team.RED){
@@ -180,8 +180,7 @@ public class TeleOpMode extends BaseOpMode {
         }
 
        if(gamepad1.dpadUpWasPressed()){
-           //isParking = true;
-           //EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(rotateToPark.copy(),parkWayPoint.copy()));
+           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(parkWayPoint.copy()));
 
            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
@@ -230,10 +229,7 @@ public class TeleOpMode extends BaseOpMode {
          }
         @Override
         public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
-//            if(isParking){
-//                return new Pose(0,0,0);
-//            }
-            if(isAngleControl || isParking) {
+            if(isAngleControl) {
                 anglePid.setTarget(angleToControl);
                 anglePid.setPos(pose.h);
                 anglePid.update();

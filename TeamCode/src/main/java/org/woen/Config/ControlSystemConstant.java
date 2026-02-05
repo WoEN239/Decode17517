@@ -52,7 +52,7 @@ public class ControlSystemConstant {
         public double shootVelSideFar = 1840;
         public double shootVelSideGoalNear = 1450;
 
-        public double lightPower = 0.7;
+        public double lightPower = 1;
 
         public PidStatus rightPidStatus = new PidStatus(0.005, 0, 0, 0.00041, 0, 0, 0,10);
         public PidStatus leftPidStatus = new PidStatus(0.005, 0, 0, 0.00039, 0, 0, 0,10);
