@@ -22,25 +22,21 @@ import org.woen.Telemetry.Telemetry;
 import java.util.List;
 
 public class CameraLimeLightImpl implements Camera {
-
     private Limelight3A camera;
     private LLResult llResult;
-
+    private int pipeLineId = 0;
     @Override
     public void subscribeInit() {
-        EventBus.getInstance().subscribe(EndOfOpModeEvent.class, this::end);
+        EventBus.getInstance().subscribe(EndOfOpModeEvent.class, this::switchPipeLine);
+        EventBus.getInstance().subscribe(PipeLineSwitchEvent.class, this::switchPipeLine);
     }
 
     @Override
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
-
         camera = hardwareMap.get(Limelight3A.class, "Limelight");
-
         camera.pipelineSwitch(0);
         camera.start();
-
-
     }
 
     private PredominantColorProcessor.Swatch getColor(double index) {
@@ -56,27 +52,16 @@ public class CameraLimeLightImpl implements Camera {
         return null;
     }
 
-    private void end(EndOfOpModeEvent e) {
+    private void switchPipeLine(EndOfOpModeEvent e) {
         camera.stop();
+    }
+    private void switchPipeLine(PipeLineSwitchEvent e) {
+        pipeLineId = e.getData();
     }
 
     private MOTIF latterTargetMotif = null;
 
-    public void update() {
-
-        camera.pipelineSwitch(0);
-
-        llResult = camera.getLatestResult();
-
-        if (llResult.getPythonOutput().length > 0) {
-            double[] llResultPythonOutput = llResult.getPythonOutput();
-
-            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
-            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[2])));
-            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[0])));
-        }
-
-
+    private void tagUpdate(){
         camera.pipelineSwitch(1);
         llResult = camera.getLatestResult();
         if (llResult.isValid()) {
@@ -99,15 +84,35 @@ public class CameraLimeLightImpl implements Camera {
                 }
                 Telemetry.getInstance().add("id", id);
 
-                latterTargetMotif = motif;
+              latterTargetMotif = motif;
             }
         }
 
-        Telemetry.getInstance().add("isValid", llResult.isValid());
+    }
+    private void ballUpdate(){
+        camera.pipelineSwitch(0);
+        llResult = camera.getLatestResult();
+
+        if (llResult.getPythonOutput().length > 0) {
+            double[] llResultPythonOutput = llResult.getPythonOutput();
+
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[2])));
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[0])));
+        }
+
+        Telemetry.getInstance().add("isLLValid", llResult.getPythonOutput().length);
         Telemetry.getInstance().add("left", llResult.getPythonOutput()[2]);
         Telemetry.getInstance().add("right", llResult.getPythonOutput()[0]);
         Telemetry.getInstance().add("center", llResult.getPythonOutput()[1]);
 
+    }
 
+    public void update() {
+        if(pipeLineId == 1){
+            tagUpdate();
+        }else{
+            ballUpdate();
+        }
     }
 }

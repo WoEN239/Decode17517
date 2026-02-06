@@ -10,6 +10,7 @@ import org.woen.Autonom.Structure.AutonomTask;
 import org.woen.Autonom.Structure.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.Config.Team;
+import org.woen.RobotModule.Modules.Camera.PipeLineSwitchEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
@@ -24,6 +25,7 @@ public class Near9Pattern6Ball extends WayPointPool {
             new Runnable[]{
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR)),
                     () -> RobotLog.dd("auto", "aim1"),
+                    () -> EventBus.getInstance().invoke(new PipeLineSwitchEvent(1)),
                     () -> parkTimer.reset()
             },
             new AutonomTask(
@@ -67,6 +69,7 @@ public class Near9Pattern6Ball extends WayPointPool {
     ).setName("rotateToEat").setEndDetect(20).setEndAngle(() -> angleTo(pool.eatNear.vector)).setVel(140);
     public WayPoint eatNear = new WayPoint(
             new Runnable[]{
+                    () -> EventBus.getInstance().invoke(new PipeLineSwitchEvent(0)),
                     () -> RobotLog.dd("auto", "eatNear")
             },
             false, pool.eatNear

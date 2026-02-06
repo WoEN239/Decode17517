@@ -102,6 +102,15 @@ public class GunImpl implements Gun {
             case EAT:
                 servoAction = eatAction.copy();
                 break;
+            case C_FIRE:
+                servoAction = new ServoAction(this::shotCenter);
+                break;
+            case L_FIRE:
+                servoAction = new ServoAction(this::shotLeft);
+                break;
+            case R_FIRE:
+                servoAction = new ServoAction(this::shotRight);
+                break;
         }
     }
 

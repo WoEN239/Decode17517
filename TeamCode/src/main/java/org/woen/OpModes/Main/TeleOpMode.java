@@ -18,6 +18,7 @@ import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
+import org.woen.RobotModule.Modules.Camera.PipeLineSwitchEvent;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
@@ -180,19 +181,29 @@ public class TeleOpMode extends BaseOpMode {
         }
 
        if(gamepad1.dpadUpWasPressed()){
-           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(rotateToPark.copy(),parkWayPoint.copy()));
+           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(parkWayPoint.copy()));
 
            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
        }
 
-        if(gamepad1.dpad_down){
-            if(MatchData.team == Team.BLUE)
-                DevicePool.getInstance().pinPoint.setPose(167.574 ,157.701, 0.0);
-            else
-                DevicePool.getInstance().pinPoint.setPose(167.574,-157.701, 0.0 );
+        if(gamepad1.dpadLeftWasPressed()){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.L_FIRE));
         }
+        if(gamepad1.dpadRightWasPressed()){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.R_FIRE));
+        }
+        if(gamepad1.dpadDownWasPressed()){
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.C_FIRE));
+        }
+
+//        if(gamepad1.dpad_down){
+//            if(MatchData.team == Team.BLUE)
+//                DevicePool.getInstance().pinPoint.setPose(167.574 ,157.701, 0.0);
+//            else
+//                DevicePool.getInstance().pinPoint.setPose(167.574,-157.701, 0.0 );
+//        }
 
         telemetry.addData("gunR",DevicePool.getInstance().gunR.getVel());
         telemetry.addData("gunL",DevicePool.getInstance().gunL.getVel());
@@ -208,7 +219,7 @@ public class TeleOpMode extends BaseOpMode {
     private WayPoint parkWayPoint = new WayPoint(
             AutonomTask.Stub,
             true,park
-    ).setEndAngle(()->park.h).setVel(30).setEndDetect(2).setLookAheadRadius(5);
+    ).setEndAngle(()->park.h).setVel(30).setEndDetect(5).setLookAheadRadius(5);
 
     @Override
     protected void initRun() {
@@ -218,7 +229,7 @@ public class TeleOpMode extends BaseOpMode {
 
     private double angleToControl = 0;
     private boolean isAngleControl = false;
-    private boolean isParking = false;
+
     private class TeleOpFeedback extends TankFeedbackController {
         public TeleOpFeedback() {
             super(new PidStatus(0, 0, 0, 0, 0, 0, 0),
@@ -230,7 +241,7 @@ public class TeleOpMode extends BaseOpMode {
         @Override
         public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
 
-            if(isAngleControl || isParking) {
+            if(isAngleControl) {
                 anglePid.setTarget(angleToControl);
                 anglePid.setPos(pose.h);
                 anglePid.update();
