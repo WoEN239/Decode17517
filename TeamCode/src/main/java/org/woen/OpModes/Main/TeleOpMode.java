@@ -180,7 +180,7 @@ public class TeleOpMode extends BaseOpMode {
         }
 
        if(gamepad1.dpadUpWasPressed()){
-           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(parkWayPoint.copy()));
+           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(rotateToPark.copy(),parkWayPoint.copy()));
 
            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
@@ -229,7 +229,8 @@ public class TeleOpMode extends BaseOpMode {
          }
         @Override
         public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
-            if(isAngleControl) {
+
+            if(isAngleControl || isParking) {
                 anglePid.setTarget(angleToControl);
                 anglePid.setPos(pose.h);
                 anglePid.update();

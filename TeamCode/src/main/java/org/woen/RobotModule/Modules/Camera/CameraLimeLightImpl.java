@@ -24,91 +24,90 @@ import java.util.List;
 public class CameraLimeLightImpl implements Camera {
 
     private Limelight3A camera;
-    private Limelight3A id;
     private LLResult llResult;
 
     @Override
-    public void subscribeInit(){
-        EventBus.getInstance().subscribe(EndOfOpModeEvent.class,this::end);
+    public void subscribeInit() {
+        EventBus.getInstance().subscribe(EndOfOpModeEvent.class, this::end);
     }
 
     @Override
-    public void init(){
+    public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
 
         camera = hardwareMap.get(Limelight3A.class, "Limelight");
 
-        id = hardwareMap.get(Limelight3A.class, "Limelight");
-
-        camera.start();
-        id.start();
-
         camera.pipelineSwitch(0);
-        id.pipelineSwitch(1);
+        camera.start();
 
-        camera.getLatestResult();
-        id.getLatestResult();
 
     }
 
-    private PredominantColorProcessor.Swatch getColor(double index){
-        if(index == 1){
+    private PredominantColorProcessor.Swatch getColor(double index) {
+        if (index == 1) {
             return PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
         }
-        if(index == 2){
+        if (index == 2) {
             return PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
         }
-        if(index == 0){
+        if (index == 0) {
             return PredominantColorProcessor.Swatch.BLACK;
         }
         return null;
     }
 
-    private void end(EndOfOpModeEvent e){
-        id.close();
-        camera.close();
+    private void end(EndOfOpModeEvent e) {
+        camera.stop();
     }
 
     private MOTIF latterTargetMotif = null;
 
-    public void update(){
+    public void update() {
+
         camera.pipelineSwitch(0);
-        id.pipelineSwitch(1);
 
         llResult = camera.getLatestResult();
-        double[] llResultPythonOutput = llResult.getPythonOutput();
 
-        List<LLResultTypes.FiducialResult> fiducialResult = id.getLatestResult().getFiducialResults();
+        if (llResult.getPythonOutput().length > 0) {
+            double[] llResultPythonOutput = llResult.getPythonOutput();
 
-        for (LLResultTypes.FiducialResult fr : fiducialResult) {
-            FtcDashboard.getInstance().getTelemetry().addData("id", fr.getFiducialId());
-            double id = fr.getFiducialId();
-            MOTIF motif = latterTargetMotif;
-            if (id == 22) {
-                motif = MOTIF.PGP;
-            } else if (id == 23) {
-                motif = MOTIF.PPG;
-            } else if (id == 21) {
-                motif = MOTIF.GPP;
-            }
-            if (latterTargetMotif != motif) {
-                EventBus.getInstance().invoke(new NewTargetMotifEvent(motif));
-            }
-            latterTargetMotif = motif;
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[2])));
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[0])));
         }
 
 
-        Telemetry.getInstance().add("left", llResultPythonOutput[0]);
-        Telemetry.getInstance().add("right", llResultPythonOutput[1]);
-        Telemetry.getInstance().add("center", llResultPythonOutput[2]);
-        Telemetry.getInstance().add("id", latterTargetMotif);
+        camera.pipelineSwitch(1);
+        llResult = camera.getLatestResult();
+        if (llResult.isValid()) {
 
+            List<LLResultTypes.FiducialResult> fiducialResults = llResult.getFiducialResults();
 
-        EventBus.getInstance().invoke(new NewTargetMotifEvent(latterTargetMotif));
-        EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
-        EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[0])));
-        EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[2])));
+            for (LLResultTypes.FiducialResult fr : fiducialResults) {
+                FtcDashboard.getInstance().getTelemetry().addData("id", fr.getFiducialId());
+                double id = fr.getFiducialId();
+                MOTIF motif = latterTargetMotif;
+                if (id == 22) {
+                    motif = MOTIF.PGP;
+                } else if (id == 23) {
+                    motif = MOTIF.PPG;
+                } else if (id == 21) {
+                    motif = MOTIF.GPP;
+                }
+                if (latterTargetMotif != motif) {
+                    EventBus.getInstance().invoke(new NewTargetMotifEvent(motif));
+                }
+                Telemetry.getInstance().add("id", id);
+
+                latterTargetMotif = motif;
+            }
+        }
+
+        Telemetry.getInstance().add("isValid", llResult.isValid());
+        Telemetry.getInstance().add("left", llResult.getPythonOutput()[2]);
+        Telemetry.getInstance().add("right", llResult.getPythonOutput()[0]);
+        Telemetry.getInstance().add("center", llResult.getPythonOutput()[1]);
+
 
     }
-
 }
