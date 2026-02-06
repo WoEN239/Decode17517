@@ -22,21 +22,25 @@ import org.woen.Telemetry.Telemetry;
 import java.util.List;
 
 public class CameraLimeLightImpl implements Camera {
+
     private Limelight3A camera;
     private LLResult llResult;
-    private int pipeLineId = 0;
+
     @Override
     public void subscribeInit() {
-        EventBus.getInstance().subscribe(EndOfOpModeEvent.class, this::switchPipeLine);
-        EventBus.getInstance().subscribe(PipeLineSwitchEvent.class, this::switchPipeLine);
+        EventBus.getInstance().subscribe(EndOfOpModeEvent.class, this::end);
     }
 
     @Override
     public void init() {
         HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
+
         camera = hardwareMap.get(Limelight3A.class, "Limelight");
+
         camera.pipelineSwitch(0);
         camera.start();
+
+
     }
 
     private PredominantColorProcessor.Swatch getColor(double index) {
@@ -52,45 +56,17 @@ public class CameraLimeLightImpl implements Camera {
         return null;
     }
 
-    private void switchPipeLine(EndOfOpModeEvent e) {
+    private void end(EndOfOpModeEvent e) {
         camera.stop();
-    }
-    private void switchPipeLine(PipeLineSwitchEvent e) {
-        pipeLineId = e.getData();
+        FtcDashboard.getInstance().stopCameraStream();
     }
 
     private MOTIF latterTargetMotif = null;
 
-    private void tagUpdate(){
-        camera.pipelineSwitch(1);
-        llResult = camera.getLatestResult();
-        if (llResult.isValid()) {
+    public void update() {
 
-            List<LLResultTypes.FiducialResult> fiducialResults = llResult.getFiducialResults();
-
-            for (LLResultTypes.FiducialResult fr : fiducialResults) {
-                FtcDashboard.getInstance().getTelemetry().addData("id", fr.getFiducialId());
-                double id = fr.getFiducialId();
-                MOTIF motif = latterTargetMotif;
-                if (id == 22) {
-                    motif = MOTIF.PGP;
-                } else if (id == 23) {
-                    motif = MOTIF.PPG;
-                } else if (id == 21) {
-                    motif = MOTIF.GPP;
-                }
-                if (latterTargetMotif != motif) {
-                    EventBus.getInstance().invoke(new NewTargetMotifEvent(motif));
-                }
-                Telemetry.getInstance().add("id", id);
-
-              latterTargetMotif = motif;
-            }
-        }
-
-    }
-    private void ballUpdate(){
         camera.pipelineSwitch(0);
+
         llResult = camera.getLatestResult();
 
         if (llResult.getPythonOutput().length > 0) {
@@ -99,20 +75,37 @@ public class CameraLimeLightImpl implements Camera {
             EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
             EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[2])));
             EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[0])));
+            double id = llResultPythonOutput[3];
+
+            MOTIF motif = latterTargetMotif;
+            if (id == 22) {
+                motif = MOTIF.PGP;
+            } else if (id == 23) {
+                motif = MOTIF.PPG;
+            } else if (id == 21) {
+                motif = MOTIF.GPP;
+            }
+
+            if (latterTargetMotif != motif) {
+                EventBus.getInstance().invoke(new NewTargetMotifEvent(motif));
+            }
+
+            FtcDashboard.getInstance().startCameraStream(camera, 20);
+            FtcDashboard.getInstance().getTelemetry().update();
+
+
+            Telemetry.getInstance().add("id", id);
+
+            latterTargetMotif = motif;
+
         }
 
-        Telemetry.getInstance().add("isLLValid", llResult.getPythonOutput().length);
+
+        // Telemetry.getInstance().add("isValid", llResult.isValid());
         Telemetry.getInstance().add("left", llResult.getPythonOutput()[2]);
         Telemetry.getInstance().add("right", llResult.getPythonOutput()[0]);
         Telemetry.getInstance().add("center", llResult.getPythonOutput()[1]);
 
-    }
 
-    public void update() {
-        if(pipeLineId == 1){
-            tagUpdate();
-        }else{
-            ballUpdate();
-        }
     }
 }
