@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -18,12 +17,13 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.EndOfOpModeEvent;
-import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
+import org.woen.RobotModule.Modules.Camera.Util.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
 import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
+import org.woen.RobotModule.Modules.Camera.Util.Roi;
 import org.woen.Telemetry.Telemetry;
 
 

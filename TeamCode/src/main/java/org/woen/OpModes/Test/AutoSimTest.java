@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Pools.Far9PatternPool;
-import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
+import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;

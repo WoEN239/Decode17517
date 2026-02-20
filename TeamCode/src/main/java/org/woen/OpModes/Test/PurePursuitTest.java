@@ -4,9 +4,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.Structure.AutonomTask;
-import org.woen.Autonom.Structure.SetNewWaypointsSequenceEvent;
-import org.woen.Autonom.Structure.WayPoint;
+import org.woen.Autonom.Architecture.AutonomTask;
+import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
+import org.woen.Autonom.Architecture.WayPoint;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;

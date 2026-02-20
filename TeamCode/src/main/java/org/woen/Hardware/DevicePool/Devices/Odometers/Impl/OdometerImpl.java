@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.Odometer;
 
-import org.woen.Util.DataFilter.Filter;
-import org.woen.Util.DataFilter.FilterStatus;
+import org.woen.Util.DataProceesing.Filter;
+import org.woen.Util.DataProceesing.FilterStatus;
 
 public class OdometerImpl implements Odometer {
     private int dir = 1;

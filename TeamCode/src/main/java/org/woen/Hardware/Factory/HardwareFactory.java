@@ -1,15 +1,11 @@
 package org.woen.Hardware.Factory;
 
-import com.qualcomm.hardware.adafruit.AdafruitI2cColorSensor;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.woen.Hardware.DevicePool.Devices.ColorSensor.Impl.ColorSensorImpl;
-import org.woen.Hardware.DevicePool.Devices.ColorSensor.Impl.ColorSensorMok;
-import org.woen.Hardware.DevicePool.Devices.ColorSensor.Interface.ColorSensor;
 import org.woen.Hardware.DevicePool.Devices.Motor.Impl.DcMotorImpl;
 import org.woen.Hardware.DevicePool.Devices.Motor.Impl.DcMotorMok;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
@@ -21,7 +17,6 @@ import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
 import org.woen.Hardware.DevicePool.Devices.Servo.Impls.ServoImpl;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensor;
-import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensorFake;
 import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensorImpl;
 import org.woen.Telemetry.ConfigurableVariables.Provider;
 import org.woen.Util.Vectors.Pose;
@@ -80,7 +75,7 @@ public class HardwareFactory {
         if(config.rev.get()){
             return new RevVoltageSensorImpl(hardwareMap.voltageSensor.get("Control Hub"));
         }else {
-            return new RevVoltageSensorFake();
+            return () -> 12;
         }
     }
 

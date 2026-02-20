@@ -3,14 +3,13 @@ package org.woen.RobotModule.Factory.ModuleFactories;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.Structure.WaypointsManager;
-import org.woen.Autonom.Structure.WaypointsManagerImpl;
+import org.woen.Autonom.Architecture.WaypointsManager;
+import org.woen.Autonom.Architecture.WaypointsManagerImpl;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.Camera.CameraLimeLightImpl;
 import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
-import org.woen.RobotModule.Modules.Camera.CameraImpl;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.GunAtEatEvent;
 import org.woen.RobotModule.Modules.Gun.GunImpl;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;

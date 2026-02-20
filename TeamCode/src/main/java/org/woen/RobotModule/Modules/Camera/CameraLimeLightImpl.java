@@ -3,7 +3,6 @@ package org.woen.RobotModule.Modules.Camera;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -11,15 +10,13 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.EndOfOpModeEvent;
-import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
+import org.woen.RobotModule.Modules.Camera.Util.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
 import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
 import org.woen.Telemetry.Telemetry;
-
-import java.util.List;
 
 public class CameraLimeLightImpl implements Camera {
 

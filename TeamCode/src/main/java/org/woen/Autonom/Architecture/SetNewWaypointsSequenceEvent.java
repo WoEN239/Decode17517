@@ -1,4 +1,4 @@
-package org.woen.Autonom.Structure;
+package org.woen.Autonom.Architecture;
 
 import org.woen.Architecture.EventBus.IEvent;
 

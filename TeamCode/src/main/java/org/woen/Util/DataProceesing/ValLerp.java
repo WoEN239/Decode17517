@@ -1,4 +1,4 @@
-package org.woen.Config;
+package org.woen.Util.DataProceesing;
 
 public class ValLerp {
     public double hiDist;

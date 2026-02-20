@@ -1,4 +1,4 @@
-package org.woen.Autonom.Structure;
+package org.woen.Autonom.Architecture;
 
 import com.qualcomm.robotcore.util.RobotLog;
 

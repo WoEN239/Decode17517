@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
-import org.woen.Hardware.DevicePool.Devices.Servo.ServoWithFeedback;
+import org.woen.Hardware.DevicePool.Devices.Servo.Impls.ServoWithFeedback;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;

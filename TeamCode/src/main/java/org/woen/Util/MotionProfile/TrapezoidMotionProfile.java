@@ -1,7 +1,4 @@
 package org.woen.Util.MotionProfile;
-
-import static java.lang.Math.signum;
-
 public class TrapezoidMotionProfile {
     private final double accel;
     private double maxVel;

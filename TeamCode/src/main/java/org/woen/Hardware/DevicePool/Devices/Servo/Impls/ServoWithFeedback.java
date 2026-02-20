@@ -1,4 +1,4 @@
-package org.woen.Hardware.DevicePool.Devices.Servo;
+package org.woen.Hardware.DevicePool.Devices.Servo.Impls;
 
 import static java.lang.Math.abs;
 

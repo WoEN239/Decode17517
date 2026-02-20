@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.Camera.Enums;
+package org.woen.RobotModule.Modules.Camera.Util;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 

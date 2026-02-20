@@ -8,7 +8,7 @@ import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
-import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
+import org.woen.RobotModule.Modules.Camera.Util.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
 import org.woen.Telemetry.Telemetry;
 

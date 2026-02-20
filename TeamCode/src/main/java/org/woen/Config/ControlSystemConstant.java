@@ -3,6 +3,7 @@ package org.woen.Config;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.woen.Util.Pid.PidStatus;
+import org.woen.Util.DataProceesing.ValLerp;
 
 @Config
 public class ControlSystemConstant {

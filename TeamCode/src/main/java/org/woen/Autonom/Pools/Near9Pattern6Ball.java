@@ -6,11 +6,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.Structure.AutonomTask;
-import org.woen.Autonom.Structure.WayPoint;
+import org.woen.Autonom.Architecture.AutonomTask;
+import org.woen.Autonom.Architecture.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.Config.Team;
-import org.woen.RobotModule.Modules.Camera.PipeLineSwitchEvent;
+import org.woen.RobotModule.Modules.Camera.Events.PipeLineSwitchEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
