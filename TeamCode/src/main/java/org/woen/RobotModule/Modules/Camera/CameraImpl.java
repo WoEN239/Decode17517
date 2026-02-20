@@ -1,0 +1,160 @@
+package org.woen.RobotModule.Modules.Camera;
+
+
+import android.util.Size;
+
+
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
+import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Hardware.DevicePool.DevicePool;
+import org.woen.OpModes.EndOfOpModeEvent;
+import org.woen.RobotModule.Modules.Camera.Util.MOTIF;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewTargetMotifEvent;
+import org.woen.RobotModule.Modules.Camera.Interfaces.Camera;
+import org.woen.RobotModule.Modules.Camera.Util.Roi;
+import org.woen.Telemetry.Telemetry;
+
+
+import java.util.List;
+
+@Config
+public class CameraImpl implements Camera {
+    private AprilTagProcessor aprilTagProcessor;
+
+    public static int height = 480;
+
+    public static int width = 640;
+
+    /// left
+
+    public static Roi leftRoi = new Roi(-0.85,0.85,-0.65,0.8);
+    public static Roi centerRoi = new Roi(0.1,0.85,0.15,0.74);
+    public static Roi rightRoi = new Roi(0.8,1,0.9,0.7);
+
+    PredominantColorProcessor leftDetection = new PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(leftRoi.left, leftRoi.top, leftRoi.right, leftRoi.bottom))
+            .setSwatches(
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.WHITE)
+            .build();
+    PredominantColorProcessor rightDetection = new PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(rightRoi.left, rightRoi.top, rightRoi.right, rightRoi.bottom))
+            .setSwatches(
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.WHITE)
+            .build();
+    PredominantColorProcessor centerDetection = new PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(centerRoi.left, centerRoi.top, centerRoi.right, centerRoi  .bottom))
+            .setSwatches(
+                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                    PredominantColorProcessor.Swatch.YELLOW,
+                    PredominantColorProcessor.Swatch.WHITE)
+            .build();
+
+    private VisionPortal visionPortal;
+
+    @Override
+    public void subscribeInit(){
+        EventBus.getInstance().subscribe(EndOfOpModeEvent.class,this::end);
+    }
+    private void end(EndOfOpModeEvent e){visionPortal.close();}
+    @Override
+    public void init() {
+        HardwareMap hardwareMap = DevicePool.getInstance().hardwareMap;
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                 .build();
+
+
+        VisionPortal.Builder builder = new VisionPortal.Builder();
+
+        builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
+
+        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
+        builder.setCameraResolution(new Size(width, height));
+        builder.addProcessor(aprilTagProcessor)
+                .addProcessor(leftDetection)
+                .addProcessor(rightDetection)
+                .addProcessor(centerDetection);
+
+
+        visionPortal = builder.build();
+
+    }
+
+    private MOTIF latterTargetMotif = null;
+    private PredominantColorProcessor.Swatch latterLeftColor = null;
+    private PredominantColorProcessor.Swatch latterRightColor = null;
+    private PredominantColorProcessor.Swatch latterCenterColor = null;
+
+
+    public void update() {
+        List<AprilTagDetection> currentDetectionList = aprilTagProcessor.getDetections();
+
+        if (!currentDetectionList.isEmpty()) {
+            double id = currentDetectionList.get(0).id;
+            MOTIF motif = latterTargetMotif;
+            if (id == 22) {
+                motif = MOTIF.PGP;
+            } else if (id == 23) {
+                motif = MOTIF.PPG;
+            } else if (id == 21) {
+                motif = MOTIF.GPP;
+            }
+            if (latterTargetMotif != motif) {
+                EventBus.getInstance().invoke(new NewTargetMotifEvent(motif));
+            }
+            latterTargetMotif = motif;
+        }
+
+        PredominantColorProcessor.Swatch resultL = leftDetection.getAnalysis().closestSwatch;
+        PredominantColorProcessor.Swatch resultR = rightDetection.getAnalysis().closestSwatch;
+        PredominantColorProcessor.Swatch resultC = centerDetection.getAnalysis().closestSwatch;
+
+        if(latterLeftColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && resultL == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            resultL = latterLeftColor;
+        }
+        if(latterCenterColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && resultC == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            resultC = latterCenterColor;
+        }
+        if(latterRightColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN && resultR == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+            resultR = latterRightColor;
+        }
+
+        if(latterCenterColor != resultC) {
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(resultC));
+        }
+        if(latterLeftColor != resultL) {
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(resultL));
+        }
+        if(latterRightColor != resultR) {
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(resultR));
+        }
+
+        Telemetry.getInstance().add("left   ball color", resultL);
+        Telemetry.getInstance().add("center ball color", resultC);
+        Telemetry.getInstance().add("right  ball color", resultR);
+
+        latterCenterColor = resultC;
+        latterLeftColor   = resultL;
+        latterRightColor  = resultR;
+    }
+}

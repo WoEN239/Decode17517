@@ -1,0 +1,155 @@
+package org.woen.Autonom.Architecture;
+
+import com.qualcomm.robotcore.util.RobotLog;
+
+import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Config.ControlSystemConstant;
+import org.woen.Config.MatchData;
+import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
+import org.woen.Telemetry.Telemetry;
+import org.woen.Util.Angel.AngleUtil;
+import org.woen.Util.Vectors.Pose;
+
+import java.util.function.Supplier;
+
+public class WayPoint {
+    private String name = "unnamed";
+    public String getName() {return name;}
+
+    public final AutonomTask onWay  ;
+    public final AutonomTask onPoint;
+
+    private Pose pose = MatchData.getStartPose();
+    public final Pose[] path;
+    private void setPose(Pose pose){this.pose = pose;}
+
+    public final boolean isReverse;
+
+    private double endDetect = 3;
+    public double getEndDetect() {return endDetect;}
+
+    private double lookAheadRadius = 20;
+    private double getLookAheadRadius(){return lookAheadRadius;}
+
+    private double vel = ControlSystemConstant.feedbackConfig.PPTransVel;
+    public double getVel() {return vel;}
+
+    public Supplier<Double> getEndAngle() {return endAngle;}
+    private Supplier<Double> endAngle;
+
+    private boolean isEndNear  = false;
+    public boolean isEndNear() {return isEndNear;}
+    private Supplier<Boolean> interrupt = ()->false;
+    private boolean isDone = false;
+    public boolean isDone() {
+        return isDone;
+    }
+
+
+    public void update(){
+        double dstToEnd = path[path.length-1].vector.minus(pose.vector).length();
+        Telemetry.getInstance().add("dst to end in updated waypoint",dstToEnd);
+        if(dstToEnd < endDetect || interrupt.get()){
+            if(!isEndNear) {
+                RobotLog.dd("end_of_path_segment", "in waypoint " + name + " end detected (dst to end = " + dstToEnd +
+                        "\n" + "end point " + path[path.length-1].toString() + "pose " + pose.toString() );
+            }
+            isEndNear = true;
+        }
+
+        if(isEndNear && onWay.isDone() || interrupt.get()) {
+            onPoint.run();
+            if(onPoint.isDone() || interrupt.get()){
+                if(!isDone) {
+                    RobotLog.dd("task_end", "in waypoint " + name + " task end");
+                }
+                isDone = true;
+            }
+        }else{
+            onWay.run();
+        }
+    }
+
+    public WayPoint(AutonomTask onPoint, boolean isReverse, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onPoint = onPoint;
+        this.onWay = AutonomTask.Stub;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
+    public WayPoint(AutonomTask onWay, AutonomTask onPoint, boolean isReverse, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onWay = onWay;
+        this.onPoint = onPoint;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
+    public WayPoint(Runnable[] run, boolean isReverse, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<0.025,run);
+        this.onWay = AutonomTask.Stub;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
+    public WayPoint(Runnable[] run,AutonomTask onWay, boolean isReverse, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<0.025,run);
+        this.onWay = onWay;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
+    public WayPoint(Runnable[] run, boolean isReverse, double angleTolerance, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onPoint = new AutonomTask(()->Math.abs(AngleUtil.normalize( pose.h-endAngle.get()))<angleTolerance,run);
+        this.onWay = AutonomTask.Stub;
+        this.path = path;
+        this.isReverse = isReverse;
+    }
+
+    public WayPoint(AutonomTask onPoint, Pose... path){
+        EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
+        this.endAngle = ()->path[path.length-1].h;
+        this.onPoint = onPoint;
+        this.onWay = AutonomTask.Stub;
+        this.path = path;
+        this.isReverse = false;
+    }
+    public WayPoint setEndDetect(double endDetect){
+        this.endDetect = endDetect;
+        return this;
+    }
+    public WayPoint setLookAheadRadius(double lookAheadRadius){
+        this.lookAheadRadius = lookAheadRadius;
+        return this;
+    }
+    public WayPoint setVel(double vel){
+        this.vel = vel;
+        return this;
+    }
+    public WayPoint setName(String name){
+        this.name = name;
+        return this;
+    }
+    public WayPoint setEndAngle(Supplier<Double> endAngle){
+        this.endAngle = endAngle;
+        return this;
+    }
+    public WayPoint setInterrupt(Supplier<Boolean> interrupt){
+        this.interrupt = interrupt;
+        return this;
+    }
+    public WayPoint copy(){
+        return new WayPoint(onWay,onPoint,isReverse,path)
+                    .setVel(vel)
+                    .setName(name+"`")
+                    .setEndDetect(endDetect)
+                    .setLookAheadRadius(lookAheadRadius)
+                    .setEndAngle(endAngle)
+                    .setInterrupt(interrupt);
+    }
+}

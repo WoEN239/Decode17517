@@ -1,0 +1,45 @@
+package org.woen.OpModes.Test;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.woen.Hardware.Factory.DeviceActivationConfig;
+import org.woen.Hardware.DevicePool.DevicePool;
+import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
+import org.woen.OpModes.BaseOpMode;
+import org.woen.RobotModule.Factory.ModulesActivateConfig;
+import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Util.Pid.Pid;
+import org.woen.Util.Pid.PidStatus;
+
+@Config
+@Disabled
+@TeleOp(name = "gun_test",group = "test")
+public class GunTest extends BaseOpMode {
+    Motor motor;
+    public static PidStatus status = new PidStatus(0,0,0,0,0,0,0,0);
+    Pid pid = new Pid(status);
+    public static double target = 0;
+    public Provider<Double> border = new Provider<>(0.5);
+
+    @Override
+    protected void initConfig(){
+        DeviceActivationConfig devConfig = DeviceActivationConfig.getAllOn();
+        devConfig.servos.set(true);
+        deviceActivationConfig = devConfig;
+
+        modulesActivationConfig = ModulesActivateConfig.getAllOff();
+        FtcDashboard.getInstance().addConfigVariable("Gun config","border",border);
+    }
+
+    @Override
+    protected void loopRun() {
+
+        pid.setTarget(target);
+        pid.setPos(DevicePool.getInstance().gunR.getVel());
+        pid.update();
+        DevicePool.getInstance().gunR.setPower(pid.getU());
+    }
+}
