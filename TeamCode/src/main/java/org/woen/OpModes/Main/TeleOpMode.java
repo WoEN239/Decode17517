@@ -54,7 +54,7 @@ public class TeleOpMode extends BaseOpMode {
         velAnglePid.isDAccessible = false;
     }
 
-    public static PidStatus anglePidStatus = new PidStatus(12, 0, 1, 0, 0, 0, 0.6 ,0.015);
+    public static PidStatus anglePidStatus = new PidStatus(10, 15, 1, 0, 0, 0.5, 0.2,0.005);
     Pid anglePid = new Pid(anglePidStatus);
     {
         anglePid.isNormolized = true;
@@ -180,19 +180,26 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
-       if(gamepad1.dpadUpWasPressed()){
-           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(parkWayPoint.copy()));
+//        if(gamepad1.dpadUpWasPressed()){
+//            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE));
+//        }
+
+        if(gamepad1.dpadUpWasPressed()){
+//           EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(parkWayPoint.copy()));
 
            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
-       }
+        }
+
+
+
 
         if(gamepad1.dpadLeftWasPressed()){
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.L_FIRE));
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.R_FIRE));
         }
         if(gamepad1.dpadRightWasPressed()){
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.R_FIRE));
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.L_FIRE));
         }
         if(gamepad1.dpadDownWasPressed()){
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.C_FIRE));
@@ -212,10 +219,8 @@ public class TeleOpMode extends BaseOpMode {
         telemetry.update();
 
     }
-    private WayPoint rotateToPark = new WayPoint(
-            new Runnable[]{},true,park
-    ).setEndAngle( ()-> AngleUtil.normalize(PI + park.vector.minus(pose.vector).getAngle()) ).setEndDetect(200);
 
+    Runnable rotateToPark = ()->{};
     private WayPoint parkWayPoint = new WayPoint(
             AutonomTask.Stub,
             true,park

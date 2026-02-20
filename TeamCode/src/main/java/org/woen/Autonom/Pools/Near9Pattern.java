@@ -1,5 +1,6 @@
 package org.woen.Autonom.Pools;
 
+
 import static java.lang.Math.PI;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,15 +18,14 @@ import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
-
-public class Near9Pattern6Ball extends WayPointPool {
+public class Near9Pattern extends WayPointPool {
     PositionPoolNear9Pattern pool = new PositionPoolNear9Pattern();
     ElapsedTime parkTimer = new ElapsedTime();
     public WayPoint aim1 = new WayPoint(
             new Runnable[]{
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR)),
                     () -> RobotLog.dd("auto", "aim1"),
-                    () -> EventBus.getInstance().invoke(new PipeLineSwitchEvent(1)),
+                    () -> EventBus.getInstance().invoke(new PipeLineSwitchEvent(0)),
                     () -> parkTimer.reset()
             },
             new AutonomTask(
@@ -44,7 +44,7 @@ public class Near9Pattern6Ball extends WayPointPool {
             new AutonomTask(
                     () -> isGunEat,
                     () -> RobotLog.dd("auto", "fire1"),
-                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
+                    () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.PATTERN_FIRE))
             ),
             true, pool.fireNear
     ).setName("fire1").setEndDetect(50).setEndAngle(this::angleToGoal).setVel(100);
@@ -54,7 +54,7 @@ public class Near9Pattern6Ball extends WayPointPool {
             new AutonomTask(()->true,()->lookTimer.reset()), false, pool.fireNear
     ).setName("lookTimerReset").setEndDetect(40).setEndAngle(()-> 0d);
     public WayPoint look = new WayPoint(
-            new AutonomTask(()->lookTimer.seconds()>0.5), false, pool.fireNear
+            new AutonomTask(()->lookTimer.seconds()>1.5), false, pool.fireNear
     ).setName("look").setEndDetect(40).setEndAngle(() -> 0.0 );
 
     public WayPoint rotateToRotateToEat = new WayPoint(
@@ -74,11 +74,10 @@ public class Near9Pattern6Ball extends WayPointPool {
                     () -> RobotLog.dd("auto", "eatNear")
             },
             new AutonomTask(
-                ()->true,
-                ()->rotateToGateTimer.reset()
-            ),
+                    ()->true,
+                    ()->rotateToGateTimer.reset()),
             false, pool.eatNear
-    ).setName("eatNear").setEndDetect(30).setVel(160);
+    ).setName("eatNear").setEndDetect(30).setVel(80).setInterrupt(()->rotateToGateTimer.seconds()>3);
     private final ElapsedTime rampTimer = new ElapsedTime();
     public WayPoint gateTimerReset = new WayPoint(
             new AutonomTask(()->true, rampTimer::reset),
@@ -200,14 +199,16 @@ public class Near9Pattern6Ball extends WayPointPool {
                 fire1.copy(),
                 lookTimerReset.copy(),
                 look.copy(),
-                rotateToRotateToEat.copy(),
-                rotateToEat.copy(),
-                eatNear.copy(),
-                gateTimerReset.copy(),
-                gateOpen.copy(),
-                aim2.copy(),
-                stop2.copy(),
-                fire2.copy(),
+
+//                rotateToRotateToEat.copy(),
+//                rotateToEat.copy(),
+//                eatNear.copy(),
+//                gateTimerReset.copy(),
+//                gateOpen.copy(),
+//                aim2.copy(),
+//                stop2.copy(),
+//                fire2.copy(),
+//
                 rotate2.copy(),
 
                 eatMid.copy(),
@@ -231,8 +232,8 @@ public class Near9Pattern6Ball extends WayPointPool {
     }
 }
 
-class PositionPool4 {
-    public PositionPool4() {
+class PositionPoolNear9Pattern {
+    public PositionPoolNear9Pattern() {
         if (MatchData.team == Team.RED) {
             fireNear = fireNear.teamReverse();
             fireNearPark = fireNearPark.teamReverse();
@@ -258,5 +259,3 @@ class PositionPool4 {
     public Pose park = new Pose(0 , -100, -60);
 
 }
-
-

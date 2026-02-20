@@ -57,9 +57,9 @@ public class WayPoint {
             isEndNear = true;
         }
 
-        if(isEndNear && onWay.isDone()) {
+        if(isEndNear && onWay.isDone() || interrupt.get()) {
             onPoint.run();
-            if(onPoint.isDone()){
+            if(onPoint.isDone() || interrupt.get()){
                 if(!isDone) {
                     RobotLog.dd("task_end", "in waypoint " + name + " task end");
                 }

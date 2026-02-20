@@ -2,6 +2,8 @@ package org.woen.RobotModule.Modules.Gun;
 
 import static org.woen.Config.ControlSystemConstant.adaptiveFireConfig;
 import static org.woen.Config.ControlSystemConstant.gunConfig;
+import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.G;
+import static org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR.P;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.GPP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PGP;
 import static org.woen.RobotModule.Modules.Camera.Enums.MOTIF.PPG;
@@ -12,10 +14,10 @@ import static org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND.PATTERN;
 import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.signum;
 
+import com.acmerobotics.roadrunner.PositionPath;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
@@ -23,9 +25,11 @@ import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
+import org.woen.Hardware.DevicePool.Devices.Servo.Impls.ServoImpl;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.DevicePool.Devices.Servo.ServoWithFeedback;
 import org.woen.RobotModule.Modules.Battery.NewVoltageAvailable;
+import org.woen.RobotModule.Modules.Camera.Enums.BALL_COLOR;
 import org.woen.RobotModule.Modules.Camera.Enums.MOTIF;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
 import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
@@ -36,6 +40,7 @@ import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoAction;
+import org.woen.RobotModule.Modules.Gun.Arcitecture.ServoActionUnit;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Interface.Gun;
@@ -46,6 +51,7 @@ import org.woen.Util.Pid.Pid;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
+import java.util.ArrayList;
 import java.util.function.BooleanSupplier;
 
 public class GunImpl implements Gun {
@@ -64,12 +70,11 @@ public class GunImpl implements Gun {
     private Motor brush;
     private DcMotor light;
 
-    private LedDriver rgb2;
-
-    private LedDriver rgb3;
-
-    private LedDriver rgb4;
-
+//    private LedDriver rgb2;
+//
+//    private LedDriver rgb3;
+//
+//    private LedDriver rgb4;
     private final Pid pidR = new Pid(gunConfig.rightPidStatus);
     private final Pid pidL = new Pid(gunConfig.leftPidStatus);
     private final Pid pidC = new Pid(gunConfig.centerPidStatus);
@@ -82,11 +87,12 @@ public class GunImpl implements Gun {
         EventBus.getInstance().invoke(new GunAtEatEvent(command==EAT));
 
         switch (command){
+
             case FULL_FIRE:
                 servoAction = fullFireAction.copy();
                 break;
             case PATTERN_FIRE:
-                servoAction = buildPatternFireAction(getInMotif(),targetMotif).copy();
+                servoAction = /*buildSavePatternFireAction().copy();*/buildPatternFireAction(getInMotif(),targetMotif).copy();
                 break;
             case FAST_PATTERN_FIRE:
                 servoAction = buildFastPatternFireAction(getInMotif(),targetMotif).copy();
@@ -131,10 +137,22 @@ public class GunImpl implements Gun {
     private MOTIF targetMotif = PPG;
     public void setTargetMotif(NewTargetMotifEvent e) {
         this.targetMotif = e.getData();
+
+        motifOutColor[0] = targetMotif.colors[0];
+        motifOutColor[1] = targetMotif.colors[1];
+        motifOutColor[2] = targetMotif.colors[2];
+
+        motifOutColor[3] = targetMotif.colors[0];
+        motifOutColor[4] = targetMotif.colors[1];
+        motifOutColor[5] = targetMotif.colors[2];
+
+        motifOutColor[6] = targetMotif.colors[0];
+        motifOutColor[7] = targetMotif.colors[1];
+        motifOutColor[8] = targetMotif.colors[2 ];
     }
 
     private double gunTargetVel = gunConfig.shootVelSideFar;
-    private double brushPower = 1;
+    private double brushPower = 0.8;
 
     private PredominantColorProcessor.Swatch centerColor = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
     private PredominantColorProcessor.Swatch leftColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
@@ -179,9 +197,13 @@ public class GunImpl implements Gun {
         aimC = DevicePool.getInstance().aimC;
         aimL = DevicePool.getInstance().aimL;
 
-        rgb2 = DevicePool.getInstance().ledDriver2;
-        rgb3 = DevicePool.getInstance().ledDriver3;
-        rgb4 = DevicePool.getInstance().ledDriver4;
+        DevicePool.getInstance().hardwareMap.get(Servo.class, "rgb2").setPosition(1);
+        DevicePool.getInstance().hardwareMap.get(Servo.class, "rgb3").setPosition(1);
+
+//        rgb3 = DevicePool.getInstance().ledDriver3;
+//        rgb4 = DevicePool.getInstance().ledDriver4;
+
+        targetColorIdx = 0;
 
     }
 
@@ -235,9 +257,9 @@ public class GunImpl implements Gun {
         }
 
         if(isBrushRevers){
-            brushPower = -1;
+            brushPower = -0.8;
         }else{
-            brushPower = 1;
+            brushPower = 0.8;
         }
         if(command != EAT){
             brushPower = 0;
@@ -255,22 +277,12 @@ public class GunImpl implements Gun {
         pidC.setPos(gunC.getVel());
         pidC.update();
 
-        if(artCheck()){
-            rgb2.setPower(0);
-            rgb3.setPower(0);
-            rgb4.setPower(0);
-        }else{
-            rgb2.setPower(0);
-            rgb3.setPower(1);
-            rgb4.setPower(1);
-        }
-
-
         Telemetry.getInstance().add("target   motif", targetMotif);
         Telemetry.getInstance().add("in robot",
                 leftColor.toString() + " " + centerColor.toString() + " " + rightColor.toString());
         Telemetry.getInstance().add("gun case", command);
         Telemetry.getInstance().add("dist to goal", dist);
+        Telemetry.getInstance().add("target color to save", motifOutColor[targetColorIdx].toString() + " " + targetColorIdx);
 
         if(command == OFF){
             gunR.setPower(0);
@@ -507,4 +519,54 @@ public class GunImpl implements Gun {
                 });
     }
 
+    private BALL_COLOR[] motifOutColor = new  BALL_COLOR[]{P,P,G,P,P,G,P,P,G};
+    private int targetColorIdx = 0;
+
+    private ServoAction buildSavePatternFireAction(){
+//        if( artCheck() ){
+//            return buildPatternFireAction(getInMotif(),targetMotif);
+//        }
+        ArrayList<Runnable> servos = new ArrayList<>();
+        ElapsedTime timer = new ElapsedTime();
+
+        boolean[] servosBusy = new boolean[]{true, true, true};
+        int targetColorIdxStart = targetColorIdx;
+        for(int i = targetColorIdxStart; i<targetColorIdxStart+3; i++){
+            Runnable servo1 = ()->{};
+            boolean isFind = false;
+            if (leftColor == motifOutColor[i].toSwatch() && servosBusy[0]) {
+                //0-l
+                isFind = true;
+                servo1 = this::shotLeft;
+                servosBusy[0] = false;
+            } else if (centerColor == motifOutColor[i].toSwatch() && servosBusy[1]) {
+                //0 - c
+                isFind = true;
+                servo1 = this::shotCenter;
+                servosBusy[1] = false;
+            } else if (rightColor == motifOutColor[i].toSwatch() && servosBusy[2]) {
+                //0 - r
+                isFind = true;
+                servo1 = this::shotRight;
+                servosBusy[2] = false;
+            }
+            if (isFind) {
+                servos.add(servo1);
+                targetColorIdx = targetColorIdx + 1;
+            }
+        }
+
+        BooleanSupplier [] isDone = new BooleanSupplier[]{
+                ()->timer.seconds()>gunConfig.patternFireDelay,
+                ()->timer.seconds()>gunConfig.patternFireDelay,
+                ()->timer.seconds()>gunConfig.patternFireDelay,
+                ()->true,
+        };
+
+        servos.add(()->setCommand(EAT));
+        return new ServoAction(
+                servos.toArray(new Runnable[0]),
+                isDone
+        );
+    }
 }

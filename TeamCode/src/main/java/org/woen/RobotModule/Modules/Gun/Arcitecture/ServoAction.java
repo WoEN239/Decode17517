@@ -41,6 +41,21 @@ public class ServoAction {
         }
         this.action = action;
     }
+    public ServoAction(Runnable[] runnables, BooleanSupplier[] isAtTargets){
+        ServoActionUnit[] action = new ServoActionUnit[runnables.length];
+        for (int i = 0; i < action.length; i++) {
+            int finalI = i;
+            action[i] = new ServoActionUnit() {
+                public void run() {
+                    runnables[finalI].run();
+                }
+                public boolean isAtTarget() {
+                    return isAtTargets[finalI].getAsBoolean();
+                }
+            };
+        }
+        this.action = action;
+    }
     public ServoAction(ServoActionUnit ... action) {
         this.action = action;
     }
