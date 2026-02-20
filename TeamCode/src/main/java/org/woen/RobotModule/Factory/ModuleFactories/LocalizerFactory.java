@@ -3,12 +3,9 @@ package org.woen.RobotModule.Factory.ModuleFactories;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
 import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
-import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerImpl;
-import org.woen.RobotModule.Modules.Localizer.DeviceListener.Impls.LocalizerDeviceListenerMoc;
-import org.woen.RobotModule.Modules.Localizer.DeviceListener.Interface.LocalizerDeviceListener;
 import org.woen.RobotModule.Modules.Localizer.LocalizerImpl;
-import org.woen.RobotModule.Modules.Localizer.Impls.PositionLocalizerMoc;
-import org.woen.RobotModule.Modules.Localizer.Interface.PositionLocalizer;
+import org.woen.RobotModule.Modules.Localizer.Impls.LocalizerMoc;
+import org.woen.RobotModule.Modules.Localizer.Interface.Localizer;
 
 public class LocalizerFactory implements IRobotModuleFactory {
     private ModulesActivateConfig config;
@@ -20,24 +17,17 @@ public class LocalizerFactory implements IRobotModuleFactory {
     @Override
     public IRobotModule[] create(){
         return new IRobotModule[]{
-                createDeviceListener(), createPositionLocalizer()
+                createPositionLocalizer()
         };
     }
 
-    public PositionLocalizer createPositionLocalizer(){
+    public Localizer createPositionLocalizer(){
         if(config.localizer.position.get()){
             return new LocalizerImpl();
         }else{
-            return new PositionLocalizerMoc();
+            return new LocalizerMoc();
         }
     }
 
-    public LocalizerDeviceListener createDeviceListener(){
-        if(config.localizer.device.get()){
-            return new LocalizerDeviceListenerImpl();
-        }else{
-            return new LocalizerDeviceListenerMoc();
-        }
-    }
 
 }

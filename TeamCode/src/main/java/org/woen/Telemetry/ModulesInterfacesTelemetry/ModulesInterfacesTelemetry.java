@@ -5,11 +5,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.RegisterNewWheelsVoltageListener;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.WheelValueMap;
-import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.LocalizeDeviceData;
-import org.woen.RobotModule.Modules.Localizer.DeviceListener.Architecture.RegisterNewLocalizeDeviceListener;
-import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewLocalPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
-import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewLocalVelocityListener;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
@@ -24,24 +20,12 @@ public class ModulesInterfacesTelemetry {
     private Pose targetVel = new Pose(0,0,0);
     private Pose targetPos = new Pose(-564,0,0);
 
-    private Pose robotLocalPos = new Pose(0,0,0);
-    private Pose robotLocalVel = new Pose(0,0,0);
-
-    private Double gyroAngle = 0d;
-    private Double gyroAngularVel = 0d;
-
     private WheelValueMap voltage = new WheelValueMap(0d,0d,0d,0d);
-    private LocalizeDeviceData localizeDeviceData = new LocalizeDeviceData();
 
     public void addRobotPoseToPacket(TelemetryPacket packet){
         packet.put("robot pos",robotPos.toString());
         packet.put("robot vel",robotVel.toString());
 
-    }
-
-    public void addGyroToPacket(TelemetryPacket packet){
-        packet.put("gyro angle",gyroAngle);
-        packet.put("gyro vel",gyroAngularVel);
     }
 
     public void addVoltageToPacket(TelemetryPacket packet){
@@ -54,25 +38,13 @@ public class ModulesInterfacesTelemetry {
     }
 
 
-    public void addLocalizeDevicesToPacket(TelemetryPacket packet){
-        packet.put("rightPos",localizeDeviceData.rightOdPos);
-        packet.put("leftPos",localizeDeviceData.leftOdPos);
-        packet.put("sidePos",localizeDeviceData.sideOdPos);
-
-        packet.put("rightVel",localizeDeviceData.rightOdVel);
-        packet.put("leftVel",localizeDeviceData.leftOdVel);
-        packet.put("sideVel",localizeDeviceData.sideOdVel);
-    }
 
     public void init(){
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setRobotPos));
         EventBus.getListenersRegistration().invoke(new RegisterNewVelocityListener(this::setRobotVel));
 
-        EventBus.getListenersRegistration().invoke(new RegisterNewLocalPositionListener(this::setRobotLocalPos));
-        EventBus.getListenersRegistration().invoke(new RegisterNewLocalVelocityListener(this::setRobotLocalVel));
 
         EventBus.getListenersRegistration().invoke(new RegisterNewWheelsVoltageListener(this::setVoltage));
-        EventBus.getListenersRegistration().invoke(new RegisterNewLocalizeDeviceListener(this::setLocalizeDeviceData));
 
         EventBus.getListenersRegistration().invoke(new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
         EventBus.getListenersRegistration().invoke(new RegisterNewFeedbackReferenceListener(this::setFeedbackReference));
@@ -86,26 +58,9 @@ public class ModulesInterfacesTelemetry {
         this.robotVel = robotVel;
     }
 
-    public void setRobotLocalPos(Pose robotLocalPos) {
-        this.robotLocalPos = robotLocalPos;
-    }
-
-    public void setRobotLocalVel(Pose robotLocalVel) {
-        this.robotLocalVel = robotLocalVel;
-    }
-
-    public void setGyroAngle(Double gyroAngle) {
-        this.gyroAngle = gyroAngle;
-    }
-
-    public void setGyroAngularVel(Double gyroAngularVel) {
-        this.gyroAngularVel = gyroAngularVel;
-    }
-
     public void setVoltage(WheelValueMap voltage) {this.voltage = voltage;}
 
     public void setFeedforwardReference(FeedforwardReference reference) {this.targetVel = reference.vel;}
     public void setFeedbackReference(FeedbackReference reference) {this.targetPos = reference.pos;}
 
-    public void setLocalizeDeviceData(LocalizeDeviceData localizeDeviceData) {this.localizeDeviceData = localizeDeviceData;}
 }

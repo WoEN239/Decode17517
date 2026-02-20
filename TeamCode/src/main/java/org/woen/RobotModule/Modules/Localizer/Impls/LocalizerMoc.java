@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
 import org.woen.RobotModule.Modules.Localizer.Architecture.PositionObserver;
-import org.woen.RobotModule.Modules.Localizer.Interface.PositionLocalizer;
+import org.woen.RobotModule.Modules.Localizer.Interface.Localizer;
 import org.woen.RobotModule.Modules.Localizer.Architecture.VelocityObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
@@ -15,7 +15,7 @@ import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
-public class PositionLocalizerMoc implements PositionLocalizer {
+public class LocalizerMoc implements Localizer {
     private final PositionObserver positionObserver = new PositionObserver();
     private final VelocityObserver velocityObserver = new VelocityObserver();
 
