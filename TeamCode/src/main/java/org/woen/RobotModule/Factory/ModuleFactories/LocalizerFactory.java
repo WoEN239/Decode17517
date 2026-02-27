@@ -17,11 +17,11 @@ public class LocalizerFactory implements IRobotModuleFactory {
     @Override
     public IRobotModule[] create(){
         return new IRobotModule[]{
-                createPositionLocalizer()
+                createLocalizer()
         };
     }
 
-    public Localizer createPositionLocalizer(){
+    public Localizer createLocalizer(){
         if(config.localizer.position.get()){
             return new LocalizerImpl();
         }else{

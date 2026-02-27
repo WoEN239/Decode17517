@@ -7,8 +7,9 @@ import org.woen.RobotModule.Interface.IRobotModule;
 import org.woen.RobotModule.Interface.IRobotModuleFactory;
 import org.woen.RobotModule.Modules.Battery.Battery;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Impls.DriveTrainMoc;
-import org.woen.RobotModule.Modules.DriveTrain.DeprecatedTankDriveTrainImpl;
 import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.Interface.DriveTrain;
+import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.TankDriveTrainImpl;
+import org.woen.RobotModule.Modules.DriveTrain.VoltageController.TankVoltageController;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.VoltageControllerImpl;
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Interface.VoltageController;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Impls.PurePursuitFollowerImpl;
@@ -31,14 +32,14 @@ public class DriveTrainFactory implements IRobotModuleFactory {
 
     public DriveTrain createDriveTrain(){
         if(config.driveTrain.driveTrain.get()){
-            return new DeprecatedTankDriveTrainImpl();
+            return new TankDriveTrainImpl();
         }else{
             return new DriveTrainMoc();
         }
     }
     public VoltageController createVoltageController(){
         if(config.driveTrain.voltageController.get()){
-            return new VoltageControllerImpl();
+            return new TankVoltageController();
         }else{
             return new VoltageController() {};
         }

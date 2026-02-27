@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.DriveTrain;
+package org.woen.RobotModule.Modules.DriveTrain.DriveTrain;
 
 import static org.woen.Config.ControlSystemConstant.*;
 

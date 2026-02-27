@@ -1,4 +1,4 @@
-package org.woen.RobotModule.Modules.DriveTrain;
+package org.woen.RobotModule.Modules.DriveTrain.DriveTrain;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.ControlSystemConstant;
