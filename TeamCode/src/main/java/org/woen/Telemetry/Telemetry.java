@@ -5,15 +5,15 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 import org.woen.Telemetry.ModulesInterfacesTelemetry.ModulesInterfacesTelemetry;
 
 import java.util.ArrayList;
 
 public class Telemetry {
-    public Provider<Boolean> robotPose = new Provider<>(false);
-    public Provider<Boolean> target = new Provider<>(false);
-    public Provider<Boolean> voltage = new Provider<>(false);
+    public SimpleProvider<Boolean> robotPose = new SimpleProvider<>(false);
+    public SimpleProvider<Boolean> target = new SimpleProvider<>(false);
+    public SimpleProvider<Boolean> voltage = new SimpleProvider<>(false);
 
     public Telemetry() {
         FtcDashboard.getInstance().addConfigVariable("telemetry","pose",robotPose);

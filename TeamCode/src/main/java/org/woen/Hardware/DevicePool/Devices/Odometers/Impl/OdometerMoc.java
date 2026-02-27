@@ -1,14 +1,14 @@
 package org.woen.Hardware.DevicePool.Devices.Odometers.Impl;
 
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.Odometer;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class OdometerMoc implements Odometer {
 
-    private Provider<Double> cord;
-    private Provider<Double> vel;
+    private SimpleProvider<Double> cord;
+    private SimpleProvider<Double> vel;
 
-    public OdometerMoc(Provider<Double> cord, Provider<Double> vel){
+    public OdometerMoc(SimpleProvider<Double> cord, SimpleProvider<Double> vel){
         this.cord = cord;
         this.vel =  vel;
     }

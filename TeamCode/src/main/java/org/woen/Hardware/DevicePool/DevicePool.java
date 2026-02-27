@@ -4,7 +4,6 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.PinPoint;
@@ -13,7 +12,7 @@ import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.Factory.HardwareFactory;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.DevicePool.Devices.Odometers.Inter.Odometer;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 import org.woen.Util.Color.LedDriver;
 
 public class DevicePool {
@@ -71,16 +70,16 @@ public class DevicePool {
         motorL = factory.createDcMotor("motorL", config.motorConfig.leftBackPos, config.motorConfig.leftBackVol);
         motorR = factory.createDcMotor("motorR", config.motorConfig.rightBackPos, config.motorConfig.rightBackVol);
 
-        gunC = factory.createDcMotor("gunC", new Provider<>(0d), new Provider<>(0d));
+        gunC = factory.createDcMotor("gunC", new SimpleProvider<>(0d), new SimpleProvider<>(0d));
         gunC.setDir(-1);
 
-        gunL = factory.createDcMotor("gunL", new Provider<>(0d), new Provider<>(0d));
+        gunL = factory.createDcMotor("gunL", new SimpleProvider<>(0d), new SimpleProvider<>(0d));
         gunL.setDir(1);
 
-        gunR = factory.createDcMotor("gunR", new Provider<>(0d), new Provider<>(0d));
+        gunR = factory.createDcMotor("gunR", new SimpleProvider<>(0d), new SimpleProvider<>(0d));
         gunR.setDir(-1);
 
-        brush = factory.createDcMotor("brush", new Provider<>(0d), new Provider<>(0d));
+        brush = factory.createDcMotor("brush", new SimpleProvider<>(0d), new SimpleProvider<>(0d));
         brush.setDir(1);
 
         //gyro = factory.createIMU("imu");

@@ -1,7 +1,7 @@
 package org.woen.Hardware.DevicePool.Devices.ColorSensor.Impl;
 
 import org.woen.Hardware.DevicePool.Devices.ColorSensor.Interface.ColorSensor;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class ColorSensorMok implements ColorSensor {
 
@@ -10,7 +10,7 @@ public class ColorSensorMok implements ColorSensor {
     protected int blue = 0;
     protected int green = 0;
 
-    public ColorSensorMok(Provider<Integer> red, Provider<Integer> green, Provider<Integer> blue){
+    public ColorSensorMok(SimpleProvider<Integer> red, SimpleProvider<Integer> green, SimpleProvider<Integer> blue){
 
         this.green = green.get();
         this.blue = blue.get();

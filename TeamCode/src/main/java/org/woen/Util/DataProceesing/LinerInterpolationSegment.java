@@ -1,12 +1,12 @@
 package org.woen.Util.DataProceesing;
 
-public class ValLerp {
+public class LinerInterpolationSegment {
     public double hiDist;
     public double lowDist;
     public double hiVal;
     public double lowVal;
 
-    public ValLerp(double lowDist, double hiDist, double lowVal, double hiVal) {
+    public LinerInterpolationSegment(double lowDist, double hiDist, double lowVal, double hiVal) {
         this.hiDist = hiDist;
         this.lowDist = lowDist;
         this.hiVal = hiVal;

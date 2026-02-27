@@ -2,8 +2,10 @@ package org.woen.Config;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
+import org.woen.Util.DataProceesing.LinerInterpolation;
 import org.woen.Util.Pid.PidStatus;
-import org.woen.Util.DataProceesing.ValLerp;
+import org.woen.Util.DataProceesing.LinerInterpolationSegment;
 
 @Config
 public class ControlSystemConstant {
@@ -11,6 +13,7 @@ public class ControlSystemConstant {
     public static class FeedbackConfig {
         public double PPLocalR   = 50;
         public double PPTransVel = 30;
+        public PidStatus wheelVelPid = new PidStatus(0.,0,0.00,0,0,0,0);
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
         public PidStatus hPid = new PidStatus(2,10,0.05,0,0,0.1,0.05,0.005);
 
@@ -28,6 +31,7 @@ public class ControlSystemConstant {
     public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
     public static class FeedforwardConfig{
+        public Double motorFeedforward = 1d;
         public Double xFeedforwardKA = 1.2d;
         public Double xFeedforwardKAReverse = 0d;
         public Double xFeedforwardKV = 5.1d;
@@ -39,10 +43,26 @@ public class ControlSystemConstant {
     
     public static class AdaptiveFireConfig {
         public double fullFireDelay = 0.025;
-        public ValLerp farVel = new ValLerp(315,370,1700,1750);
-        public ValLerp farAngle = new ValLerp(315,370,0.7,0.8);
-        public ValLerp nearVel = new ValLerp(178,260,1400,1570);
-        public ValLerp nearAngle = new ValLerp(178,260,1,0.9);
+        public LinerInterpolationSegment farVel = new LinerInterpolationSegment(315,370,1700,1750);
+        public LinerInterpolationSegment farAngle = new LinerInterpolationSegment(315,370,0.7,0.8);
+        public LinerInterpolationSegment nearVel = new LinerInterpolationSegment(178,260,1400,1570);
+        public LinerInterpolationSegment nearAngle = new LinerInterpolationSegment(178,260,1,0.9);
+
+        public LinerInterpolation vel = new LinerInterpolation();
+        {
+            vel.add(160,1400);
+            vel.add(195,1410);
+            vel.add(226,1470);
+            vel.add(260,1540);
+        }
+        public LinerInterpolation angle = new LinerInterpolation();
+        {
+            angle.add(160,1);
+            angle.add(195,1);
+            angle.add(226,0.95);
+            angle.add(260,0.9);
+        }
+
     }
     public static AdaptiveFireConfig adaptiveFireConfig = new AdaptiveFireConfig();
 

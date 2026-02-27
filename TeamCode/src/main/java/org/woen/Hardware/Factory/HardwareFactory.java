@@ -18,7 +18,7 @@ import org.woen.Hardware.DevicePool.Devices.Servo.Impls.ServoImpl;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
 import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensor;
 import org.woen.Hardware.DevicePool.Devices.VoltageSensor.RevVoltageSensorImpl;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 import org.woen.Util.Vectors.Pose;
 
 public class HardwareFactory {
@@ -43,7 +43,7 @@ public class HardwareFactory {
         }
     }
 
-    public Motor createDcMotor(String name, Provider<Double> pos, Provider<Double> vol){
+    public Motor createDcMotor(String name, SimpleProvider<Double> pos, SimpleProvider<Double> vol){
         if(config.motors.get()){
             return new DcMotorImpl(hardwareMap.get(DcMotorEx.class, name));
         }
@@ -62,7 +62,7 @@ public class HardwareFactory {
         }
     }
 
-    public Odometer createOdometer(String name, Provider<Double> cord, Provider<Double> vel){
+    public Odometer createOdometer(String name, SimpleProvider<Double> cord, SimpleProvider<Double> vel){
         if(config.odometers.get()){
             return new OdometerImpl(hardwareMap.get(DcMotorEx.class, name));
         }

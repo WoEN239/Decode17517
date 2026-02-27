@@ -2,18 +2,18 @@ package org.woen.Hardware.DevicePool.Devices.Motor;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class MotorConfig{
-    public final Provider<Double>  rightFrontPos = new Provider<>(0d);
-    public final Provider<Double>  rightBackPos  = new Provider<>(0d);
-    public final Provider<Double>  leftFrontPos  = new Provider<>(0d);
-    public final Provider<Double>  leftBackPos   = new Provider<>(0d);
+    public final SimpleProvider<Double> rightFrontPos = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> rightBackPos  = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> leftFrontPos  = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> leftBackPos   = new SimpleProvider<>(0d);
 
-    public final Provider<Double>  rightFrontVol = new Provider<>(0d);
-    public final Provider<Double>  rightBackVol  = new Provider<>(0d);
-    public final Provider<Double>  leftFrontVol  = new Provider<>(0d);
-    public final Provider<Double>  leftBackVol   = new Provider<>(0d);
+    public final SimpleProvider<Double> rightFrontVol = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> rightBackVol  = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> leftFrontVol  = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> leftBackVol   = new SimpleProvider<>(0d);
 
     public void init(){
         FtcDashboard.getInstance().addConfigVariable("MotorConfig", "rightFrontPos",rightFrontPos);

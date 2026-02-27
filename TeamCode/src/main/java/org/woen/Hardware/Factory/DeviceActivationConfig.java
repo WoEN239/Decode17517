@@ -4,14 +4,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.woen.Hardware.DevicePool.Devices.Motor.MotorConfig;
 import org.woen.Hardware.DevicePool.Devices.Odometers.OdometerConf;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class DeviceActivationConfig {
 
-    public final Provider<Boolean> odometers = new Provider<>(true);
-    public final Provider<Boolean> motors    = new Provider<>(true);
-    public final Provider<Boolean> servos    = new Provider<>(true);
-    public final Provider<Boolean> rev       = new Provider<>(true);
+    public final SimpleProvider<Boolean> odometers = new SimpleProvider<>(true);
+    public final SimpleProvider<Boolean> motors    = new SimpleProvider<>(true);
+    public final SimpleProvider<Boolean> servos    = new SimpleProvider<>(true);
+    public final SimpleProvider<Boolean> rev       = new SimpleProvider<>(true);
     public final MotorConfig motorConfig     = new MotorConfig();
     public final OdometerConf odometerConfig = new OdometerConf();
 

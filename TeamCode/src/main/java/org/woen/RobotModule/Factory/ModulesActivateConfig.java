@@ -4,14 +4,14 @@ import com.acmerobotics.dashboard.FtcDashboard;
 
 import org.woen.RobotModule.Modules.DriveTrain.ActivationConfig.DriveTrainActivationConfig;
 import org.woen.RobotModule.Modules.Localizer.ActivationConfig.LocalizerActivationConfig;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class ModulesActivateConfig {
     public LocalizerActivationConfig localizer = LocalizerActivationConfig.getAllOn();
     public DriveTrainActivationConfig driveTrain = DriveTrainActivationConfig.getAllOn();
-    public Provider<Boolean> gun                = new Provider<>(true);
-    public Provider<Boolean> camera             = new Provider<>(true);
-    public Provider<Boolean> autonomTaskManager = new Provider<>(true);
+    public SimpleProvider<Boolean> gun                = new SimpleProvider<>(true);
+    public SimpleProvider<Boolean> camera             = new SimpleProvider<>(true);
+    public SimpleProvider<Boolean> autonomTaskManager = new SimpleProvider<>(true);
 
     public static ModulesActivateConfig getAllOn(){
         return new ModulesActivateConfig();

@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class DcMotorMok implements Motor {
 
-    Provider<Double> motorPos;
-    Provider<Double> motorVol;
+    SimpleProvider<Double> motorPos;
+    SimpleProvider<Double> motorVol;
 
-    public DcMotorMok(Provider<Double> motorPos, Provider<Double> motorVol){
+    public DcMotorMok(SimpleProvider<Double> motorPos, SimpleProvider<Double> motorVol){
         this.motorPos = motorPos;
         this.motorVol = motorVol;
     }

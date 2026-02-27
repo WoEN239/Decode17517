@@ -11,7 +11,7 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Feed
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 import org.woen.Telemetry.Telemetry;
 import org.woen.Util.Angel.AngleUtil;
 import org.woen.Util.MotionProfile.TrapezoidMotionProfile;
@@ -30,20 +30,20 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
         this.velocity = velocity;
     }
 
-    private final Provider<Double> profileAccel   = new Provider<>(25d);
-    private final Provider<Double> profileMaxVel  = new Provider<>(35d);
-    private final Provider<Double> profilePos     = new Provider<>(55d);
+    private final SimpleProvider<Double> profileAccel   = new SimpleProvider<>(25d);
+    private final SimpleProvider<Double> profileMaxVel  = new SimpleProvider<>(35d);
+    private final SimpleProvider<Double> profilePos     = new SimpleProvider<>(55d);
 
-    private final Provider<Double> velH = new Provider<>(0d);
-    private final Provider<Double> velY = new Provider<>(0d);
-    private final Provider<Double> velX = new Provider<>(0d);
+    private final SimpleProvider<Double> velH = new SimpleProvider<>(0d);
+    private final SimpleProvider<Double> velY = new SimpleProvider<>(0d);
+    private final SimpleProvider<Double> velX = new SimpleProvider<>(0d);
 
-    private final Provider<Double> posH = new Provider<>(0d);
-    private final Provider<Double> posY = new Provider<>(0d);
-    private final Provider<Double> posX = new Provider<>(0d);
+    private final SimpleProvider<Double> posH = new SimpleProvider<>(0d);
+    private final SimpleProvider<Double> posY = new SimpleProvider<>(0d);
+    private final SimpleProvider<Double> posX = new SimpleProvider<>(0d);
 
-    private final Provider<String> mode = new Provider<>("manual");
-    private final Provider<String> axis = new Provider<>("h");
+    private final SimpleProvider<String> mode = new SimpleProvider<>("manual");
+    private final SimpleProvider<String> axis = new SimpleProvider<>("h");
 
     private TrapezoidMotionProfile motionProfile = new TrapezoidMotionProfile(profileAccel.get(),profileMaxVel.get(),profilePos.get(),position.h,velocity.h);
     private final ElapsedTime timer = new ElapsedTime();

@@ -2,16 +2,16 @@ package org.woen.Hardware.DevicePool.Devices.Odometers;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class OdometerConf {
 
-    public final Provider<Double> rightOdPos= new Provider<>(0d);
-    public final Provider<Double> leftOdPos= new Provider<>(0d);
-    public final Provider<Double> sideOdPos= new Provider<>(0d);
-    public final Provider<Double> rightOdVel = new Provider<>(0d);
-    public final Provider<Double> leftOdVel = new Provider<>(0d);
-    public final Provider<Double> sideOdVel = new Provider<>(0d);
+    public final SimpleProvider<Double> rightOdPos= new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> leftOdPos= new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> sideOdPos= new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> rightOdVel = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> leftOdVel = new SimpleProvider<>(0d);
+    public final SimpleProvider<Double> sideOdVel = new SimpleProvider<>(0d);
 
     public void init(){
         FtcDashboard.getInstance().addConfigVariable("OdometerConf", "rightOdPos", rightOdPos);

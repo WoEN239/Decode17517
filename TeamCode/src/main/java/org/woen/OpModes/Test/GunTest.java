@@ -10,7 +10,7 @@ import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Pid.PidStatus;
 
@@ -22,7 +22,7 @@ public class GunTest extends BaseOpMode {
     public static PidStatus status = new PidStatus(0,0,0,0,0,0,0,0);
     Pid pid = new Pid(status);
     public static double target = 0;
-    public Provider<Double> border = new Provider<>(0.5);
+    public SimpleProvider<Double> border = new SimpleProvider<>(0.5);
 
     @Override
     protected void initConfig(){

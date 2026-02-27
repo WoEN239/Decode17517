@@ -2,13 +2,13 @@ package org.woen.RobotModule.Modules.DriveTrain.ActivationConfig;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 
-import org.woen.Telemetry.ConfigurableVariables.Provider;
+import org.woen.Telemetry.ConfigurableVariables.SimpleProvider;
 
 public class DriveTrainActivationConfig {
 
-    public final Provider<Boolean> driveTrain         = new Provider<>(true);
-    public final Provider<Boolean> voltageController  = new Provider<>(true);
-    public final Provider<Boolean> trajectoryFollower = new Provider<>(true);
+    public final SimpleProvider<Boolean> driveTrain         = new SimpleProvider<>(true);
+    public final SimpleProvider<Boolean> voltageController  = new SimpleProvider<>(true);
+    public final SimpleProvider<Boolean> trajectoryFollower = new SimpleProvider<>(true);
 
     private void initConfigs(){
         FtcDashboard.getInstance().addConfigVariable("DriveTrainActivation", "driveTrain", driveTrain);

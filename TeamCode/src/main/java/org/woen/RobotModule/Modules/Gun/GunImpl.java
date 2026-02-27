@@ -55,8 +55,8 @@ public class GunImpl implements Gun {
             gunTargetVel = adaptiveFireConfig.farVel.get(dist);
             setAimServoPos(adaptiveFireConfig.farAngle.get(dist));
         } else if (aimCommand == NEAR){
-            gunTargetVel = adaptiveFireConfig.nearVel.get(dist);
-            setAimServoPos(adaptiveFireConfig.nearAngle.get(dist));
+            gunTargetVel = adaptiveFireConfig.vel.get(dist);
+            setAimServoPos(adaptiveFireConfig.angle.get(dist));
         } else if(aimCommand == PATTERN){
             gunTargetVel = gunConfig.shootVelSidePattern;
             patternAim();
@@ -229,7 +229,6 @@ public class GunImpl implements Gun {
     private PredominantColorProcessor.Swatch leftColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
     private PredominantColorProcessor.Swatch rightColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
 
-
     private MOTIF getInMotif() {
         MOTIF inMouth = GPP;
         if (centerColor == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
@@ -240,28 +239,12 @@ public class GunImpl implements Gun {
         return inMouth;
     }
 
-    private void setLeftOnEvent(NewDetectionBallsLeftEvent event) {
-        leftColor = event.getData();
-    }
-    private void setRightOnEvent(NewDetectionBallsRightEvent event) {
-        rightColor = event.getData();
-    }
-    private void setCenterOnEvent(NewDetectionBallsCenterEvent event) {
-        centerColor = event.getData();
-    }
+    private void setLeftOnEvent(NewDetectionBallsLeftEvent event) {leftColor = event.getData();}
+    private void setRightOnEvent(NewDetectionBallsRightEvent event) {rightColor = event.getData();}
+    private void setCenterOnEvent(NewDetectionBallsCenterEvent event) {centerColor = event.getData();}
 
-    private boolean getBalls(PredominantColorProcessor.Swatch swatch){
-        return swatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN || swatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;
-    }
-
-    private boolean artCheck(){
-        return getBalls(centerColor) && getBalls(rightColor) && getBalls(leftColor);
-    }
-
-    private void patternAim() {
-        setAimServoPos(aimCPat);
-    }
-
+    private boolean getBalls(PredominantColorProcessor.Swatch swatch){return swatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN || swatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;}
+    private void patternAim() {setAimServoPos(aimCPat);}
     private void setAimServoPos(double l, double c, double r) {
         aimR.setPos(r);
         aimC.setPos(c);
@@ -272,21 +255,11 @@ public class GunImpl implements Gun {
         aimC.setPos(c);
         aimL.setPos(c+servoDeltaL);
     }
-
     private Pose pose = new Pose(0, 0, 0);
-    private void setPose(Pose p) {
-        pose = p;
-    }
-
-    private void shotRight (){
-        servoR.setTarget(shotRPos);
-    }
-    private void shotCenter (){
-        servoC.setTarget(shotCPos);
-    }
-    private void shotLeft (){
-        servoL.setTarget(shotLPos);
-    }
+    private void setPose(Pose p) {pose = p;}
+    private void shotRight (){servoR.setTarget(shotRPos);}
+    private void shotCenter (){servoC.setTarget(shotCPos);}
+    private void shotLeft (){servoL.setTarget(shotLPos);}
     private final ElapsedTime fireTimer = new ElapsedTime();
     private final ServoAction fullFireAction = new ServoAction(
             new BooleanSupplier[]{
