@@ -13,7 +13,7 @@ public class ControlSystemConstant {
     public static class FeedbackConfig {
         public double PPLocalR   = 50;
         public double PPTransVel = 30;
-        public PidStatus wheelVelPid = new PidStatus(0.,0,0.00,0,0,0,0);
+        public PidStatus wheelVelPid = new PidStatus(0.2,0,0,0.07,0,0,0,3);
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
         public PidStatus hPid = new PidStatus(2,10,0.05,0,0,0.1,0.05,0.005);
 
@@ -25,19 +25,19 @@ public class ControlSystemConstant {
     public static class RobotSizeConfig{ //sm
         public double lx = 6.3;
         public double ly = 16.4375;
-        public double B = 44;
-        public double wheelR = 55;
+        public double B = 42.2;
+        public double wheelR = 5;
     }
     public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
     public static class FeedforwardConfig{
-        public Double motorFeedforward = 1d;
+        public Double motorFeedforward = 0d;
         public Double xFeedforwardKA = 1.2d;
         public Double xFeedforwardKAReverse = 0d;
         public Double xFeedforwardKV = 5.1d;
         public Double hSlip = 0.6;
-        public Double staticVoltageOffsetX = 0.909d;
-        public Double staticVoltageOffsetH = 2.3;
+        public Double staticVoltageOffsetX = 0.8;
+        public Double staticVoltageOffsetH = 0.8;
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
     

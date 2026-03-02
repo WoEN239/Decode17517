@@ -32,7 +32,7 @@ public class Near9Pattern6Ball extends WayPointPool {
                     ()->true,
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR))),
             false, pool.fireNear
-    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(150).setEndDetect(50);
+    ).setName("aim1").setEndAngle(this::angleToGoal).setVel(150).setEndDetect(10);
 
     public WayPoint stop1 = new WayPoint(
             new Runnable[]{},
@@ -196,7 +196,7 @@ public class Near9Pattern6Ball extends WayPointPool {
     public WayPoint[] getPool() {
         return new WayPoint[]{
                 aim1.copy(),
-                stop1.copy(),
+//                stop1.copy(),
                 fire1.copy(),
                 lookTimerReset.copy(),
                 look.copy(),
