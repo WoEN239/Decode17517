@@ -52,11 +52,16 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         //define current projection and target segment
         Vector2d projection = targetPath.get(0).findProjection(pose.vector);
         LineSegment targetSegment = targetPath.get(0);
+        boolean isSegmentLast = false;
         for (int i = 0; i<targetPath.size();i++) {
             Vector2d p = targetPath.get(i).findProjection(pose.vector);
             if(localRadius*localRadius > p.minus(pose.vector).lengthSquare()){
                 projection = p;
                 targetSegment = targetPath.get(i);
+
+                if(i == targetPath.size()-1){
+                    isSegmentLast = true;
+                }
             }
         }
 
@@ -70,27 +75,29 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
 
         Vector2d virtualTarget = projection.plus(targetSegment.unitVector.multiply(step));
         double y = virtualTarget.minus(pose.vector).rotate(-pose.h).y;
-
         double screwR = (chord*chord)/(2d*y);
+
         //define velocity command
-        double angleVel = (transVelocity/screwR);
+        if(isSegmentLast) transVelocity = Double.min(transVelocity,sqrt(2*ControlSystemConstant.feedforwardConfig.maxPPAccel*distanceToEnd));
+
+        double angleVelocity = (transVelocity/screwR);
 
         if(wayPoint.isReverse){
-            transVelocity = - abs(transVelocity);
+            transVelocity = -abs(transVelocity);
         }
 
         //send velocity command to control loop
-        if(pose.vector.minus(lastPoint).lengthSquare() < endDetect*endDetect){
+        if(pose.vector.minus(lastPoint).lengthSquare() < endDetect*endDetect && isSegmentLast){
             isEndNear = true;
         }
 
         if(isEndNear){
-            angleVel = 0;
+            angleVelocity = 0;
             transVelocity = 0;
         }
 
         observerVel.notifyListeners(new FeedforwardReference(
-                        new Pose(angleVel,transVelocity,0),
+                        new Pose(angleVelocity,transVelocity,0),
                         new Pose(0,0,0)
                 )
         );

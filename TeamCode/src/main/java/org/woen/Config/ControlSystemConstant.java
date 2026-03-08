@@ -42,6 +42,7 @@ public class ControlSystemConstant {
         public Double hSlip = 0.6;
         public Double staticVoltageOffsetX = 0.8;
         public Double staticVoltageOffsetH = 0.8;
+        public Double maxPPAccel = 1d;
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
     
