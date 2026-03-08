@@ -8,15 +8,19 @@ import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.Ta
 import org.woen.RobotModule.Modules.DriveTrain.VoltageController.Architecture.TankWheelsVoltageObserver;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionListener;
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewTankFeedbackReferenceListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReference;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Pid.Pid;
 import org.woen.Util.Vectors.Pose;
 
 public class TankDriveTrainImpl implements DriveTrain {
-    private Pid lPid = new Pid(ControlSystemConstant.feedbackConfig.wheelVelPid);
-    private Pid rPid = new Pid(ControlSystemConstant.feedbackConfig.wheelVelPid);
-    private TankKinematics kinematics = new TankKinematics(ControlSystemConstant.robotSizeConfig.B,ControlSystemConstant.robotSizeConfig.wheelR);
+    private final Pid lPid = new Pid(ControlSystemConstant.tankFeedbackConfig.wheelVelPid);
+    private final Pid rPid = new Pid(ControlSystemConstant.tankFeedbackConfig.wheelVelPid);
+    private final TankKinematics kinematics = new TankKinematics(ControlSystemConstant.robotSizeConfig.B,ControlSystemConstant.robotSizeConfig.wheelR);
+    private final Pid anglePid = new Pid(ControlSystemConstant.tankFeedbackConfig.hPid);
     @Override
     public void lateUpdate() {
         double dir = Math.signum(velocity.vector.rotate(-pose.h).x);
@@ -25,8 +29,7 @@ public class TankDriveTrainImpl implements DriveTrain {
         lPid.setPos(wheelVelocity.l);
         rPid.setPos(wheelVelocity.r);
 
-        TankWheelValueMap wheelTaget = kinematics.getWheel(feedforwardReference.vel.h,feedforwardReference.vel.x);
-        TankWheelValueMap wheelF = wheelTaget.multiply(ControlSystemConstant.feedforwardConfig.motorFeedforward);
+        TankWheelValueMap wheelTaget = kinematics.getWheel(feedforwardReference.vel.h+feedback(),feedforwardReference.vel.x);
 
         lPid.setTarget(wheelTaget.l);
         rPid.setTarget(wheelTaget.r);
@@ -34,11 +37,21 @@ public class TankDriveTrainImpl implements DriveTrain {
         lPid.update();
         rPid.update();
 
-        wheelsVoltageObserver.notifyListeners(new TankWheelValueMap(lPid.getU() + wheelF.l, rPid.getU() + wheelF.r));
+        wheelsVoltageObserver.notifyListeners(new TankWheelValueMap(lPid.getU(), rPid.getU()));
 
     }
-
+    private Double feedback(){
+        if (!feedbackReference.isEnable){
+            return 0d;
+        }
+        anglePid.setTarget(feedbackReference.angle);
+        anglePid.setPos(pose.h);
+        return anglePid.getU();
+    }
+    private TankFeedbackReference feedbackReference = new TankFeedbackReference(false,0);
     private FeedforwardReference feedforwardReference = new FeedforwardReference(new Pose(0,0,0), new Pose(0,0,0));
+    public void setFeedforwardReference(FeedforwardReference r) {this.feedforwardReference = r;}
+    public void setFeedbackReference(TankFeedbackReference r) {this.feedbackReference = r;}
     private Pose pose = new Pose(0,0,0);
     private Pose velocity = new Pose(0,0,0);
     public void setPose(Pose pose) {
@@ -47,15 +60,13 @@ public class TankDriveTrainImpl implements DriveTrain {
     public void seVel(Pose velocity) {
         this.velocity = velocity;
     }
-    public void setFeedforwardReference(FeedforwardReference feedforwardReference) {
-        this.feedforwardReference = feedforwardReference;
-    }
     private final TankWheelsVoltageObserver wheelsVoltageObserver = new TankWheelsVoltageObserver();
-
     @Override
     public void init() {
         EventBus.getListenersRegistration().invoke(new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
+        EventBus.getListenersRegistration().invoke(new RegisterNewTankFeedbackReferenceListener(this::setFeedbackReference));
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));
         EventBus.getListenersRegistration().invoke(new RegisterNewVelocityListener(this::seVel));
+
     }
 }

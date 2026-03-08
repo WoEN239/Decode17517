@@ -10,10 +10,15 @@ import org.woen.Util.DataProceesing.LinerInterpolationSegment;
 @Config
 public class ControlSystemConstant {
 
+    public static class TankFeedbackConfig{
+        public PidStatus wheelVelPid = new PidStatus(0.2,0,0,0.07,0,0,0,3);
+        public PidStatus hPid = new PidStatus(2,10,0.05,0,0,0.1,0.05,0.005);
+    }
+    public static TankFeedbackConfig tankFeedbackConfig = new TankFeedbackConfig();
     public static class FeedbackConfig {
         public double PPLocalR   = 50;
         public double PPTransVel = 30;
-        public PidStatus wheelVelPid = new PidStatus(0.2,0,0,0.07,0,0,0,3);
+
         public PidStatus xPid = new PidStatus(0.,0,0.00,0,0,0,0);
         public PidStatus hPid = new PidStatus(2,10,0.05,0,0,0.1,0.05,0.005);
 
@@ -31,7 +36,6 @@ public class ControlSystemConstant {
     public static RobotSizeConfig robotSizeConfig = new RobotSizeConfig();
 
     public static class FeedforwardConfig{
-        public Double motorFeedforward = 0d;
         public Double xFeedforwardKA = 1.2d;
         public Double xFeedforwardKAReverse = 0d;
         public Double xFeedforwardKV = 5.1d;

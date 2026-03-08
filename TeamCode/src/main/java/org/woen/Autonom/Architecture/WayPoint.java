@@ -29,7 +29,7 @@ public class WayPoint {
     public double getEndDetect() {return endDetect;}
 
     private double lookAheadRadius = 20;
-    private double getLookAheadRadius(){return lookAheadRadius;}
+    public double getLookAheadRadius(){return lookAheadRadius;}
 
     private double vel = ControlSystemConstant.feedbackConfig.PPTransVel;
     public double getVel() {return vel;}
