@@ -11,6 +11,8 @@ import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionLi
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewFeedbackReferenceListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewTankFeedbackReferenceListener;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Vectors.Pose;
@@ -20,7 +22,7 @@ public class ModulesInterfacesTelemetry {
     private Pose robotVel = new Pose(0,0,0);
 
     private Pose targetVel = new Pose(0,0,0);
-    private Pose targetPos = new Pose(-564,0,0);
+    private TankFeedbackReference targetPos = new TankFeedbackReference(false,0);
 
     private TankWheelValueMap voltage = new TankWheelValueMap(0d,0d);
 
@@ -49,7 +51,7 @@ public class ModulesInterfacesTelemetry {
         EventBus.getListenersRegistration().invoke(new RegisterNewTankWheelsVoltageListener(this::setVoltage));
 
         EventBus.getListenersRegistration().invoke(new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
-        EventBus.getListenersRegistration().invoke(new RegisterNewFeedbackReferenceListener(this::setFeedbackReference));
+        EventBus.getListenersRegistration().invoke(new RegisterNewTankFeedbackReferenceListener(this::setFeedbackReference));
     }
 
     public void setRobotPos(Pose robotPos) {
@@ -63,6 +65,6 @@ public class ModulesInterfacesTelemetry {
     public void setVoltage(TankWheelValueMap voltage) {this.voltage = voltage;}
 
     public void setFeedforwardReference(FeedforwardReference reference) {this.targetVel = reference.vel;}
-    public void setFeedbackReference(FeedbackReference reference) {this.targetPos = reference.pos;}
+    public void setFeedbackReference(TankFeedbackReference reference) {this.targetPos = reference;}
 
 }

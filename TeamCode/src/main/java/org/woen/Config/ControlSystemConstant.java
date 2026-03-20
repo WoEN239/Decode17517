@@ -12,7 +12,8 @@ public class ControlSystemConstant {
 
     public static class TankFeedbackConfig{
         public PidStatus wheelVelPid = new PidStatus(0.2,0,0,0.07,0,0,0,3);
-        public PidStatus hPid = new PidStatus(2,10,0.05,0,0,0.1,0.05,0.005);
+        public PidStatus hPid = new PidStatus(8,3000,0,0,0,0.2,0.35,0);
+
     }
     public static TankFeedbackConfig tankFeedbackConfig = new TankFeedbackConfig();
     public static class FeedbackConfig {
@@ -42,30 +43,34 @@ public class ControlSystemConstant {
         public Double hSlip = 0.6;
         public Double staticVoltageOffsetX = 0.8;
         public Double staticVoltageOffsetH = 0.8;
-        public Double maxPPAccel = 1d;
+        public Double maxPPAccel = 200d;
     }
     public static FeedforwardConfig feedforwardConfig = new FeedforwardConfig();
     
     public static class AdaptiveFireConfig {
-        public double fullFireDelay = 0.025;
-        public LinerInterpolationSegment farVel = new LinerInterpolationSegment(315,370,1700,1750);
-        public LinerInterpolationSegment farAngle = new LinerInterpolationSegment(315,370,0.7,0.8);
+        public double fullFireDelay = 0.05;
+        public LinerInterpolationSegment farVel = new LinerInterpolationSegment(340,380,1690,1820);
+        public LinerInterpolationSegment farAngle = new LinerInterpolationSegment(340,380,0.8,0.7);
         public LinerInterpolationSegment nearVel = new LinerInterpolationSegment(178,260,1400,1570);
         public LinerInterpolationSegment nearAngle = new LinerInterpolationSegment(178,260,1,0.9);
 
         public LinerInterpolation vel = new LinerInterpolation();
         {
-            vel.add(160,1400);
-            vel.add(195,1410);
-            vel.add(226,1470);
-            vel.add(260,1540);
+            vel.add(200,1410);
+            vel.add(240,1490);
+            vel.add(280,1540);
+            //vel.add(195,1410);
+            //vel.add(226,1470);
+            //vel.add(260,1540);
         }
         public LinerInterpolation angle = new LinerInterpolation();
         {
-            angle.add(160,1);
-            angle.add(195,1);
-            angle.add(226,0.95);
-            angle.add(260,0.9);
+            angle.add(200,1);
+            angle.add(240,0.95);
+            angle.add(280,0.9);
+            //angle.add(195,1);
+            //angle.add(226,0.95);
+            //angle.add(260,0.9);
         }
 
     }

@@ -4,10 +4,10 @@ import org.woen.Util.Vectors.Pose;
 
 public enum Start {
     ZERO(new Pose(0,0,0)),
-    FAR_BLUE(new Pose(0,158,-58)),
-    NEAR_BLUE(new Pose(0.836,-122,-136)),
-    FAR_RED (new Pose(0,158,-58).teamReverse()),
-    NEAR_RED(new Pose(0.836,-122,-136).teamReverse());
+    FAR_BLUE(new Pose(0,157.2,-58.5)),
+    NEAR_BLUE(new Pose(0,-153,-100)),
+    FAR_RED (new Pose(0,157.2,-58.5).teamReverse()),
+    NEAR_RED(new Pose(0,-153,-100).teamReverse());
 
 
 

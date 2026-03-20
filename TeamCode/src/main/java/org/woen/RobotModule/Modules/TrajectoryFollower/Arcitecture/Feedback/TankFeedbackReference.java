@@ -8,4 +8,8 @@ public class TankFeedbackReference {
         this.isEnable = isEnable;
         this.angle = angle;
     }
+    @Override
+    public String toString(){
+        return  "h" + angle + " " + isEnable;
+    }
 }

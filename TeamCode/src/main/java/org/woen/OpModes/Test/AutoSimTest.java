@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.woen.Architecture.EventBus.EventBus;
-import org.woen.Autonom.Pools.Far9PatternPool;
 import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
@@ -42,24 +41,6 @@ public class AutoSimTest extends BaseOpMode {
 
     @Override
     protected void initRun() {
-        Far9PatternPool poolNear = new Far9PatternPool();
-        EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
-                poolNear.aim1.copy(),
-                poolNear.fire1.copy(),
-                poolNear.rotate1.copy(),
-                poolNear.eat1.copy().setVel(150),
-                poolNear.aim2.copy().setVel(100),
-                poolNear.fire2.copy(),
-                poolNear.rotate2.copy(),
-                poolNear.eat2.copy().setVel(150),
-                poolNear.aim3.copy().setVel(150),
-                poolNear.fire3.copy(),
-                poolNear.rotate3.copy(),
-                poolNear.eat3.copy().setVel(150),
-                poolNear.aim4.copy().setVel(150)
-
-
-        ));
 
         try {
             socket = new DatagramSocket();

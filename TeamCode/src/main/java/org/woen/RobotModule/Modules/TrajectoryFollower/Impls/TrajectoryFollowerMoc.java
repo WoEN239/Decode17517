@@ -8,6 +8,8 @@ import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionLi
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.FeedbackReferenceObserver;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReference;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Interface.TrajectoryFollower;
@@ -19,7 +21,7 @@ import org.woen.Util.Vectors.Pose;
 
 public class TrajectoryFollowerMoc implements TrajectoryFollower {
     private final FeedforwardReferenceObserver feedforwardObserver = new FeedforwardReferenceObserver();
-    private final FeedbackReferenceObserver feedbackObserver = new FeedbackReferenceObserver();
+    private final TankFeedbackReferenceObserver feedbackObserver = new TankFeedbackReferenceObserver();
 
     private Pose position = new Pose(0,0,0);
     private Pose velocity = new Pose(0,0,0);
@@ -56,8 +58,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
             feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(velH.get(), velX.get(), velY.get()),
                     new Pose(0, 0, 0)));
 
-            feedbackObserver.notifyListeners(new FeedbackReference(new Pose(posH.get(), posX.get(), posY.get()),
-                    new Pose(velH.get(), velX.get(), velY.get())));
+            feedbackObserver.notifyListeners(new TankFeedbackReference(true,posH.get()));
 
             Telemetry.getInstance().add("x target",posX.get());
             Telemetry.getInstance().add("h target", AngleUtil.normalize(posH.get()));
@@ -93,8 +94,7 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
             Telemetry.getInstance().add("direction bdgd", dir);
 
             if(axis.get().equals("h")) {
-                feedbackObserver.notifyListeners(new FeedbackReference(new Pose(posTarget, 0, 0),
-                        new Pose(velTarget, 0, 0)));
+                //feedbackObserver.notifyListeners(new TankFeedbackReference(posTarget,true);
 
                 feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(velTarget, 0, 0),
                         new Pose(accTarget, 0, 0)));
@@ -103,8 +103,8 @@ public class TrajectoryFollowerMoc implements TrajectoryFollower {
                 Telemetry.getInstance().add("velValue", velocity.h);
 
             }else if(axis.get().equals("x")){
-                feedbackObserver.notifyListeners(new FeedbackReference(new Pose(0, posTarget, 0),
-                        new Pose(0, velTarget, 0)));
+//                feedbackObserver.notifyListeners(new FeedbackReference(new Pose(0, posTarget, 0),
+//                        new Pose(0, velTarget, 0)));
                 feedforwardObserver.notifyListeners(new FeedforwardReference(new Pose(0, velTarget, 0),
                         new Pose(0, accTarget, 0)));
 

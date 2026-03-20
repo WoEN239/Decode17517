@@ -80,11 +80,12 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         //define velocity command
         if(isSegmentLast) transVelocity = Double.min(transVelocity,sqrt(2*ControlSystemConstant.feedforwardConfig.maxPPAccel*distanceToEnd));
 
-        double angleVelocity = (transVelocity/screwR);
+
 
         if(wayPoint.isReverse){
             transVelocity = -abs(transVelocity);
         }
+        double angleVelocity = (transVelocity/screwR);
 
         //send velocity command to control loop
         if(pose.vector.minus(lastPoint).lengthSquare() < endDetect*endDetect && isSegmentLast){

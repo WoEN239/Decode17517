@@ -10,7 +10,6 @@ import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewPositionLi
 import org.woen.RobotModule.Modules.Localizer.Architecture.RegisterNewVelocityListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.RegisterNewTankFeedbackReferenceListener;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReference;
-import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.RegisterNewFeedforwardReferenceListener;
 import org.woen.Util.Pid.Pid;
@@ -46,6 +45,7 @@ public class TankDriveTrainImpl implements DriveTrain {
         }
         anglePid.setTarget(feedbackReference.angle);
         anglePid.setPos(pose.h);
+        anglePid.update();
         return anglePid.getU();
     }
     private TankFeedbackReference feedbackReference = new TankFeedbackReference(false,0);
@@ -63,6 +63,7 @@ public class TankDriveTrainImpl implements DriveTrain {
     private final TankWheelsVoltageObserver wheelsVoltageObserver = new TankWheelsVoltageObserver();
     @Override
     public void init() {
+        anglePid.isNormolized = true;
         EventBus.getListenersRegistration().invoke(new RegisterNewFeedforwardReferenceListener(this::setFeedforwardReference));
         EventBus.getListenersRegistration().invoke(new RegisterNewTankFeedbackReferenceListener(this::setFeedbackReference));
         EventBus.getListenersRegistration().invoke(new RegisterNewPositionListener(this::setPose));

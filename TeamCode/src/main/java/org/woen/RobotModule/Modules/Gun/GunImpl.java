@@ -13,6 +13,8 @@ import static org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND.*;
 import static org.woen.RobotModule.Modules.Gun.Config.GunServoPositions.*;
 
 
+import static java.lang.Math.sqrt;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -49,8 +51,10 @@ import java.util.function.BooleanSupplier;
 public class GunImpl implements Gun {
     @Override
     public void lateUpdate() {
-        double dist = pose.vector.minus(goal).length();
+        double dist = pose.vector.minus(new Vector2d(-172,-172)).lengthSquare();
+        dist = sqrt(dist+100*100);
 
+        //aimCommand = FAR;
         if (aimCommand == FAR) {
             gunTargetVel = adaptiveFireConfig.farVel.get(dist);
             setAimServoPos(adaptiveFireConfig.farAngle.get(dist));
@@ -223,7 +227,7 @@ public class GunImpl implements Gun {
     public void setTargetMotif(NewTargetMotifEvent e) {this.targetMotif = e.getData();}
 
     private double gunTargetVel = gunConfig.shootVelSideFar;
-    private double brushPower = 0.8;
+    private double brushPower = 0.95;
 
     private PredominantColorProcessor.Swatch centerColor = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
     private PredominantColorProcessor.Swatch leftColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;

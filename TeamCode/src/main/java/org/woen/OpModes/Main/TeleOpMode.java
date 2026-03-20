@@ -13,30 +13,29 @@ import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.BaseOpMode;
 import org.woen.RobotModule.Factory.ModulesActivateConfig;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.ReplaceFeedbackControllerEvent;
-import org.woen.RobotModule.Modules.DriveTrain.DriveTrain.FeedbackController.TankFeedbackController;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewBrushReversEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
 import org.woen.RobotModule.Modules.Gun.Config.AIM_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.RobotModule.Modules.Gun.Config.GunServoPositions;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReference;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
-import org.woen.Util.Pid.Pid;
-import org.woen.Util.Pid.PidStatus;
 import org.woen.Util.Vectors.Pose;
 
 @Config
 @TeleOp(name = "teleOp", group = "A1")
 public class TeleOpMode extends BaseOpMode {
     private final FeedforwardReferenceObserver feedforwardReferenceObserver = new FeedforwardReferenceObserver();
+    private final TankFeedbackReferenceObserver feedbackObserver = new TankFeedbackReferenceObserver();
 
     @Override
     protected void loopRun() {
         targetVelocity = new Pose(
-                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * yawSens   ,
-                -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y)    * transSens),
+                -(gamepad1.right_stick_x * abs(gamepad1.right_stick_x)) * yawSens,
+                -(gamepad1.left_stick_y * abs(gamepad1.left_stick_y) * transSens),
                 0
         );
 
@@ -45,84 +44,86 @@ public class TeleOpMode extends BaseOpMode {
         angleToControl = Math.PI + MatchData.team.goalPose.minus(pose.vector).getAngle();
 
 
-        if(brushReverseButt.get(gamepad1.left_trigger>0.1)){
+        if (brushReverseButt.get(gamepad1.left_trigger > 0.1)) {
             EventBus.getInstance().invoke(new NewBrushReversEvent(true));
         }
-        if(brushReverseButt1.get( !(gamepad1.left_trigger>0.1) )){
+        if (brushReverseButt1.get(!(gamepad1.left_trigger > 0.1))) {
             EventBus.getInstance().invoke(new NewBrushReversEvent(false));
         }
 
-        if (lowAimButt.get(pose.vector.x<60)) {
+        if (lowAimButt.get(pose.vector.x < 60)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR));
         }
 
-        if (lowAimButt.get(pose.vector.x>60)) {
+        if (lowAimButt.get(pose.vector.x > 60)) {
             EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR));
         }
 
-        isAngleControl = gamepad1.right_trigger>0.1;
+        isAngleControl = gamepad1.right_trigger > 0.1;
 
         if (fireButt.get(gamepad1.left_bumper)) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE));
+            gamepad1.rumble(150);
         }
 
-        if(greenFireButt.get(gamepad1.triangle)){
+        if (greenFireButt.get(gamepad1.triangle)) {
             colorShootCounter += 1;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.G_FIRE));
         }
 
-        if(purpleFireButt.get(gamepad1.circle)){
+        if (purpleFireButt.get(gamepad1.circle)) {
             colorShootCounter += 1;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.P_FIRE));
         }
-        if(colorShootCounter < 3){
+        if (colorShootCounter < 3) {
             colorShootTimer.reset();
         }
-        if(colorShootTimer.seconds()>0.5){
+        if (colorShootTimer.seconds() > 0.5) {
             colorShootCounter = 0;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
-        if(cancelFireButt.get(gamepad1.cross)){
+        if (cancelFireButt.get(gamepad1.cross)) {
             colorShootCounter = 0;
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
 
-        if(gamepad1.rightBumperWasPressed()){
+        if (gamepad1.rightBumperWasPressed()) {
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLBrakePad);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRBrakePad);
-        }if(gamepad1.rightBumperWasReleased()){
+        }
+        if (gamepad1.rightBumperWasReleased()) {
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
         }
 
-        if(gamepad1.psWasPressed()){
+        if (gamepad1.psWasPressed()) {
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
 
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
-        if(gamepad1.dpadUpWasPressed()){
+        if (gamepad1.dpadUpWasPressed()) {
 
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
         }
 
-        if(gamepad1.dpadLeftWasPressed()){
+        if (gamepad1.dpadLeftWasPressed()) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.R_FIRE));
         }
-        if(gamepad1.dpadRightWasPressed()){
+        if (gamepad1.dpadRightWasPressed()) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.L_FIRE));
         }
-        if(gamepad1.dpadDownWasPressed()){
+        if (gamepad1.dpadDownWasPressed()) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.C_FIRE));
         }
-
-        telemetry.addData("gunR",DevicePool.getInstance().gunR.getVel());
-        telemetry.addData("gunL",DevicePool.getInstance().gunL.getVel());
-        telemetry.addData("gunC",DevicePool.getInstance().gunC.getVel());
+        feedbackObserver.notifyListeners(new TankFeedbackReference(isAngleControl, angleToControl));
+        telemetry.addData("gunR", DevicePool.getInstance().gunR.getVel());
+        telemetry.addData("gunL", DevicePool.getInstance().gunL.getVel());
+        telemetry.addData("gunC", DevicePool.getInstance().gunC.getVel());
 
         telemetry.update();
     }
@@ -133,32 +134,13 @@ public class TeleOpMode extends BaseOpMode {
         DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
     }
 
-    public static double yawSens = 7;
+    public static double yawSens = 6;
     public static double transSens = 200;
-    public static PidStatus velPidStatusForward = new PidStatus(0.0141, 0, 0., 0, 0, 0, 5);
-    private final Pid velForwardPid = new Pid(velPidStatusForward);
-    {
-        velForwardPid.isNormolized = false;
-        velForwardPid.isDAccessible = false;
-    }
 
-    public static PidStatus velAnglePidStatus = new PidStatus(2.5, 0, 0., 0, 0, 0, 0.5,1);
-    private final Pid velAnglePid = new Pid(velAnglePidStatus);
-    {
-        velAnglePid.isNormolized = false;
-        velAnglePid.isDAccessible = false;
-    }
+    public static Pose park = new Pose(0, 82, 75);
 
-    public static PidStatus anglePidStatus = new PidStatus(10, 15, 1, 0, 0, 0.5, 0.2,0.005);
-    private final Pid anglePid = new Pid(anglePidStatus);
-    {
-        anglePid.isNormolized = true;
-        anglePid.isDAccessible = false;
-    }
-
-    public static Pose park = new Pose(0,82,75);
     static {
-        if(MatchData.team == Team.RED){
+        if (MatchData.team == Team.RED) {
             park = park.teamReverse();
         }
     }
@@ -179,14 +161,11 @@ public class TeleOpMode extends BaseOpMode {
         modConfig.autonomTaskManager.set(false);
         modulesActivationConfig = modConfig;
 
-        if(MatchData.team == Team.RED){
+        if (MatchData.team == Team.RED) {
             park = park.teamReverse();
         }
     }
-    @Override
-    protected void modulesReplace() {
-        EventBus.getInstance().invoke(new ReplaceFeedbackControllerEvent(new TeleOpFeedback()));
-    }
+
     private final BorderButton lowAimButt = new BorderButton();
     private final BorderButton brushReverseButt = new BorderButton();
     private final BorderButton brushReverseButt1 = new BorderButton();
@@ -196,43 +175,13 @@ public class TeleOpMode extends BaseOpMode {
     private final BorderButton greenFireButt = new BorderButton();
     private final BorderButton cancelFireButt = new BorderButton();
 
-    private Pose targetVelocity = new Pose(0,0,0);
+    private Pose targetVelocity = new Pose(0, 0, 0);
 
     private int colorShootCounter = 0;
     private final ElapsedTime colorShootTimer = new ElapsedTime();
 
     private double angleToControl = 0;
     private boolean isAngleControl = false;
-
-    private class TeleOpFeedback extends TankFeedbackController {
-        @Override
-        public Pose computeU(Pose p1, Pose p2, Pose p3, Pose p4) {
-            if(isAngleControl) {
-                anglePid.setTarget(angleToControl);
-                anglePid.setPos(pose.h);
-                anglePid.update();
-                return new Pose(anglePid.getU(), 0, 0);
-            } else {
-                velAnglePid.setTarget(targetVelocity.h);
-                velAnglePid.setPos(velocity.h);
-                velAnglePid.update();
-
-                velForwardPid.setTarget(targetVelocity.x);
-                double dir = Math.signum(velocity.vector.rotate(-pose.h).x);
-                velForwardPid.setPos(dir*velocity.vector.length());
-                velForwardPid.update();
-
-                return new Pose(velAnglePid.getU(), velForwardPid.getU(), 0);
-            }
-        }
-        public TeleOpFeedback() {
-            super(new PidStatus(0, 0, 0, 0, 0, 0, 0),
-                    new PidStatus(0, 0, 0, 0, 0, 0, 0),
-                    new PidStatus(0, 0, 0, 0, 0, 0, 0),
-                    new PidStatus(0, 0, 0, 0, 0, 0, 0)
-            );
-        }
-    }
 }
 class BorderButton{
     private boolean old = false;
