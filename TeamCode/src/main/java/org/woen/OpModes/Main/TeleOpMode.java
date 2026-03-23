@@ -1,14 +1,18 @@
 package org.woen.OpModes.Main;
 
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
+import org.woen.Autonom.Architecture.WayPoint;
+import org.woen.Autonom.Pools.WayPointPool;
 import org.woen.Config.MatchData;
-import org.woen.Config.Team;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.BaseOpMode;
@@ -87,7 +91,6 @@ public class TeleOpMode extends BaseOpMode {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
-
         if (gamepad1.rightBumperWasPressed()) {
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLBrakePad);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRBrakePad);
@@ -98,14 +101,13 @@ public class TeleOpMode extends BaseOpMode {
         }
 
         if (gamepad1.psWasPressed()) {
-            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
-
-            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
+            EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(new ParkWayPointsPool().getPool()));
+//            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+//            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+//            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
         }
 
         if (gamepad1.dpadUpWasPressed()) {
-
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLClose);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoRClose);
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.OFF));
@@ -120,7 +122,9 @@ public class TeleOpMode extends BaseOpMode {
         if (gamepad1.dpadDownWasPressed()) {
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.C_FIRE));
         }
+
         feedbackObserver.notifyListeners(new TankFeedbackReference(isAngleControl, angleToControl));
+
         telemetry.addData("gunR", DevicePool.getInstance().gunR.getVel());
         telemetry.addData("gunL", DevicePool.getInstance().gunL.getVel());
         telemetry.addData("gunC", DevicePool.getInstance().gunC.getVel());
@@ -137,13 +141,6 @@ public class TeleOpMode extends BaseOpMode {
     public static double yawSens = 6;
     public static double transSens = 200;
 
-    public static Pose park = new Pose(0, 82, 75);
-
-    static {
-        if (MatchData.team == Team.RED) {
-            park = park.teamReverse();
-        }
-    }
 
     @Override
     protected void initConfig() {
@@ -158,18 +155,14 @@ public class TeleOpMode extends BaseOpMode {
         modConfig.driveTrain.voltageController.set(true);
         modConfig.gun.set(true);
         modConfig.camera.set(true);
-        modConfig.autonomTaskManager.set(false);
+        modConfig.autonomTaskManager.set(true);
         modulesActivationConfig = modConfig;
 
-        if (MatchData.team == Team.RED) {
-            park = park.teamReverse();
-        }
     }
 
     private final BorderButton lowAimButt = new BorderButton();
     private final BorderButton brushReverseButt = new BorderButton();
     private final BorderButton brushReverseButt1 = new BorderButton();
-    private final BorderButton ptoButt = new BorderButton();
     private final BorderButton fireButt = new BorderButton();
     private final BorderButton purpleFireButt = new BorderButton();
     private final BorderButton greenFireButt = new BorderButton();
@@ -182,15 +175,41 @@ public class TeleOpMode extends BaseOpMode {
 
     private double angleToControl = 0;
     private boolean isAngleControl = false;
-}
-class BorderButton{
-    private boolean old = false;
 
-    public boolean get(boolean button) {
-        boolean indicator = (button != old) && button;
-        old = button;
-        return indicator;
+    static class BorderButton{
+        private boolean old = false;
+
+        public boolean get(boolean button) {
+            boolean indicator = (button != old) && button;
+            old = button;
+            return indicator;
+        }
+
+    }
+
+    class ParkWayPointsPool extends WayPointPool {
+        private Pose parkPos = new Pose(0,0,0);
+        private WayPoint rotateToPark = new WayPoint(
+                new Runnable[]{},
+                false,pose
+        ).setEndAngle(()->angleTo(parkPos.vector)).setEndDetect(Double.POSITIVE_INFINITY);
+        private WayPoint park = new WayPoint(
+                new Runnable[]{
+                        ()->gamepad1.rumble(200)
+                },
+                false,parkPos
+        ).setVel(150).setEndAngle(()->0d).setEndDetect(2);
+
+        private ParkWayPointsPool(){
+            parkPos = parkPos.teamReverse();
+        }
+        @Override
+        public WayPoint[] getPool() {
+            return new WayPoint[]{rotateToPark,park};
+        }
+
+
+
     }
 
 }
-

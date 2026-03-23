@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 
-@Autonomous
+@Autonomous(name = "ll_test",group = "test")
 public class LimeLightTest extends LinearOpMode {
 
     @Override

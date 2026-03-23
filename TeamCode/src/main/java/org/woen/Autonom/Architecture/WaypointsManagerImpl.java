@@ -20,7 +20,7 @@ public class WaypointsManagerImpl implements WaypointsManager {
 
     public void update(){
         if(wayPoints.isEmpty()) {
-            RobotLog.dd("end_of_trajectory","actual waypoints sequence finished");
+            //RobotLog.dd("end_of_trajectory","actual waypoints sequence finished");
             return;
         }
 
