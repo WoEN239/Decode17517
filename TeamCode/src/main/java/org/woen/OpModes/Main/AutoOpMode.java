@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Pools.Far15BallPool;
-import org.woen.Autonom.Pools.Near9Pattern6Ball;
+import org.woen.Autonom.Pools.Near9Pattern12Ball;
 import org.woen.Autonom.Pools.WayPointPool;
 import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
 import org.woen.Config.MatchData;
@@ -24,8 +24,8 @@ public class AutoOpMode extends BaseOpMode {
         WayPointPool pool = null;
         if (MatchData.auto.equals("far15ball")) {
             pool = new Far15BallPool();
-        }else if (MatchData.auto.equals("near9pattern6ball")) {
-            pool = new Near9Pattern6Ball();
+        }else if (MatchData.auto.equals("near9pattern12ball")) {
+            pool = new Near9Pattern12Ball();
         }
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 pool.getPool()
@@ -59,6 +59,4 @@ public class AutoOpMode extends BaseOpMode {
         telemetry.update();
 
     }
-    @Override
-    protected void lastRun() {}
 }

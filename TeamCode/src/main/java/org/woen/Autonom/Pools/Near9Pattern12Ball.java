@@ -5,11 +5,15 @@ import static java.lang.Math.PI;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Autonom.Architecture.AutonomTask;
 import org.woen.Autonom.Architecture.WayPoint;
 import org.woen.Config.MatchData;
 import org.woen.Config.Team;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsCenterEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsLeftEvent;
+import org.woen.RobotModule.Modules.Camera.Events.NewDetectionBallsRightEvent;
 import org.woen.RobotModule.Modules.Camera.Events.PipeLineSwitchEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewAimEvent;
 import org.woen.RobotModule.Modules.Gun.Arcitecture.NewGunCommandAvailable;
@@ -18,7 +22,7 @@ import org.woen.RobotModule.Modules.Gun.Config.GUN_COMMAND;
 import org.woen.Util.Vectors.Pose;
 
 
-public class Near9Pattern6Ball extends WayPointPool {
+public class Near9Pattern12Ball extends WayPointPool {
     PositionPoolNear9Pattern6Ball pool = new PositionPoolNear9Pattern6Ball();
     ElapsedTime parkTimer = new ElapsedTime();
     public WayPoint aim1 = new WayPoint(
@@ -34,12 +38,6 @@ public class Near9Pattern6Ball extends WayPointPool {
             false, pool.fireNear
     ).setName("aim1").setEndAngle(this::angleToGoal).setVel(150).setEndDetect(10);
 
-    public WayPoint stop1 = new WayPoint(
-            new Runnable[]{},
-            true, pool.fireNear
-    ).setName("stop1").setEndDetect(30).setEndAngle(this::angleToGoal).setVel(200);
-
-
     public WayPoint fire1 = new WayPoint(
             new AutonomTask(
                     () -> isGunEat,
@@ -54,7 +52,7 @@ public class Near9Pattern6Ball extends WayPointPool {
             new AutonomTask(() -> true, () -> lookTimer.reset()), false, pool.fireNear
     ).setName("lookTimerReset").setEndDetect(40).setEndAngle(() -> 0d);
     public WayPoint look = new WayPoint(
-            new AutonomTask(() -> lookTimer.seconds() > 0.5), false, pool.fireNear
+            new AutonomTask(() -> lookTimer.seconds() > 1.5), false, pool.fireNear
     ).setName("look").setEndDetect(40).setEndAngle(() -> 0.0);
 
     public WayPoint rotateToRotateToEat = new WayPoint(
@@ -70,7 +68,8 @@ public class Near9Pattern6Ball extends WayPointPool {
     private ElapsedTime rotateToGateTimer = new ElapsedTime();
     public WayPoint eatNear = new WayPoint(
             new Runnable[]{
-                    () -> RobotLog.dd("auto", "eatNear")
+                    () -> RobotLog.dd("auto", "eatNear"),
+                    this::invokeNearColors
             },
             new AutonomTask(
                     () -> true,
@@ -90,16 +89,12 @@ public class Near9Pattern6Ball extends WayPointPool {
 
     public WayPoint aim2 = new WayPoint(
             new Runnable[]{
-                    () -> EventBus.getInstance().invoke(new PipeLineSwitchEvent(0)),
+                   // () -> EventBus.getInstance().invoke(new PipeLineSwitchEvent(0)),
+
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.NEAR)),
                     () -> RobotLog.dd("auto", "aim2")
             }, true, pool.fireNear
     ).setName("aim2").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(10);
-
-    public WayPoint stop2 = new WayPoint(
-            new Runnable[]{},
-            false, pool.fireNear
-    ).setName("stop2").setEndDetect(30).setEndAngle(this::angleToGoal).setVel(200);
 
     public WayPoint fire2 = new WayPoint(
             new AutonomTask(
@@ -118,7 +113,8 @@ public class Near9Pattern6Ball extends WayPointPool {
 
     public WayPoint eatMid = new WayPoint(
             new Runnable[]{
-                    () -> RobotLog.dd("auto", "eatMid")
+                    () -> RobotLog.dd("auto", "eatMid"),
+                    this::invokeNearColors
             },
             false, 0.1, pool.eatMid
     ).setName("eatMid").setEndDetect(10).setVel(150).setEndAngle(() -> PI + angleTo(pool.fireNear.vector));
@@ -129,11 +125,6 @@ public class Near9Pattern6Ball extends WayPointPool {
                     () -> RobotLog.dd("auto", "aim3")
             }, true, pool.fireNear
     ).setName("aim3").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(10);
-
-    public WayPoint stop3 = new WayPoint(
-            new Runnable[]{},
-            false, pool.fireNear
-    ).setName("stop3").setEndDetect(30).setEndAngle(this::angleToGoal).setVel(200);
 
 
     public WayPoint fire3 = new WayPoint(
@@ -159,7 +150,8 @@ public class Near9Pattern6Ball extends WayPointPool {
 
     public WayPoint eatFar = new WayPoint(
             new Runnable[]{
-                    () -> RobotLog.dd("auto", "eat3")
+                    () -> RobotLog.dd("auto", "eat3"),
+                    this::invokeNearColors
             },
             false, 0.1, pool.eatFar
     ).setName("eat3").setEndDetect(10).setVel(200).setEndAngle(() -> PI + angleTo(pool.fireNear.vector));
@@ -171,11 +163,6 @@ public class Near9Pattern6Ball extends WayPointPool {
                     () -> RobotLog.dd("auto", "aim4")
             }, true, pool.fireNearPark
     ).setName("aim4").setEndAngle(this::angleToGoal).setVel(100).setEndDetect(10);
-
-    public WayPoint stop4 = new WayPoint(
-            new Runnable[]{},
-            false, pool.fireNear
-    ).setName("stop4").setEndDetect(30).setEndAngle(this::angleToGoal).setVel(200);
 
     public WayPoint fire4 = new WayPoint(
             new AutonomTask(
@@ -206,30 +193,27 @@ public class Near9Pattern6Ball extends WayPointPool {
     public WayPoint[] getPool() {
         return new WayPoint[]{
                 aim1.copy(),
-//                stop1.copy(),
                 fire1.copy(),
-                //lookTimerReset.copy(),
-                //look.copy(),
+                lookTimerReset.copy(),
+                look.copy(),
                 rotateToRotateToEat.copy(),
                 rotateToEatNear.copy(),
                 eatNear.copy(),
                 gateTimerReset.copy(),
                 gateOpen.copy(),
                 aim2.copy(),
-                // stop2.copy(),
                 fire2.copy(),
                 rotateToEatMid.copy(),
 
                 eatMid.copy(),
                 aim3.copy(),
-                //   stop3.copy(),
+
                 fire3.copy(),
 
                 rotateToRotateToEatFar.copy(),
                 rotateToEatFar.copy(),
                 eatFar.copy(),
                 aim4.copy(),
-                //   stop4.copy(),
                 fire4.copy(),
                 eatHuman.copy(),
 
@@ -279,6 +263,34 @@ public class Near9Pattern6Ball extends WayPointPool {
         public Pose park = new Pose(0, -100, -60);
 
     }
+    private void invokeNearColors(){
+        if(MatchData.team == Team.RED) {
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(PredominantColorProcessor.Swatch.ARTIFACT_GREEN));
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+        }else{
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent  (PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent (PredominantColorProcessor.Swatch.ARTIFACT_GREEN));
+        }
+    }
+    private void invokeMidColors(){
+        EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent  (PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+        EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(PredominantColorProcessor.Swatch.ARTIFACT_GREEN));
+        EventBus.getInstance().invoke(new NewDetectionBallsRightEvent (PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+    }
+    private void invokeFarColors(){
+        if(MatchData.team == Team.BLUE) {
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(PredominantColorProcessor.Swatch.ARTIFACT_GREEN));
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+        }else{
+            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent  (PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(PredominantColorProcessor.Swatch.ARTIFACT_PURPLE));
+            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent (PredominantColorProcessor.Swatch.ARTIFACT_GREEN));
+        }
+    }
+
 }
 
 
