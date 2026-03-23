@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 import org.woen.Architecture.EventBus.EventBus;
 import org.woen.Config.MatchData;
+import org.woen.Config.Team;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.DevicePool.Devices.Motor.Interface.Motor;
 import org.woen.Hardware.DevicePool.Devices.Servo.Interface.ServoMotor;
@@ -51,7 +52,11 @@ import java.util.function.BooleanSupplier;
 public class GunImpl implements Gun {
     @Override
     public void lateUpdate() {
-        double dist = pose.vector.minus(new Vector2d(-172,-172)).lengthSquare();
+        Vector2d goalPose = new Vector2d(-172,-172);
+        if(MatchData.team == Team.RED){
+            goalPose = new Vector2d(-172,172);
+        }
+        double dist = pose.vector.minus(goalPose).lengthSquare();
         dist = sqrt(dist+100*100);
 
         //aimCommand = FAR;

@@ -68,10 +68,10 @@ public class CameraLimeLightImpl implements Camera {
 
         if (llResult.getPythonOutput().length > 0) {
             double[] llResultPythonOutput = llResult.getPythonOutput();
-
-            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
-            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[2])));
-            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[0])));
+//
+//            EventBus.getInstance().invoke(new NewDetectionBallsCenterEvent(getColor(llResultPythonOutput[1])));
+//            EventBus.getInstance().invoke(new NewDetectionBallsLeftEvent(getColor(llResultPythonOutput[2])));
+//            EventBus.getInstance().invoke(new NewDetectionBallsRightEvent(getColor(llResultPythonOutput[0])));
             double id = llResultPythonOutput[3];
 
             MOTIF motif = latterTargetMotif;
@@ -98,10 +98,9 @@ public class CameraLimeLightImpl implements Camera {
         }
 
 
-        // Telemetry.getInstance().add("isValid", llResult.isValid());
-        Telemetry.getInstance().add("left", llResult.getPythonOutput()[2]);
-        Telemetry.getInstance().add("right", llResult.getPythonOutput()[0]);
-        Telemetry.getInstance().add("center", llResult.getPythonOutput()[1]);
+//        Telemetry.getInstance().add ("isValid", llResult.i//        Telemetry.getInstance().add("center", llResult.getPythonOutput()[1]);sValid());
+//        Telemetry.getInstance().add("left", llResult.getPythonOutput()[2]);
+//        Telemetry.getInstance().add("right", llResult.getPythonOutput()[0]);
 
 
     }

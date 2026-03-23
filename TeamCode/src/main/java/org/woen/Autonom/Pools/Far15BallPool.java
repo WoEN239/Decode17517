@@ -272,6 +272,16 @@ public class Far15BallPool extends WayPointPool {
             if (MatchData.team == RED) {
                 fireFar = fireFar.teamReverse();
                 eatHuman1 = eatHuman1.teamReverse();
+                eatFar = new Pose[]{eatFar[0].teamReverse(), eatFar[1].teamReverse()};
+                halfFirePos = halfFirePos.teamReverse();
+                fireNear = fireNear.teamReverse();
+                rotateToEatNearPos = rotateToEatNearPos.teamReverse();
+                rotateToEatMidPos = rotateToEatMidPos.teamReverse();
+                eatNear = eatNear.teamReverse();
+                gateOpen = gateOpen.teamReverse();
+                eatMid = eatMid.teamReverse();
+                eatHuman2 = new Pose[]{eatHuman2[0].teamReverse(), eatHuman2[1].teamReverse()};
+                park = park.teamReverse();
             }
         }
     }

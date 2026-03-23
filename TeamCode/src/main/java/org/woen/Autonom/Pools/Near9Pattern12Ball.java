@@ -114,7 +114,7 @@ public class Near9Pattern12Ball extends WayPointPool {
     public WayPoint eatMid = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "eatMid"),
-                    this::invokeNearColors
+                    this::invokeMidColors
             },
             false, 0.1, pool.eatMid
     ).setName("eatMid").setEndDetect(10).setVel(150).setEndAngle(() -> PI + angleTo(pool.fireNear.vector));
@@ -151,7 +151,7 @@ public class Near9Pattern12Ball extends WayPointPool {
     public WayPoint eatFar = new WayPoint(
             new Runnable[]{
                     () -> RobotLog.dd("auto", "eat3"),
-                    this::invokeNearColors
+                    this::invokeFarColors
             },
             false, 0.1, pool.eatFar
     ).setName("eat3").setEndDetect(10).setVel(200).setEndAngle(() -> PI + angleTo(pool.fireNear.vector));

@@ -28,6 +28,7 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Tank
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
 import org.woen.Util.Vectors.Pose;
+import org.woen.Util.Vectors.Vector2d;
 
 @Config
 @TeleOp(name = "teleOp", group = "A1")
@@ -45,7 +46,11 @@ public class TeleOpMode extends BaseOpMode {
 
         feedforwardReferenceObserver.notifyListeners(new FeedforwardReference(targetVelocity, new Pose(0, 0, 0)));
 
-        angleToControl = Math.PI + MatchData.team.goalPose.minus(pose.vector).getAngle();
+        Vector2d goalPose = MatchData.team.goalPose;
+        if(pose.x>60){
+            goalPose = MatchData.team.farGoalPose;
+        }
+        angleToControl = Math.PI + goalPose.minus(pose.vector).getAngle();
 
 
         if (brushReverseButt.get(gamepad1.left_trigger > 0.1)) {
@@ -100,11 +105,15 @@ public class TeleOpMode extends BaseOpMode {
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
         }
 
-        if (gamepad1.psWasPressed()) {
+        if (gamepad1.touchpadWasPressed()) {
             EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(new ParkWayPointsPool().getPool()));
-//            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
-//            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
-//            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
+        }
+
+        if (gamepad1.psWasPressed()){
+            DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
+            DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
+            EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
+
         }
 
         if (gamepad1.dpadUpWasPressed()) {
