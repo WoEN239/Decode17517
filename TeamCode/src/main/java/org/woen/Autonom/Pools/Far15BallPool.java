@@ -28,7 +28,7 @@ public class Far15BallPool extends WayPointPool {
                     ()->gunTimer.reset()
             )
             , true, pool.fireFar
-    ).setName("firstAim").setEndAngle(this::angleToGoal).setVel(200).setEndDetect(5);
+    ).setName("firstAim").setEndAngle(this::angleToFarGoal).setVel(200).setEndDetect(5);
 
     public WayPoint fire1 = new WayPoint(
             new AutonomTask(()->gunTimer.seconds()>1.2)
@@ -38,7 +38,7 @@ public class Far15BallPool extends WayPointPool {
                     () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
             ),
             true, pool.fireFar
-    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToGoal);
+    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToFarGoal);
 
     public WayPoint rotateToEatHuman = new WayPoint(
             new Runnable[]{
@@ -61,7 +61,7 @@ public class Far15BallPool extends WayPointPool {
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR)),
                     () -> RobotLog.dd("auto", "firstAim")
             }, true, pool.fireFar
-    ).setName("firstAim").setEndAngle(this::angleToGoal).setVel(200).setEndDetect(10);
+    ).setName("firstAim").setEndAngle(this::angleToFarGoal).setVel(200).setEndDetect(10);
     public WayPoint fire2 = new WayPoint(
             new AutonomTask(
                     () -> isGunEat,
@@ -69,7 +69,7 @@ public class Far15BallPool extends WayPointPool {
                     () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
             ),
             true, pool.fireFar
-    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToGoal);
+    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToFarGoal);
 
     public WayPoint rotateToEatFar = new WayPoint(
             new Runnable[]{
@@ -196,7 +196,7 @@ public class Far15BallPool extends WayPointPool {
                     () -> EventBus.getInstance().invoke(new NewAimEvent(AIM_COMMAND.FAR)),
                     () -> RobotLog.dd("auto", "firstAim")
             }, true, pool.fireFar
-    ).setName("firstAim").setEndAngle(this::angleToGoal).setVel(200).setEndDetect(10);
+    ).setName("firstAim").setEndAngle(this::angleToFarGoal).setVel(200).setEndDetect(10);
 
 
     public WayPoint fire6 = new WayPoint(
@@ -206,7 +206,7 @@ public class Far15BallPool extends WayPointPool {
                     () -> EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.FULL_FIRE))
             ),
             true, pool.fireFar
-    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToGoal);
+    ).setName("firstFire").setEndDetect(30).setEndAngle(this::angleToFarGoal );
 
     public WayPoint park = new WayPoint(
             new Runnable[]{
@@ -220,10 +220,12 @@ public class Far15BallPool extends WayPointPool {
         return new WayPoint[]{
                 aim1.copy(),
                 fire1.copy(),
+
                 rotateToEatHuman.copy(),
                 eatHuman.copy(),
                 aim2.copy(),
                 fire2.copy(),
+
                 rotateToEatFar.copy(),
                 eatFar.copy(),
                 aim3.copy().setLookAheadRadius(30),
@@ -251,8 +253,8 @@ public class Far15BallPool extends WayPointPool {
         };
     }
 
-    static class PositionPoolFar {
-        public Pose fireFar = new Pose(0,150,-58.5);
+    private static class PositionPoolFar {
+        public Pose fireFar = new Pose(0,145,-58.5);
         public Pose eatHuman1 = new Pose(0, 165, -170);
         public Pose[] eatFar = new Pose[]{new Pose(0, 135, -110),new Pose(0, 80, -120)};
 

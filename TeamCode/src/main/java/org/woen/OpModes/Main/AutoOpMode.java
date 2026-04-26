@@ -5,10 +5,12 @@ import static org.woen.RobotModule.Modules.Camera.Util.MOTIF.PGP;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Pools.AirPool;
 import org.woen.Autonom.Pools.Far15BallPool;
 import org.woen.Autonom.Pools.Near9Pattern12Ball;
 import org.woen.Autonom.Pools.WayPointPool;
 import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
+import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
@@ -26,10 +28,13 @@ public class AutoOpMode extends BaseOpMode {
             pool = new Far15BallPool();
         }else if (MatchData.auto.equals("near9pattern12ball")) {
             pool = new Near9Pattern12Ball();
+        } else if (MatchData.auto.equals("air")) {
+            pool = new AirPool();
         }
         EventBus.getInstance().invoke(new SetNewWaypointsSequenceEvent(
                 pool.getPool()
         ));
+        ControlSystemConstant.feedforwardConfig.maxPPAccel = 200d;
     }
     @Override
     protected void initConfig(){

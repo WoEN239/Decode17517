@@ -75,9 +75,9 @@ public class GunImpl implements Gun {
         }
 
         if(isBrushRevers){
-            brushPower = -0.8;
+            brushPower = -1;
         }else{
-            brushPower = 0.8;
+            brushPower = 1;
         }
         if(command != EAT){
             brushPower = 0;
@@ -232,7 +232,7 @@ public class GunImpl implements Gun {
     public void setTargetMotif(NewTargetMotifEvent e) {this.targetMotif = e.getData();}
 
     private double gunTargetVel = gunConfig.shootVelSideFar;
-    private double brushPower = 0.95;
+    private double brushPower = 1;
 
     private PredominantColorProcessor.Swatch centerColor = PredominantColorProcessor.Swatch.ARTIFACT_GREEN;
     private PredominantColorProcessor.Swatch leftColor = PredominantColorProcessor.Swatch.ARTIFACT_PURPLE;

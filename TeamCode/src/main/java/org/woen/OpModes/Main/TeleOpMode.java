@@ -9,10 +9,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.woen.Architecture.EventBus.EventBus;
+import org.woen.Autonom.Architecture.AutonomTask;
 import org.woen.Autonom.Architecture.SetNewWaypointsSequenceEvent;
 import org.woen.Autonom.Architecture.WayPoint;
 import org.woen.Autonom.Pools.WayPointPool;
+import org.woen.Config.ControlSystemConstant;
 import org.woen.Config.MatchData;
+import org.woen.Config.Team;
 import org.woen.Hardware.Factory.DeviceActivationConfig;
 import org.woen.Hardware.DevicePool.DevicePool;
 import org.woen.OpModes.BaseOpMode;
@@ -27,6 +30,7 @@ import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.Tank
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedback.TankFeedbackReferenceObserver;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReference;
 import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.Feedforward.FeedforwardReferenceObserver;
+import org.woen.RobotModule.Modules.TrajectoryFollower.Arcitecture.TargetSegment.SetNewTargetTrajectorySegmentEvent;
 import org.woen.Util.Vectors.Pose;
 import org.woen.Util.Vectors.Vector2d;
 
@@ -113,7 +117,7 @@ public class TeleOpMode extends BaseOpMode {
             DevicePool.getInstance().ptoL.setPos(GunServoPositions.ptoLOpen);
             DevicePool.getInstance().ptoR.setPos(GunServoPositions.ptoROpen);
             EventBus.getInstance().invoke(new NewGunCommandAvailable(GUN_COMMAND.EAT));
-
+            EventBus.getInstance().invoke(new SetNewTargetTrajectorySegmentEvent(new WayPoint(AutonomTask.Stub,new Pose[]{})));
         }
 
         if (gamepad1.dpadUpWasPressed()) {
@@ -197,20 +201,28 @@ public class TeleOpMode extends BaseOpMode {
     }
 
     class ParkWayPointsPool extends WayPointPool {
-        private Pose parkPos = new Pose(0,0,0);
-        private WayPoint rotateToPark = new WayPoint(
-                new Runnable[]{},
-                false,pose
-        ).setEndAngle(()->angleTo(parkPos.vector)).setEndDetect(Double.POSITIVE_INFINITY);
-        private WayPoint park = new WayPoint(
-                new Runnable[]{
-                        ()->gamepad1.rumble(200)
-                },
-                false,parkPos
-        ).setVel(150).setEndAngle(()->0d).setEndDetect(2);
+        private Pose parkPos = new Pose(-0.5*PI,96.5,95);
+
+        private WayPoint rotateToPark;
+        private WayPoint park;
 
         private ParkWayPointsPool(){
-            parkPos = parkPos.teamReverse();
+            ControlSystemConstant.feedforwardConfig.maxPPAccel = 50d;
+            if(MatchData.team == Team.RED){
+                parkPos = parkPos.teamReverse();
+            }
+            rotateToPark = new WayPoint(
+                    new Runnable[]{},
+                    false,pose
+            ).setEndAngle(()->PI+angleTo(parkPos.vector)).setEndDetect(Double.POSITIVE_INFINITY);
+
+            park = new WayPoint(
+                    new Runnable[]{
+                            ()->gamepad1.rumble(200)
+                    },
+                    true,parkPos
+            ).setVel(100).setEndAngle(()->parkPos.h).setEndDetect(2);
+
         }
         @Override
         public WayPoint[] getPool() {

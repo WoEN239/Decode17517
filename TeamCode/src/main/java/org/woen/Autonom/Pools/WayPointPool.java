@@ -13,6 +13,7 @@ public abstract class WayPointPool {
     protected Pose pose = new Pose(0,0,0);
     public void setPose(Pose pose){this.pose = pose;}
     protected Double angleToGoal(){return Math.PI + MatchData.team.goalPose.minus(pose.vector).getAngle();}
+    protected Double angleToFarGoal(){return Math.PI + MatchData.team.farGoalPose.minus(pose.vector).getAngle();}
     protected Double angleTo(Vector2d p){return p.minus(pose.vector).getAngle();}
     public void setGunIsEat(GunAtEatEvent event){isGunEat = event.getData();}
     protected Boolean isGunEat = false;

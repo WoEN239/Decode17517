@@ -49,7 +49,7 @@ public class ControlSystemConstant {
     
     public static class AdaptiveFireConfig {
         public double fullFireDelay = 0.05;
-        public LinerInterpolationSegment farVel = new LinerInterpolationSegment(340,380,1690,1820);
+        public LinerInterpolationSegment farVel = new LinerInterpolationSegment(340,405,1720,1890);
         public LinerInterpolationSegment farAngle = new LinerInterpolationSegment(340,380,0.8,0.7);
         public LinerInterpolationSegment nearVel = new LinerInterpolationSegment(178,260,1400,1570);
         public LinerInterpolationSegment nearAngle = new LinerInterpolationSegment(178,260,1,0.9);
@@ -58,7 +58,7 @@ public class ControlSystemConstant {
         {
             vel.add(200,1410);
             vel.add(240,1490);
-            vel.add(280,1540);
+            vel.add(280,1550);
             //vel.add(195,1410);
             //vel.add(226,1470);
             //vel.add(260,1540);
@@ -78,7 +78,7 @@ public class ControlSystemConstant {
 
     public static class GunConfig {
         public double velTol = 60;
-        public double patternFireDelay = 0.7;
+        public double patternFireDelay = 1;
         public double shootVelSidePattern = 1860;
         public double shootVelSideFar = 1840;
         public double shootVelSideGoalNear = 1450;

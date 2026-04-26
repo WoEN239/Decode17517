@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 public class PurePursuitFollowerImpl implements TrajectoryFollower {
+
     @Override
     public void update() {
         if(targetPath.isEmpty()) {
@@ -116,7 +117,10 @@ public class PurePursuitFollowerImpl implements TrajectoryFollower {
         Telemetry.getInstance().getField().line(pose.vector,projection);
     }
     private void setNewTrajectoryEvent(SetNewTargetTrajectorySegmentEvent e){
-        if(e.getData().path.length == 0){return;}
+        if(e.getData().path.length == 0){
+            targetPath = new ArrayList<>();
+            return;
+        }
         wayPoint = e.getData();
 
         ArrayList<LineSegment> buildPath = new ArrayList<>();
