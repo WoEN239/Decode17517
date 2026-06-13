@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Modules;
+package org.firstinspires.ftc.teamcode.Modules.Intake;
 
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -24,7 +24,7 @@ public class Intake {
         ON, OFF, REVERSE
     }
 
-    public Intake(HardwareMap hardwareMap){
+    public void start(HardwareMap hardwareMap){
         brush = hardwareMap.get(DcMotorEx.class, "brush");
         brush.setDirection(DcMotorSimple.Direction.FORWARD);
     }

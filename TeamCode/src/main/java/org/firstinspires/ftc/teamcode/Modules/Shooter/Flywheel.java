@@ -66,7 +66,7 @@
             r = hardwareMap.get(Servo.class, "");
             c = hardwareMap.get(Servo.class, "");
             l = hardwareMap.get(Servo.class, "");
-            if (alliance == ALLIANCE.RED) {
+            if (ALLIANCE.alliance == ALLIANCE.RED) {
                 goal = Utility.revertPose(goal);
             }
         }
