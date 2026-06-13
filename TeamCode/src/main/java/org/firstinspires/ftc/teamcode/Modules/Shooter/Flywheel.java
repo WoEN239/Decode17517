@@ -1,4 +1,4 @@
-    package org.firstinspires.ftc.teamcode.Modules.ShooterConst;
+    package org.firstinspires.ftc.teamcode.Modules.Shooter;
 
     import com.acmerobotics.dashboard.FtcDashboard;
     import com.acmerobotics.dashboard.config.Config;
@@ -8,7 +8,6 @@
     import com.pedropathing.control.PIDFController;
     import com.pedropathing.follower.Follower;
     import com.pedropathing.geometry.Pose;
-    import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
     import com.qualcomm.robotcore.hardware.DcMotor;
     import com.qualcomm.robotcore.hardware.DcMotorEx;
     import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,8 +17,6 @@
 
     import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
     import org.firstinspires.ftc.teamcode.Utility;
-
-    import java.util.function.Supplier;
 
 
     @Config

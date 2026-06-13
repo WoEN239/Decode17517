@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Modules.ShooterConst;
+package org.firstinspires.ftc.teamcode.Modules.Shooter;
 
 
 import com.acmerobotics.dashboard.config.Config;
