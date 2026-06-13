@@ -17,9 +17,9 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
+import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
 
 @Configurable
 @Config

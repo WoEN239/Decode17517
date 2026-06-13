@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OpModes.TestOpModes;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.teamcode.DeviceTest.DeviceType.ANALOG_INPUT;
-import static org.firstinspires.ftc.teamcode.DeviceTest.DeviceType.NONE;
-import static org.firstinspires.ftc.teamcode.DeviceTest.DeviceType.SERVO;
+import static org.firstinspires.ftc.teamcode.OpModes.TestOpModes.DeviceTest.DeviceType.ANALOG_INPUT;
+import static org.firstinspires.ftc.teamcode.OpModes.TestOpModes.DeviceTest.DeviceType.NONE;
+import static org.firstinspires.ftc.teamcode.OpModes.TestOpModes.DeviceTest.DeviceType.SERVO;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
