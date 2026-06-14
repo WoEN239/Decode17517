@@ -66,6 +66,9 @@ public class Tele extends OpMode {
     public static PIDFCoefficients anglePidC = new PIDFCoefficients(3,0,0,0);
     private PIDFController anglePid = new PIDFController(anglePidC);
 
+    boolean old_right_bumper = false;
+    int count_press = 0;
+
 
     @Override
     public void loop() {
@@ -120,8 +123,12 @@ public class Tele extends OpMode {
         telemetryM.debug("r y",vel.getYComponent());
         telemetryM.debug("r h",follower.getAngularVelocity());
 
-        if(gamepad1.right_bumper){
-            fsm.setState(FSM_STATE.SHOOT_NEAR);
+        if(gamepad1.right_bumper && !old_right_bumper && count_press == 0){
+            fsm.setState(FSM_STATE.DRIVE);
+            count_press = 1;
+        } else if(gamepad1.right_bumper && !old_right_bumper && count_press == 1){
+            fsm.setState(FSM_STATE.SHOOT);
+            count_press = 0;
         }
 
         turret.debug(telemetryM);
@@ -140,6 +147,7 @@ public class Tele extends OpMode {
         panelsField.moveCursor(x1, y1);
         panelsField.line(x2, y2);
         panelsField.update();
+        old_right_bumper = gamepad1.right_bumper;
 
     }
 

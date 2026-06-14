@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Modules.Intake.Intake;
@@ -61,7 +60,12 @@ public class FSM {
                 transfer.setState(Transfer.STATE.DOWN);
                 intake.setState(Intake.State.REVERSE);
                 break;
-            case SHOOT_NEAR:
+            case DRIVE:
+                target = FSM_STATE.DRIVE;
+                transfer.setState(Transfer.STATE.DRIVE);
+                intake.setState(Intake.State.REVERSE);
+                break;
+            case SHOOT:
                 target = FSM_STATE.EAT;
                 transfer.setState(Transfer.STATE.UP);
                 intake.setState(Intake.State.REVERSE);
