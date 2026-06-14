@@ -47,10 +47,10 @@
 
         private Follower follower;
 
-        public static  double minDist = 50;
-        public static double maxDist = 150;
+        public static  double minDist = 52;
+        public static double maxDist = 112;
 
-        public static Pose goal = new Pose(180, 180, 0);
+        public static Pose goal = new Pose(-70, 70, 0);
 
         public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
             this.follower = follower;
@@ -69,9 +69,9 @@
             r = hardwareMap.get(Servo.class, "banan_r");
             c = hardwareMap.get(Servo.class, "banan_c");
             l = hardwareMap.get(Servo.class, "banan_l");
-            if (ALLIANCE.alliance == ALLIANCE.RED) {
-                goal = Utility.revertPose(goal);
-            }
+          ///  if (ALLIANCE.alliance == ALLIANCE.RED) {
+             //   goal = Utility.revertPose(goal);
+           /// }
         }
 
         private double calculatePowerToDist(double dist2Tar,double minDist, double maxDist, double minVel2Tar, double maxVel2Tar){
@@ -158,6 +158,7 @@
                 packet.put("Current Velocity L", lMotor.getVelocity());
                 packet.put("Current Velocity C", cMotor.getVelocity());
                 packet.put("Current Velocity R", rMotor.getVelocity());
+                packet.put("distance", distToTarget);
 
                 dashboard.sendTelemetryPacket(packet);
 
