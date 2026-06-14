@@ -22,7 +22,7 @@
     @Config
     @Configurable
     public class Flywheel {
-        public static PIDFCoefficients flywheelMotorCoef = new PIDFCoefficients(0, 0, 0, 0);
+        public static PIDFCoefficients flywheelMotorCoef = new PIDFCoefficients(0.01, 0, 0, 0.00039);
 
         private PIDFController lPIDFCotroler = new PIDFController(flywheelMotorCoef);
 
@@ -47,14 +47,17 @@
 
         private Follower follower;
 
+        public static  double minDist = 50;
+        public static double maxDist = 150;
+
         public static Pose goal = new Pose(180, 180, 0);
 
         public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
             this.follower = follower;
-            lMotor = hardwareMap.get(DcMotorEx.class, "");
-            rMotor = hardwareMap.get(DcMotorEx.class, "");
-            cMotor = hardwareMap.get(DcMotorEx.class, "");
-            lMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+            lMotor = hardwareMap.get(DcMotorEx.class, "gun_l");
+            rMotor = hardwareMap.get(DcMotorEx.class, "gun_r");
+            cMotor = hardwareMap.get(DcMotorEx.class, "gun_c");
+            lMotor.setDirection(DcMotorSimple.Direction.REVERSE);
             cMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             rMotor.setDirection(DcMotorSimple.Direction.FORWARD);
             lMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,12 +66,22 @@
             lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             cMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            r = hardwareMap.get(Servo.class, "");
-            c = hardwareMap.get(Servo.class, "");
-            l = hardwareMap.get(Servo.class, "");
+            r = hardwareMap.get(Servo.class, "banan_r");
+            c = hardwareMap.get(Servo.class, "banan_c");
+            l = hardwareMap.get(Servo.class, "banan_l");
             if (ALLIANCE.alliance == ALLIANCE.RED) {
                 goal = Utility.revertPose(goal);
             }
+        }
+
+        private double calculatePowerToDist(double dist2Tar,double minDist, double maxDist, double minVel2Tar, double maxVel2Tar){
+            double y = minVel2Tar + (dist2Tar - minDist) * (maxVel2Tar - minVel2Tar)/(maxDist - minDist);
+            double realMin = Math.min(minVel2Tar, maxVel2Tar);
+            double realMax = Math.max(minVel2Tar, maxVel2Tar);
+
+            if (y > realMax) y = realMax;
+            if (y < realMin) y = realMin;
+            return y;
         }
 
         public void update() {
@@ -80,9 +93,26 @@
             rPIDFCotroler.setCoefficients(flywheelMotorCoef);
             cPIDFCotroler.setCoefficients(flywheelMotorCoef);
 
-            double errL = ShooterConst.leftS[0] - lMotor.getVelocity();
-            double errC = ShooterConst.centerS[0] - cMotor.getVelocity();
-            double errR = ShooterConst.rightS[0] - rMotor.getVelocity();
+            double velL = calculatePowerToDist(distToTarget, minDist, maxDist, ShooterConst.leftS[0], ShooterConst.leftS[
+                    2]);
+            double velR = calculatePowerToDist(distToTarget, minDist, maxDist, ShooterConst.rightS[0], ShooterConst.rightS[
+                    2]);
+            double velC = calculatePowerToDist(distToTarget, minDist, maxDist, ShooterConst.centerS[0], ShooterConst.centerS[
+                    2]);
+
+            double lPos = calculatePowerToDist(
+                    distToTarget, minDist, maxDist, ShooterConst.leftS[1],ShooterConst.leftS[3]
+            );
+            double rPos = calculatePowerToDist(
+                    distToTarget, minDist, maxDist, ShooterConst.rightS[1],ShooterConst.rightS[3]
+            );
+            double cPos = calculatePowerToDist(
+                    distToTarget, minDist, maxDist, ShooterConst.centerS[1],ShooterConst.centerS[3]
+            );
+
+            double errL = velL - lMotor.getVelocity();
+            double errC = velC - cMotor.getVelocity();
+            double errR = velR - rMotor.getVelocity();
 
 
             if (Math.abs(errL) < errorBorder) {
@@ -102,9 +132,9 @@
 
 
 
-            lPIDFCotroler.updateFeedForwardInput(ShooterConst.leftS[0] * kV);
-            rPIDFCotroler.updateFeedForwardInput(ShooterConst.rightS[0] * kV);
-            cPIDFCotroler.updateFeedForwardInput(ShooterConst.centerS[0] * kV);
+            lPIDFCotroler.updateFeedForwardInput(velL);
+            rPIDFCotroler.updateFeedForwardInput(velR);
+            cPIDFCotroler.updateFeedForwardInput(velC);
 
             double powerR = Range.clip(rPIDFCotroler.run(),0,1);
             double powerC = Range.clip(cPIDFCotroler.run(),0,1);
@@ -115,14 +145,14 @@
             lMotor.setPower(powerL);
             cMotor.setPower(powerC);
 
-            l.setPosition(ShooterConst.leftS[1]);
-            r.setPosition(ShooterConst.rightS[1]);
-            c.setPosition(ShooterConst.centerS[1]);
+            l.setPosition(lPos);
+            r.setPosition(rPos);
+            c.setPosition(cPos);
             if(debug) {
                 FtcDashboard dashboard = FtcDashboard.getInstance();
                 TelemetryPacket packet = new TelemetryPacket();
 
-                packet.put("Target Velocity", ShooterConst.leftS[0]);
+                packet.put("Target Velocity L", velL);
 
 
                 packet.put("Current Velocity L", lMotor.getVelocity());

@@ -18,6 +18,8 @@ import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Modules.FSM;
+import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
 import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
 
@@ -44,9 +46,11 @@ public class Tele extends OpMode {
     }
 
     Turret turret = new Turret();
+    FSM fsm = new FSM();
     @Override
     public void start() {
         turret.start(hardwareMap,()->follower.getPose().getHeading());
+        fsm.start(hardwareMap, follower);
     }
 
     public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015,0,0,0.012);
@@ -116,6 +120,10 @@ public class Tele extends OpMode {
         telemetryM.debug("r y",vel.getYComponent());
         telemetryM.debug("r h",follower.getAngularVelocity());
 
+        if(gamepad1.right_bumper){
+            fsm.setState(FSM_STATE.SHOOT_NEAR);
+        }
+
         turret.debug(telemetryM);
 
 
@@ -139,6 +147,7 @@ public class Tele extends OpMode {
         follower.update();
         telemetryM.update();
         turret.update();
+        fsm.update();
     }
 }
 

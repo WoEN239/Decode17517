@@ -13,16 +13,16 @@ public class Transfer {
     Servo c;
     Servo r;
 
-    public static double upL = 1;
-    public static double upC = 1;
-    public static double upR = 1;
-    public static double downL = 0;
-    public static double downR = 0;
-    public static double downC = 0;
+    public static double upL = 0.367;
+    public static double upC = 0.4;
+    public static double upR = 0.61;
+    public static double downL = 0.13;
+    public static double downR = 0.82;
+    public static double downC = 0.18;
     public void start(HardwareMap hardwareMap){
-        r = hardwareMap.get(Servo.class, "");
-        c = hardwareMap.get(Servo.class, "");
-        l = hardwareMap.get(Servo.class, "");
+        r = hardwareMap.get(Servo.class, "upper_r");
+        c = hardwareMap.get(Servo.class, "upper_c");
+        l = hardwareMap.get(Servo.class, "upper_l");
     }
     public enum STATE {
         LEFT, CENTER, RIGHT, UP, DOWN

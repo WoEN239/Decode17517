@@ -43,7 +43,7 @@ public class FSM {
     public void start(HardwareMap hardwareMap, Follower follower) {
         this.hardwareMap = hardwareMap;
         this.follower = follower;
-        turret.start(hardwareMap, () -> follower.getHeading());
+        turret.start(hardwareMap, follower::getHeading);
         flywheel.start(hardwareMap, follower, ALLIANCE.alliance);
         intake.start(hardwareMap);
         transfer.start(hardwareMap);
@@ -65,7 +65,7 @@ public class FSM {
                 target = FSM_STATE.EAT;
                 transfer.setState(Transfer.STATE.UP);
                 intake.setState(Intake.State.REVERSE);
-                if(timer.seconds() > 0.2) {
+                if(timer.seconds() > 0.3) {
                     setState(FSM_STATE.EAT);
                     timer.reset();
                 }
@@ -79,7 +79,7 @@ public class FSM {
         updateStates();
         transfer.update();
         flywheel.update();
-        turret.update();
+     //   turret.update();
         intake.update();
 
     }
