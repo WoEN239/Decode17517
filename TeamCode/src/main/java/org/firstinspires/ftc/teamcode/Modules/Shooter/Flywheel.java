@@ -185,7 +185,7 @@ public class Flywheel {
             TelemetryPacket packet = new TelemetryPacket();
 
 
-            packet.put("Target Velocity L", velL);
+            packet.put("Target Velocity L", velL * 0.00039);
 
 
             packet.put("Current Velocity L", lMotor.getVelocity());
