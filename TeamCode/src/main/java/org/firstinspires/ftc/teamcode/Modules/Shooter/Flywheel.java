@@ -53,7 +53,10 @@ public class Flywheel {
     public static double minDistFar = 52;
     public static double maxDistFar = 112;
 
-    public static Pose goal = new Pose(-70, 70, 0);
+    public static double xGoal = -70;
+    public static double yGoal = 70;
+
+    public static Pose goal = new Pose(xGoal, yGoal, 0);
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
         this.follower = follower;

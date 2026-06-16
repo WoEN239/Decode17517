@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Modules;
 
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
@@ -64,12 +65,13 @@ public class FSM {
                 target = FSM_STATE.DRIVE;
                 transfer.setState(Transfer.STATE.DRIVE);
                 intake.setState(Intake.State.REVERSE);
+
                 break;
             case SHOOT:
                 target = FSM_STATE.EAT;
                 transfer.setState(Transfer.STATE.UP);
                 intake.setState(Intake.State.REVERSE);
-                if(timer.seconds() > 0.3) {
+                if (timer.seconds() > 0.3) {
                     setState(FSM_STATE.EAT);
                     timer.reset();
                 }
@@ -77,13 +79,23 @@ public class FSM {
         }
     }
 
-    public void update(){
-        if(target == state)
+    public void update() {
+        if (target == state)
             timer.reset();
         updateStates();
+        double dX = Flywheel.goal.getX() - follower.getPose().getX();
+        double dY = Flywheel.goal.getY() - follower.getPose().getY();
+        double absoluteAngleToGoal = Math.atan2(dY, dX);
+
+        //FtcDashboard.getInstance().getTelemetry().addData("relative turret angle", Math.toDegrees(relativeTurretAngle));
+        FtcDashboard.getInstance().getTelemetry().addData("dx", dX);
+        FtcDashboard.getInstance().getTelemetry().addData("dY", dY);
+        FtcDashboard.getInstance().getTelemetry().update();
+
+        turret.setAngleToHold(absoluteAngleToGoal);
         transfer.update();
         flywheel.update();
-     //   turret.update();
+        turret.update();
         intake.update();
 
     }

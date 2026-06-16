@@ -19,8 +19,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Turret {
 
-    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0,0,0,0);
-    public static double errorBorder = 0;
+    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.4,0,0.02,0);
+    public static double errorBorder = 0.02;
     private PIDFController turretPid = new PIDFController(turretPidC);
     private GoBildaPinpointDriver gyro;
     private Supplier<Double> robotAngle;
@@ -60,18 +60,28 @@ public class Turret {
 
     public void update(){
         gyro.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
-
+        double turretAngle = gyro.getHeading(AngleUnit.RADIANS);
         turretPid.setCoefficients(turretPidC);
         double angleRF = angleToHold - (robotAngle.get() + Math.PI*0.5);
-
-        angleRF = MathFunctions.clamp(angleRF,-1.9,1.9);
-
+        angleRF = MathFunctions.normalizeAngleSigned(angleRF);
+        angleRF = MathFunctions.clamp(angleRF,-1.5,1.5);
         double angleToHoldN = angleRF + (robotAngle.get() + Math.PI*0.5);
+        angleToHoldN = MathFunctions.normalizeAngleSigned(angleToHoldN);
 
-        double err = angleToHoldN -gyro.getHeading(AngleUnit.RADIANS);
+        FtcDashboard.getInstance().getTelemetry().addData("angle target rf", angleRF);
+        FtcDashboard.getInstance().getTelemetry().addData("angle target gf", angleToHoldN);
+        FtcDashboard.getInstance().getTelemetry().addData("robotAngle", robotAngle.get());
+        FtcDashboard.getInstance().getTelemetry().addData("turretAngle", turretAngle);
+
+        FtcDashboard.getInstance().getTelemetry().update();
+
+
+
+        double err = MathFunctions.normalizeAngleSigned(angleToHoldN - turretAngle);
         turretPid.updateError( err );
         if(Math.abs(err)<errorBorder){ err = 0;}
         turretPid.updateFeedForwardInput(Math.signum(err));
+
         power = turretPid.run();
 
         driveTurret(power);
@@ -88,4 +98,7 @@ public class Turret {
 
         FtcDashboard.getInstance().getTelemetry().update();
     }
+
 }
+
+

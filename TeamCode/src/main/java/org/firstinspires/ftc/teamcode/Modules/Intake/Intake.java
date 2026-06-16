@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 @Configurable
 @Config
 public class Intake {
-    public static double maxPower = 0.8;
+    public static double maxPower = 1;
     public static boolean debug = false;
     private DcMotorEx brush;
     private double power = maxPower;

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import static com.pedropathing.math.MathFunctions.normalizeAngle;
+import static com.pedropathing.math.MathFunctions.normalizeAngleSigned;
+
+import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
@@ -21,7 +23,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
-import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
 
 @Configurable
 @Config
@@ -37,37 +38,45 @@ public class Tele extends OpMode {
     private static final Style robotLook = new Style(
             "", "#3F51B5", 0.75
     );
+
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0,0,0 ));
+        follower.setStartingPose(new Pose(0, 0, 0));
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
-    Turret turret = new Turret();
+    //Turret turret = new Turret();
+
+    public static double angle = 30;
     FSM fsm = new FSM();
+
     @Override
     public void start() {
-        turret.start(hardwareMap,()->follower.getPose().getHeading());
+        //turret.start(hardwareMap,()->follower.getPose().getHeading());
+
         fsm.start(hardwareMap, follower);
+
     }
 
-    public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015,0,0,0.012);
-    public static PIDFCoefficients yPidC = new PIDFCoefficients(0.02,0,0,0.0154);
-    public static PIDFCoefficients hPidC = new PIDFCoefficients(0.05,0,0,0.14);
+    public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015, 0, 0, 0.012);
+    public static PIDFCoefficients yPidC = new PIDFCoefficients(0.02, 0, 0, 0.0154);
+    public static PIDFCoefficients hPidC = new PIDFCoefficients(0.05, 0, 0, 0.14);
     private PIDFController xPid = new PIDFController(xPidC);
     private PIDFController yPid = new PIDFController(yPidC);
     private PIDFController hPid = new PIDFController(hPidC);
 
 
-    boolean isAngleControl = false;
-    double angleToControl = Math.PI*0.5;
-    public static PIDFCoefficients anglePidC = new PIDFCoefficients(3,0,0,0);
+    boolean isAngleControl = true;
+    double angleToControl = PI * 0.5;
+    public static PIDFCoefficients anglePidC = new PIDFCoefficients(1, 0, 0, 0);
     private PIDFController anglePid = new PIDFController(anglePidC);
 
-    boolean old_right_bumper = false;
+    boolean old_left_bumper = false;
     int count_press = 0;
+
+    boolean isItReversed = false;
 
 
     @Override
@@ -75,38 +84,39 @@ public class Tele extends OpMode {
         //Call this once per loop
         updateAll();
 
+
         xPid.setCoefficients(xPidC);
         hPid.setCoefficients(hPidC);
         yPid.setCoefficients(yPidC);
 
         Vector sticks = new Vector();
-        sticks.setOrthogonalComponents(-gamepad1.left_stick_y,-gamepad1.left_stick_x);
-        sticks.rotateVector(-follower.getPose().getHeading() + Math.PI*0.5);
+        sticks.setOrthogonalComponents(fpv(-gamepad1.left_stick_y), fpv(-gamepad1.left_stick_x));
+        sticks.rotateVector(-follower.getPose().getHeading() + PI * 0.5);
 
         Vector vel = follower.getVelocity();
         vel.rotateVector(-follower.getPose().getHeading());
 
-        xPid.setTargetPosition(sticks.getXComponent()*84);
+        xPid.setTargetPosition(sticks.getXComponent() * 84);
         xPid.updatePosition(vel.getXComponent());
-        xPid.updateFeedForwardInput(sticks.getXComponent()*84);
+        xPid.updateFeedForwardInput(sticks.getXComponent() * 84);
         double x = xPid.run();
 
-        yPid.setTargetPosition(sticks.getYComponent()*65);
+        yPid.setTargetPosition(sticks.getYComponent() * 65);
         yPid.updatePosition(vel.getYComponent());
-        yPid.updateFeedForwardInput(sticks.getYComponent()*65);
+        yPid.updateFeedForwardInput(sticks.getYComponent() * 65);
         double y = yPid.run();
 
-        hPid.setTargetPosition(-gamepad1.right_stick_x*7);
+        hPid.setTargetPosition(fpv(-gamepad1.right_stick_x) * 6);
         hPid.updatePosition(follower.getAngularVelocity());
-        hPid.updateFeedForwardInput(-gamepad1.right_stick_x*7);
+        hPid.updateFeedForwardInput(fpv(-gamepad1.right_stick_x) * 6);
         double h = hPid.run();
 
         telemetryM.debug(hPid.getError());
 
-        isAngleControl = gamepad1.right_trigger>0.1;
-        if(isAngleControl){
+        isAngleControl = gamepad1.right_trigger > 0.1;
+        if (isAngleControl) {
             anglePid.setCoefficients(anglePidC);
-            anglePid.updateError( normalizeAngle(angleToControl-follower.getHeading()) );
+            anglePid.updateError(normalizeAngleSigned(angleToControl - follower.getHeading()));
             h = anglePid.run();
         }
 
@@ -116,22 +126,31 @@ public class Tele extends OpMode {
         double lb = x - h + y;
 
         follower.drivetrain.runDrive(
-             new double[]{lf,lb,rf,rb}
+                new double[]{lf, lb, rf, rb}
         );
 
-        telemetryM.debug("r x",vel.getXComponent());
-        telemetryM.debug("r y",vel.getYComponent());
-        telemetryM.debug("r h",follower.getAngularVelocity());
+        telemetryM.debug("r x", vel.getXComponent());
+        telemetryM.debug("r y", vel.getYComponent());
+        telemetryM.debug("r h", follower.getAngularVelocity());
 
-        if(gamepad1.right_bumper && !old_right_bumper && count_press == 0){
+        if (gamepad1.left_trigger > 0.1) {
+            fsm.setState(FSM_STATE.REVERSE);
+            isItReversed = true;
+        }
+        if(gamepad1.left_trigger < 0.1 && isItReversed){
+            fsm.setState(FSM_STATE.EAT);
+            isItReversed = false;
+        }
+        if (gamepad1.left_bumper && !old_left_bumper && count_press == 0) {
             fsm.setState(FSM_STATE.DRIVE);
             count_press = 1;
-        } else if(gamepad1.right_bumper && !old_right_bumper && count_press == 1){
+        } else if (gamepad1.left_bumper && !old_left_bumper && count_press == 1) {
             fsm.setState(FSM_STATE.SHOOT);
             count_press = 0;
         }
 
-        turret.debug(telemetryM);
+
+        //turret.debug(telemetryM);
 
 
         panelsField.setStyle(robotLook);
@@ -147,15 +166,19 @@ public class Tele extends OpMode {
         panelsField.moveCursor(x1, y1);
         panelsField.line(x2, y2);
         panelsField.update();
-        old_right_bumper = gamepad1.right_bumper;
+        old_left_bumper = gamepad1.left_bumper;
 
     }
 
-    private void updateAll(){
+    private void updateAll() {
         follower.update();
         telemetryM.update();
-        turret.update();
+        // turret.update();
         fsm.update();
+    }
+
+    private double fpv(double x) {
+        return (1 - 0.68) * x + 0.68 * x * x * x;
     }
 }
 
