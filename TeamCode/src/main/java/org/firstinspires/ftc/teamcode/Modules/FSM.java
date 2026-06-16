@@ -82,46 +82,37 @@ public class FSM {
                     timer.reset();
                 }
                 break;
-            case  SHOOT_CENTER:
-                target = FSM_STATE.WAIT;
-                cServo = Transfer.upC;
-                Transfer.c.setPosition(cServo);
-                setState(FSM_STATE.WAIT);
-                break;
             case SHOOT_LEFT:
-                target = FSM_STATE.WAIT;
-                lServo = Transfer.upL;
-                Transfer.l.setPosition(lServo);
-                setState(FSM_STATE.WAIT);
+                target = FSM_STATE.EAT;
+                transfer.setState(Transfer.STATE.LEFT);
+                intake.setState(Intake.State.REVERSE);
+
+
+                if(timer.seconds() > 0.3) {
+                    setState(FSM_STATE.EAT);
+                    timer.reset();
+                }
                 break;
+
+            case SHOOT_CENTER:
+                target = FSM_STATE.EAT;
+                transfer.setState(Transfer.STATE.CENTER);
+                intake.setState(Intake.State.REVERSE);
+
+                if(timer.seconds() > 0.3) {
+                    setState(FSM_STATE.EAT);
+                    timer.reset();
+                }
+                break;
+
             case SHOOT_RIGHT:
-                target = FSM_STATE.WAIT;
-                rServo = Transfer.upR;
-                Transfer.r.setPosition(rServo);
-                setState(FSM_STATE.WAIT);
-                break;
-            case  WAIT:
+                target = FSM_STATE.EAT;
+                transfer.setState(Transfer.STATE.RIGHT);
+                intake.setState(Intake.State.REVERSE);
 
-                if(rServo == Transfer.upR && lServo == Transfer.upL && cServo == Transfer.upC){
-                    target = FSM_STATE.EAT;
-
-                    Transfer.r.setPosition(cServo);
-                    Transfer.c.setPosition(cServo);
-                    Transfer.l.setPosition(lServo);
-                    if(timer.seconds() > 0.3){
-
-                        cServo = Transfer.downC;
-                        lServo = Transfer.downL;
-                        rServo = Transfer.downL;
-                        setState(FSM_STATE.EAT);
-                    }
-
-                }else{
-                    target = FSM_STATE.WAIT;
-
-                    Transfer.r.setPosition(cServo);
-                    Transfer.c.setPosition(cServo);
-                    Transfer.l.setPosition(lServo);
+                if(timer.seconds() > 0.3) {
+                    setState(FSM_STATE.EAT);
+                    timer.reset();
                 }
                 break;
         }
