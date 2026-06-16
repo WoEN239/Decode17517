@@ -4,6 +4,7 @@ import static com.pedropathing.math.MathFunctions.normalizeAngleSigned;
 
 import static java.lang.Math.PI;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 
@@ -19,6 +20,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
@@ -52,11 +54,16 @@ public class Tele extends OpMode {
     public static double angle = 30;
     FSM fsm = new FSM();
 
+    public static double k = 1;
+
     @Override
     public void start() {
         //turret.start(hardwareMap,()->follower.getPose().getHeading());
 
         fsm.start(hardwareMap, follower);
+        enc = hardwareMap.get(
+                DcMotorEx.class, "motor_lb"
+        );
 
     }
 
@@ -77,6 +84,8 @@ public class Tele extends OpMode {
     int count_press = 0;
 
     boolean isItReversed = false;
+
+    DcMotorEx enc;
 
 
     @Override
@@ -132,7 +141,8 @@ public class Tele extends OpMode {
         telemetryM.debug("r x", vel.getXComponent());
         telemetryM.debug("r y", vel.getYComponent());
         telemetryM.debug("r h", follower.getAngularVelocity());
-
+        FtcDashboard.getInstance().getTelemetry().addData("angele ",enc.getCurrentPosition() * k);
+        FtcDashboard.getInstance().getTelemetry().update();
         if (gamepad1.left_trigger > 0.1) {
             fsm.setState(FSM_STATE.REVERSE);
             isItReversed = true;
@@ -149,8 +159,17 @@ public class Tele extends OpMode {
             count_press = 0;
         }
 
+        if(gamepad1.square)
+            fsm.setState(FSM_STATE.SHOOT_LEFT);
+        if(gamepad1.triangle)
+            fsm.setState(FSM_STATE.SHOOT_CENTER);
+        if(gamepad1.circle)
+            fsm.setState(FSM_STATE.SHOOT_RIGHT);
+
 
         //turret.debug(telemetryM);
+
+
 
 
         panelsField.setStyle(robotLook);

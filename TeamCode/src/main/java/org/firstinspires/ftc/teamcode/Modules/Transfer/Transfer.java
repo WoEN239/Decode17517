@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class Transfer {
 
-    Servo l;
-    Servo c;
-    Servo r;
+    public static Servo l;
+    public static Servo c;
+    public static Servo r;
 
     public static double upL = 0.387;
     public static double upC = 0.4;
@@ -19,7 +19,7 @@ public class Transfer {
     public static double downL = 0.13;
     public static double downR = 0.82;
     public static double downC = 0.18;
-    public static double midL = 0.324;
+    public static double midL = 0.284;
     public static double midR = 0.7;
     public static double midC = 0.3;
     public void start(HardwareMap hardwareMap){
@@ -55,6 +55,15 @@ public class Transfer {
                 r.setPosition(midR);
                 l.setPosition(midL);
                 c.setPosition(midC);
+                break;
+            case LEFT:
+                l.setPosition(upL);
+                break;
+            case RIGHT:
+                r.setPosition(upR);
+                break;
+            case CENTER:
+                c.setPosition(upC);
                 break;
         }
     }

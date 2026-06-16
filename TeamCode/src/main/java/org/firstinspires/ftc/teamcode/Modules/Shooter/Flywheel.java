@@ -10,6 +10,7 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -50,13 +51,12 @@ public class Flywheel {
 
     public static double minDistNear = 52;
     public static double maxDistNear = 112;
-    public static double minDistFar = 52;
-    public static double maxDistFar = 112;
+    public static double minDistFar = 120;
+    public static double maxDistFar = 151;
 
     public static double xGoal = -70;
-    public static double yGoal = 70;
+    public static double yGoal = 68;
 
-    public static Pose goal = new Pose(xGoal, yGoal, 0);
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
         this.follower = follower;
@@ -97,8 +97,12 @@ public class Flywheel {
     double rPos;
     double cPos;
 
+    public static double vArtifact = 0.12;
+
     public void update() {
         follower.update();
+
+        Pose goal = new Pose(xGoal, yGoal, 0);
 
         double distToTarget = goal.distanceFrom(follower.getPose());///add for future
 
@@ -106,7 +110,17 @@ public class Flywheel {
         rPIDFCotroler.setCoefficients(flywheelMotorCoef);
         cPIDFCotroler.setCoefficients(flywheelMotorCoef);
 
-        if(distToTarget < 150) {
+        if (distToTarget < 115) {
+
+            Vector v = follower.getPose().getHeadingAsUnitVector();
+
+            double t = distToTarget / vArtifact;
+            double xVirt = xGoal - v.getXComponent()*t;
+            double yVirt = yGoal - v.getYComponent()*t;
+
+            Pose virtPose = new Pose(xVirt, yVirt, 0);
+
+            distToTarget = virtPose.distanceFrom(follower.getPose());
 
             velL = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[0], ShooterConst.leftS[
                     2]);
@@ -124,25 +138,23 @@ public class Flywheel {
             cPos = calculatePowerToDist(
                     distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[1], ShooterConst.centerS[3]
             );
-        }else{
+        } else {
+            velL = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[4], ShooterConst.leftS[
+                    6]);
+            velR = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[4], ShooterConst.rightS[
+                    6]);
+            velC = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.centerS[4], ShooterConst.centerS[
+                    6]);
 
-
-                velL = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[4], ShooterConst.leftS[
-                        6]);
-                velR = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[4], ShooterConst.rightS[
-                        6]);
-                velC = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.centerS[4], ShooterConst.centerS[
-                        6]);
-
-                lPos = calculatePowerToDist(
-                        distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[5], ShooterConst.leftS[7]
-                );
-                rPos = calculatePowerToDist(
-                        distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[5], ShooterConst.rightS[7]
-                );
-                cPos = calculatePowerToDist(
-                        distToTarget, minDistFar, maxDistFar, ShooterConst.centerS[5], ShooterConst.centerS[7]
-                );
+            lPos = calculatePowerToDist(
+                    distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[5], ShooterConst.leftS[7]
+            );
+            rPos = calculatePowerToDist(
+                    distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[5], ShooterConst.rightS[7]
+            );
+            cPos = calculatePowerToDist(
+                    distToTarget, minDistFar, maxDistFar, ShooterConst.centerS[5], ShooterConst.centerS[7]
+            );
 
         }
 

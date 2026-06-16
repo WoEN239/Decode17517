@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Modules;
 
 
+import android.net.TrafficStats;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
@@ -23,6 +25,11 @@ public class FSM {
     Transfer transfer = new Transfer();
     HardwareMap hardwareMap;
     ElapsedTime timer = new ElapsedTime();
+
+
+    double rServo = Transfer.midR;
+    double lServo = Transfer.midL;
+    double cServo = Transfer.midC;
 
 
     private FSM_STATE state = FSM_STATE.EAT;
@@ -65,7 +72,6 @@ public class FSM {
                 target = FSM_STATE.DRIVE;
                 transfer.setState(Transfer.STATE.DRIVE);
                 intake.setState(Intake.State.REVERSE);
-
                 break;
             case SHOOT:
                 target = FSM_STATE.EAT;
@@ -76,6 +82,48 @@ public class FSM {
                     timer.reset();
                 }
                 break;
+            case  SHOOT_CENTER:
+                target = FSM_STATE.WAIT;
+                cServo = Transfer.upC;
+                Transfer.c.setPosition(cServo);
+                setState(FSM_STATE.WAIT);
+                break;
+            case SHOOT_LEFT:
+                target = FSM_STATE.WAIT;
+                lServo = Transfer.upL;
+                Transfer.l.setPosition(lServo);
+                setState(FSM_STATE.WAIT);
+                break;
+            case SHOOT_RIGHT:
+                target = FSM_STATE.WAIT;
+                rServo = Transfer.upR;
+                Transfer.r.setPosition(rServo);
+                setState(FSM_STATE.WAIT);
+                break;
+            case  WAIT:
+
+                if(rServo == Transfer.upR && lServo == Transfer.upL && cServo == Transfer.upC){
+                    target = FSM_STATE.EAT;
+
+                    Transfer.r.setPosition(cServo);
+                    Transfer.c.setPosition(cServo);
+                    Transfer.l.setPosition(lServo);
+                    if(timer.seconds() > 0.3){
+
+                        cServo = Transfer.downC;
+                        lServo = Transfer.downL;
+                        rServo = Transfer.downL;
+                        setState(FSM_STATE.EAT);
+                    }
+
+                }else{
+                    target = FSM_STATE.WAIT;
+
+                    Transfer.r.setPosition(cServo);
+                    Transfer.c.setPosition(cServo);
+                    Transfer.l.setPosition(lServo);
+                }
+                break;
         }
     }
 
@@ -83,8 +131,8 @@ public class FSM {
         if (target == state)
             timer.reset();
         updateStates();
-        double dX = Flywheel.goal.getX() - follower.getPose().getX();
-        double dY = Flywheel.goal.getY() - follower.getPose().getY();
+        double dX = Flywheel.xGoal - follower.getPose().getX();
+        double dY = Flywheel.yGoal - follower.getPose().getY();
         double absoluteAngleToGoal = Math.atan2(dY, dX);
 
         //FtcDashboard.getInstance().getTelemetry().addData("relative turret angle", Math.toDegrees(relativeTurretAngle));
