@@ -89,7 +89,7 @@ public class FSM {
 
 
                 if(timer.seconds() > 0.3) {
-                    setState(FSM_STATE.EAT);
+                    setState(FSM_STATE.DRIVE);
                     timer.reset();
                 }
                 break;
@@ -100,7 +100,7 @@ public class FSM {
                 intake.setState(Intake.State.REVERSE);
 
                 if(timer.seconds() > 0.3) {
-                    setState(FSM_STATE.EAT);
+                    setState(FSM_STATE.DRIVE);
                     timer.reset();
                 }
                 break;
@@ -111,7 +111,7 @@ public class FSM {
                 intake.setState(Intake.State.REVERSE);
 
                 if(timer.seconds() > 0.3) {
-                    setState(FSM_STATE.EAT);
+                    setState(FSM_STATE.DRIVE);
                     timer.reset();
                 }
                 break;
@@ -131,7 +131,7 @@ public class FSM {
         FtcDashboard.getInstance().getTelemetry().addData("dY", dY);
         FtcDashboard.getInstance().getTelemetry().update();
 
-        turret.setAngleToHold(absoluteAngleToGoal);
+       turret.setAngleToHold(absoluteAngleToGoal);
         transfer.update();
         flywheel.update();
         turret.update();

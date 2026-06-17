@@ -44,7 +44,7 @@ public class Tele extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0, 0, 0));
+        follower.setStartingPose(new Pose(0, 0, PI));
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
@@ -105,20 +105,13 @@ public class Tele extends OpMode {
         Vector vel = follower.getVelocity();
         vel.rotateVector(-follower.getPose().getHeading());
 
-        xPid.setTargetPosition(sticks.getXComponent() * 84);
-        xPid.updatePosition(vel.getXComponent());
-        xPid.updateFeedForwardInput(sticks.getXComponent() * 84);
-        double x = xPid.run();
 
-        yPid.setTargetPosition(sticks.getYComponent() * 65);
-        yPid.updatePosition(vel.getYComponent());
-        yPid.updateFeedForwardInput(sticks.getYComponent() * 65);
-        double y = yPid.run();
+        double x = sticks.getXComponent();
 
-        hPid.setTargetPosition(fpv(-gamepad1.right_stick_x) * 6);
-        hPid.updatePosition(follower.getAngularVelocity());
-        hPid.updateFeedForwardInput(fpv(-gamepad1.right_stick_x) * 6);
-        double h = hPid.run();
+
+        double y = sticks.getYComponent();
+
+        double h = fpv(-gamepad1.right_stick_x);
 
         telemetryM.debug(hPid.getError());
 
@@ -139,6 +132,12 @@ public class Tele extends OpMode {
         );
 
         telemetryM.debug("r x", vel.getXComponent());
+
+        FtcDashboard.getInstance().getTelemetry().addData("x", follower.getPose().getX());
+
+        FtcDashboard.getInstance().getTelemetry().addData("y", follower.getPose().getY());
+
+        FtcDashboard.getInstance().getTelemetry().addData("h", Math.toDegrees(follower.getPose().getHeading()));
         telemetryM.debug("r y", vel.getYComponent());
         telemetryM.debug("r h", follower.getAngularVelocity());
         FtcDashboard.getInstance().getTelemetry().addData("angele ",enc.getCurrentPosition() * k);

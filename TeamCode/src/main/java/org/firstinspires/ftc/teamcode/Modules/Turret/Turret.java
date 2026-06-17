@@ -89,7 +89,7 @@ public class Turret {
         turretPid.setCoefficients(turretPidC);
         double angleRF = angleToHold - (robotAngle.get() + Math.PI*0.5);
         angleRF = MathFunctions.normalizeAngleSigned(angleRF);
-        angleRF = MathFunctions.clamp(angleRF,-1.5,1.5);
+        angleRF = MathFunctions.clamp(angleRF,-1.3,1.3);
 
 
         FtcDashboard.getInstance().getTelemetry().addData("angle",Math.toDegrees(getAngleFromEnc()));

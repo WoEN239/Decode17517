@@ -49,13 +49,17 @@ public class Flywheel {
 
     private Follower follower;
 
-    public static double minDistNear = 52;
-    public static double maxDistNear = 112;
-    public static double minDistFar = 120;
-    public static double maxDistFar = 151;
+    public static double minDistNear = 33;
+    public static double maxDistNear = 96;
+    public static double minDistFar = 145;
+    public static double maxDistFar = 178;
 
     public static double xGoal = -70;
-    public static double yGoal = 68;
+    public static double yGoal = -68;
+
+
+    public static double xGoalFar = -80;
+    public static double yGoalFar = -80;
 
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
@@ -112,15 +116,6 @@ public class Flywheel {
 
         if (distToTarget < 115) {
 
-            Vector v = follower.getPose().getHeadingAsUnitVector();
-
-            double t = distToTarget / vArtifact;
-            double xVirt = xGoal - v.getXComponent()*t;
-            double yVirt = yGoal - v.getYComponent()*t;
-
-            Pose virtPose = new Pose(xVirt, yVirt, 0);
-
-            distToTarget = virtPose.distanceFrom(follower.getPose());
 
             velL = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[0], ShooterConst.leftS[
                     2]);
@@ -139,6 +134,11 @@ public class Flywheel {
                     distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[1], ShooterConst.centerS[3]
             );
         } else {
+
+
+            Pose poseFarGoal = new Pose(xGoalFar, yGoalFar, 0);
+            distToTarget = poseFarGoal.distanceFrom(follower.getPose());
+
             velL = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[4], ShooterConst.leftS[
                     6]);
             velR = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[4], ShooterConst.rightS[
