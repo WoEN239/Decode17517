@@ -69,21 +69,8 @@ public class Tele extends OpMode {
 
     @Override
     public void loop() {
-        double forward = fpv(-gamepad1.left_stick_y);
-        double strafe = fpv(-gamepad1.left_stick_x);
-        double turn = fpv(-gamepad1.right_stick_x);
-
-        isAngleControl = gamepad1.right_trigger > 0.1;
-        if (isAngleControl) {
-            anglePid.setCoefficients(anglePidC);
-            anglePid.updateError(normalizeAngleSigned(angleToControl - follower.getHeading()));
-            turn = anglePid.run();
-        }
-
-        follower.setTeleOpDrive(forward, strafe, turn, false);
-
-        follower.update();
         fsm.update();
+        follower.poseTracker.update();
 
         if (gamepad1.left_trigger > 0.1) {
             fsm.setState(FSM_STATE.REVERSE);
@@ -126,9 +113,57 @@ public class Tele extends OpMode {
 
             telemetryTimer.reset();
         }
+
+        xPid.setCoefficients(xPidC);
+        hPid.setCoefficients(hPidC);
+        yPid.setCoefficients(yPidC);
+
+        Vector sticks = new Vector();
+        sticks.setOrthogonalComponents(fpv(-gamepad1.left_stick_y), fpv(-gamepad1.left_stick_x));
+        sticks.rotateVector(-follower.getPose().getHeading() + PI * 0.5);
+
+        Vector vel = follower.getVelocity();
+        vel.rotateVector(-follower.getPose().getHeading());
+
+
+        double x = sticks.getXComponent();
+
+
+        double y = sticks.getYComponent();
+
+        double h = fpv(-gamepad1.right_stick_x);
+
+        telemetryM.debug(hPid.getError());
+
+        isAngleControl = gamepad1.right_trigger > 0.1;
+        if (isAngleControl) {
+            anglePid.setCoefficients(anglePidC);
+            anglePid.updateError(normalizeAngleSigned(angleToControl - follower.getHeading()));
+            h = anglePid.run();
+        }
+
+        double lf = x - h - y;
+        double rf = x + h + y;
+        double rb = x + h - y;
+        double lb = x - h + y;
+
+        follower.drivetrain.runDrive(
+                new double[]{lf, lb, rf, rb}
+        );
+
     }
 
     private double fpv(double x) {
         return (1 - 0.68) * x + 0.68 * x * x * x;
     }
+
+    public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015, 0, 0, 0.012);
+    public static PIDFCoefficients yPidC = new PIDFCoefficients(0.02, 0, 0, 0.0154);
+    public static PIDFCoefficients hPidC = new PIDFCoefficients(0.05, 0, 0, 0.14);
+    private PIDFController xPid = new PIDFController(xPidC);
+    private PIDFController yPid = new PIDFController(yPidC);
+    private PIDFController hPid = new PIDFController(hPidC);
+
+
+
 }
