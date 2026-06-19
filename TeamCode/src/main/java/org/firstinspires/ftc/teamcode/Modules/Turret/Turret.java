@@ -22,11 +22,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Turret {
 
-    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.4,0,0.02,0.04);
+    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.1,0,0.02,0.04);
     public static double errorBorder = 0.02;
+    public static double iBorder = 0.0;
+    public static double kLiner = -0.085;
     private PIDFController turretPid = new PIDFController(turretPidC);
     //private GoBildaPinpointDriver gyro;
     private Supplier<Double> robotAngle;
+    private Supplier<Double> robotVel;
 
     public static double ENCODER_TICK_PER_REV = 8192.0;
     public static double GEAR_RATIO = 15.0/130.0;
@@ -34,7 +37,7 @@ public class Turret {
 
 
     DcMotorEx enc;
-    public void start(HardwareMap hardwareMap, Supplier<Double> robotAngle) {
+    public void start(HardwareMap hardwareMap, Supplier<Double> robotAngle, Supplier<Double> robotVel) {
         turret1 = hardwareMap.get(Servo.class,"turret1");
         turret2 = hardwareMap.get(Servo.class,"turret2");
         turret0 = hardwareMap.get(Servo.class,"turret0");
@@ -52,6 +55,7 @@ public class Turret {
         enc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.robotAngle = robotAngle;
+        this.robotVel = robotVel;
     }
 
     Servo turret1;
@@ -105,15 +109,17 @@ public class Turret {
 
         double err = MathFunctions.normalizeAngleSigned(angleRF - turretAngle);
         err = MathFunctions.normalizeAngleSigned(err);
+        FtcDashboard.getInstance().getTelemetry().addData("turret err", Math.toDegrees(err));
 
         turretPid.updateError( err );
         if(Math.abs(err)<errorBorder){ err = 0;}
+        if(Math.abs(turretPid.I())>iBorder){turretPid.setI(0);}
 
         turretPid.updateFeedForwardInput(Math.signum(err));
 
-        power = turretPid.run();
+        power = turretPid.run() + kLiner*robotVel.get();
 
-       driveTurret(power);
+        driveTurret(power);
     }
     double power;
     public void debug(TelemetryManager telemetry){

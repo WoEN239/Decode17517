@@ -147,8 +147,8 @@ public class Tele extends OpMode {
         double rb = x + h - y;
         double lb = x - h + y;
 
-        runDrive(
-                lf,rf,rb,lb
+        follower.getDrivetrain().runDrive(
+                new double[]{lf,lb,rf,rb}
         );
         FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
         deltaTime.reset();

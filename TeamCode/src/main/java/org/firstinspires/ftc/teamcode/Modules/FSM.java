@@ -51,7 +51,7 @@ public class FSM {
     public void start(HardwareMap hardwareMap, Follower follower) {
         this.hardwareMap = hardwareMap;
         this.follower = follower;
-        turret.start(hardwareMap, follower::getHeading);
+        turret.start(hardwareMap, follower::getHeading, follower::getAngularVelocity);
         flywheel.start(hardwareMap, follower, ALLIANCE.alliance);
         intake.start(hardwareMap);
         transfer.start(hardwareMap);
@@ -153,6 +153,7 @@ public class FSM {
             FtcDashboard.getInstance().getTelemetry().addData("in zone", false);
             turret.setAngleToHold(lastAngle);
         }
+
         //FtcDashboard.getInstance().getTelemetry().update();
         transfer.update();
         flywheel.update();

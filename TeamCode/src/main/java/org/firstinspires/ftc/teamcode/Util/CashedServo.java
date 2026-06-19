@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Util;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class CashedServo {
-    private Servo servo;
+    private final Servo servo;
     private double lastPosition = -1;
 
     public Servo getServo() {

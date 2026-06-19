@@ -5,11 +5,7 @@ import static com.pedropathing.ivy.groups.Groups.*;
 import static com.pedropathing.ivy.pedro.PedroCommands.*;
 
 import com.pedropathing.ivy.Command;
-import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
-import com.pedropathing.ivy.commands.Commands;
-import com.pedropathing.ivy.groups.Groups;
-import com.pedropathing.ivy.pedro.PedroCommands;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
@@ -77,7 +73,7 @@ public class PedroAutonomous extends OpMode {
 
                 parallel(follow(follower, paths.eatAndOpenGate1),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
-                waitMs(150),
+                waitMs(350),
 
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
@@ -88,15 +84,72 @@ public class PedroAutonomous extends OpMode {
 
                 race(  parallel(follow(follower, paths.eat3),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
-                        waitMs(2000))
+                        waitMs(1200))
               ,
-                waitMs(800),
+                waitMs(500),
+
+
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.openGate),
+                waitMs(100),
                 follow(follower, paths.shoot4),
                 waitMs(100),
-                instant(() -> fsm.setState(FSM_STATE.SHOOT))
-              /*  waitMs(300),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(300),
+                race(  parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200))
+                ,
+                waitMs(500),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.openGate),
+                waitMs(100),
+                follow(follower, paths.shoot4),
+                waitMs(100),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(300),
+                race(  parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200))
+                ,
+                waitMs(500),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.openGate),
+                waitMs(100),
+                follow(follower, paths.shoot4),
+                waitMs(100),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(300),
+                race(  parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200))
+                ,
+                waitMs(500),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.openGate),
+                waitMs(100),
+                follow(follower, paths.shoot4),
+                waitMs(100),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(300),
+                race(  parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200))
+                ,
+                waitMs(500),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+
+                follow(follower, paths.shoot4),
+                waitMs(100),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(300)
+              /*
+
 
 
                 parallel(follow(follower, paths.eat4),
@@ -141,7 +194,7 @@ public class PedroAutonomous extends OpMode {
         public PathChain shoot3;
         public PathChain eat3;
         public PathChain shoot4;
-        public PathChain eat4;
+        public PathChain openGate;
         public PathChain shootAndPark5;
 
         public Paths(Follower follower) {
@@ -152,7 +205,7 @@ public class PedroAutonomous extends OpMode {
                                     new Pose(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(145))
+                    .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(90))
                     .build();
 
             eat1 = follower.pathBuilder()
@@ -182,18 +235,18 @@ public class PedroAutonomous extends OpMode {
                                     new Pose(13, -23),
                                     new Pose(13, -55),
                                     new Pose(16, -20),
-                                    new Pose(0, -50.4)
+                                    new Pose(0, -51.4)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90)).setTranslationalConstraint(0.75)
                     .build();
 
             shoot3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(0, -48.4),
+                                    new Pose(0, -51.4),
                                     new Pose(2, -36),
-                                    new Pose(-6, -10)
+                                    new Pose(-13, -22)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(55))
@@ -202,9 +255,9 @@ public class PedroAutonomous extends OpMode {
             eat3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(-6, -10),
-                                    new Pose(10,-44),
-                                    new Pose(12,-57.7)
+                                    new Pose(-13, -22),
+                                    new Pose(11,-44),
+                                    new Pose(11,-57.7)
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(55), Math.toRadians(60)).setTranslationalConstraint(0.75)
@@ -213,22 +266,21 @@ public class PedroAutonomous extends OpMode {
             shoot4 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(12, -57.7),
-                                    new Pose(-10, -10)
+                                    new Pose(8, -51.4),
+                                    new Pose(-13, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(55))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
                     .build();
 
-            eat4 = follower.pathBuilder()
+            openGate = follower.pathBuilder()
                     .addPath(
-                            new BezierCurve(
-                                    new Pose(-6, -18),
-                                    new Pose(36, -12),
-                                    new Pose(37, -57.5)
+                            new BezierLine(
+                                    new Pose(12, -57.7),
+                                    new Pose(8, -51.4)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(55), Math.toRadians(90)).setTranslationalConstraint(0.75)
+                    .setLinearHeadingInterpolation(Math.toRadians(60), Math.toRadians(90)).setTranslationalConstraint(0.75)
                     .build();
 
             shootAndPark5 = follower.pathBuilder()

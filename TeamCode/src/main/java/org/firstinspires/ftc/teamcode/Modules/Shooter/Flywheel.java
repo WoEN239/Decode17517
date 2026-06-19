@@ -52,8 +52,8 @@ public class Flywheel {
 
     public static double minDistNear = 57;
     public static double maxDistNear = 104;
-    public static double minDistFar = 145;
-    public static double maxDistFar = 178;
+    public static double minDistFar = 132;
+    public static double maxDistFar = 160;
 
     public static double xGoal = -70;
     public static double yGoal = -70;
