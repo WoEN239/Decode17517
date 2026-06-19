@@ -54,8 +54,8 @@ public class Tele extends OpMode {
 
     @Override
     public void init() {
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0, 0, PI));
+     //   follower = Constants.createFollower(hardwareMap);
+       // follower.setStartingPose(new Pose(0, 0, PI));
 
         follower.drivetrain.breakFollowing() ;
 

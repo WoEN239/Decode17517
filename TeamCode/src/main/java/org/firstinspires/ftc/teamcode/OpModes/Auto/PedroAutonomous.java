@@ -21,20 +21,22 @@ import com.pedropathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
-
-
-
+import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
+import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
 public class PedroAutonomous extends OpMode {
-    private TelemetryManager panelsTelemetry; 
+    private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
     private Paths paths;
 
+
+
     private FSM fsm = new FSM();
+
 
     @Override
     public void init() {
@@ -42,10 +44,13 @@ public class PedroAutonomous extends OpMode {
 
         follower = Constants.createFollower(hardwareMap);
 
-    
-        follower.setStartingPose(new Pose(-58, -47, Math.toRadians(145)));
+
 
         paths = new Paths(follower);
+
+        follower.setStartingPose(Boot.startPose);
+
+
 
         fsm.start(hardwareMap, follower);
 
@@ -82,12 +87,11 @@ public class PedroAutonomous extends OpMode {
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(300),
 
-                race(  parallel(follow(follower, paths.eat3),
-                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                race(parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200))
-              ,
+                ,
                 waitMs(500),
-
 
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
@@ -97,7 +101,7 @@ public class PedroAutonomous extends OpMode {
                 waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(300),
-                race(  parallel(follow(follower, paths.eat3),
+                race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200))
                 ,
@@ -110,7 +114,7 @@ public class PedroAutonomous extends OpMode {
                 waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(300),
-                race(  parallel(follow(follower, paths.eat3),
+                race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200))
                 ,
@@ -123,7 +127,7 @@ public class PedroAutonomous extends OpMode {
                 waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(300),
-                race(  parallel(follow(follower, paths.eat3),
+                race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200))
                 ,
@@ -136,7 +140,7 @@ public class PedroAutonomous extends OpMode {
                 waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(300),
-                race(  parallel(follow(follower, paths.eat3),
+                race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200))
                 ,
@@ -169,7 +173,6 @@ public class PedroAutonomous extends OpMode {
     }
 
 
-
     @Override
     public void loop() {
 
@@ -177,7 +180,7 @@ public class PedroAutonomous extends OpMode {
 
         Scheduler.execute();
 
- 
+
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
@@ -187,6 +190,10 @@ public class PedroAutonomous extends OpMode {
 
 
     public static class Paths {
+
+
+
+
         public PathChain shoot1;
         public PathChain eat1;
         public PathChain shoot2;
@@ -197,107 +204,129 @@ public class PedroAutonomous extends OpMode {
         public PathChain openGate;
         public PathChain shootAndPark5;
 
+
         public Paths(Follower follower) {
             shoot1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(-58, -47),
-                                    new Pose(-13, -22)
+                                    P(-58, -47),
+                                    P(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(145), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(H(145), H(90))
                     .build();
 
             eat1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(-13, -22),
-                                    new Pose(-12, -50)
+                                    P(-13, -22),
+                                    P(-12, -50)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
             shoot2 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(-12, -50),
-                                    new Pose(-13, -22)
+                                    P(-12, -50),
+                                    P(-13, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
             eatAndOpenGate1 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(-13, -22),
-                                    new Pose(13, -23),
-                                    new Pose(13, -55),
-                                    new Pose(16, -20),
-                                    new Pose(0, -51.4)
+                                    P(-13, -22),
+                                    P(13, -23),
+                                    P(13, -55),
+                                    P(16, -20),
+                                    P(0, -51.4)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90)).setTranslationalConstraint(0.75)
+                    .setLinearHeadingInterpolation(H(90), H(90)).setTranslationalConstraint(0.75)
                     .build();
 
             shoot3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(0, -51.4),
-                                    new Pose(2, -36),
-                                    new Pose(-13, -22)
+                                    P(0, -51.4),
+                                    P(2, -36),
+                                    P(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(55))
+                    .setLinearHeadingInterpolation(H(90), H(55))
                     .build();
 
             eat3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(-13, -22),
-                                    new Pose(11,-44),
-                                    new Pose(11,-57.7)
+                                    P(-13, -22),
+                                    P(11, -44),
+                                    P(11, -57.7)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(55), Math.toRadians(60)).setTranslationalConstraint(0.75)
+                    .setLinearHeadingInterpolation(H(55), H(60)).setTranslationalConstraint(0.75)
                     .build();
 
             shoot4 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(8, -51.4),
-                                    new Pose(-13, -22)
+                                    P(8, -51.4),
+                                    P(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(H(90), H(90))
                     .build();
 
             openGate = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(12, -57.7),
-                                    new Pose(8, -51.4)
+                                    P(12, -57.7),
+                                    P(8, -51.4)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(60), Math.toRadians(90)).setTranslationalConstraint(0.75)
+                    .setLinearHeadingInterpolation(H(60), H(90)).setTranslationalConstraint(0.75)
                     .build();
 
             shootAndPark5 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(37, -53),
-                                    new Pose(36, -12),
-                                    new Pose(-45, -23)
+                                    P(37, -53),
+                                    P(36, -12),
+                                    P(-45, -23)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
+
+
+
+
         }
     }
 
+
+    public static Pose P(double x, double y) {
+        if (Boot.alliance == ALLIANCE.RED) {
+            return new Pose(-x, -y);
+        }
+        return new Pose(x, y);
+    }
+    public static double H(double deg) {
+        double rad = Math.toRadians(deg);
+        if (Boot.alliance == ALLIANCE.RED) {
+            return rad + Math.PI;
+        }
+        return rad;
+    }
+
+
+
     public int autonomousPathUpdate() {
-       
+
         return 0;
     }
 }
