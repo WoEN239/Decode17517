@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
+import static com.pedropathing.math.MathFunctions.normalizeAngle;
 import static com.pedropathing.math.MathFunctions.normalizeAngleSigned;
 import static java.lang.Math.PI;
 
@@ -16,6 +17,7 @@ import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -53,12 +55,19 @@ public class Tele extends OpMode {
     @Override
     public void init() {
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0, 0, 0));
+        follower.setStartingPose(new Pose(0, 0, PI));
 
         follower.drivetrain.breakFollowing() ;
 
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+
+        motor_lf = hardwareMap.get(DcMotorEx.class,"motor_lf");
+        motor_rf = hardwareMap.get(DcMotorEx.class,"motor_rf");
+        motor_rb = hardwareMap.get(DcMotorEx.class,"motor_rb");
+        motor_lb = hardwareMap.get(DcMotorEx.class,"motor_lb");
+
+        hardwareMap.getAll(LynxModule.class).forEach(i->i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO));
     }
 
     @Override
@@ -67,6 +76,7 @@ public class Tele extends OpMode {
         telemetryTimer.reset();
     }
 
+    ElapsedTime deltaTime = new ElapsedTime();
     @Override
     public void loop() {
         fsm.update();
@@ -96,49 +106,39 @@ public class Tele extends OpMode {
         if (gamepad1.triangle) fsm.setState(FSM_STATE.SHOOT_CENTER);
         if (gamepad1.circle) fsm.setState(FSM_STATE.SHOOT_RIGHT);
 
-        if (telemetryTimer.milliseconds() > 100) {
-            panelsField.setStyle(robotLook);
-            panelsField.moveCursor(follower.getPose().getX(), follower.getPose().getY());
-            panelsField.circle(ROBOT_RADIUS);
-
-            Vector v = follower.getPose().getHeadingAsUnitVector();
-            v.setMagnitude(v.getMagnitude() * ROBOT_RADIUS);
-            panelsField.line(follower.getPose().getX() + v.getXComponent(), follower.getPose().getY() + v.getYComponent());
-            panelsField.update();
-
-            telemetryM.debug("X", follower.getPose().getX());
-            telemetryM.debug("Y", follower.getPose().getY());
-            telemetryM.debug("Heading", follower.getPose().getHeading());
-            telemetryM.update();
-
-            telemetryTimer.reset();
-        }
 
         xPid.setCoefficients(xPidC);
         hPid.setCoefficients(hPidC);
         yPid.setCoefficients(yPidC);
 
         Vector sticks = new Vector();
-        sticks.setOrthogonalComponents(fpv(-gamepad1.left_stick_y), fpv(-gamepad1.left_stick_x));
-        sticks.rotateVector(-follower.getPose().getHeading() + PI * 0.5);
+        sticks.setOrthogonalComponents(fpv(-gamepad1.left_stick_y),fpv(-gamepad1.left_stick_x));
+        sticks.rotateVector(-follower.getPose().getHeading() + Math.PI*0.5);
 
         Vector vel = follower.getVelocity();
         vel.rotateVector(-follower.getPose().getHeading());
 
+        xPid.setTargetPosition(sticks.getXComponent()*84);
+        xPid.updatePosition(vel.getXComponent());
+        xPid.updateFeedForwardInput(sticks.getXComponent()*84);
+        double x = xPid.run();
 
-        double x = sticks.getXComponent();
+        yPid.setTargetPosition(sticks.getYComponent()*65);
+        yPid.updatePosition(vel.getYComponent());
+        yPid.updateFeedForwardInput(sticks.getYComponent()*65);
+        double y = yPid.run();
 
-
-        double y = sticks.getYComponent();
-
-        double h = fpv(-gamepad1.right_stick_x);
+        hPid.setTargetPosition(fpv(-gamepad1.right_stick_x)*7);
+        hPid.updatePosition(follower.getAngularVelocity());
+        hPid.updateFeedForwardInput(fpv(-gamepad1.right_stick_x)*7);
+        double h = hPid.run();
 
         telemetryM.debug(hPid.getError());
 
-        isAngleControl = gamepad1.right_trigger > 0.1;
-        if (isAngleControl) {
+        isAngleControl = gamepad1.right_trigger>0.1;
+        if(isAngleControl){
             anglePid.setCoefficients(anglePidC);
-            anglePid.updateError(normalizeAngleSigned(angleToControl - follower.getHeading()));
+            anglePid.updateError( normalizeAngle(angleToControl-follower.getHeading()) );
             h = anglePid.run();
         }
 
@@ -147,12 +147,15 @@ public class Tele extends OpMode {
         double rb = x + h - y;
         double lb = x - h + y;
 
-        follower.drivetrain.runDrive(
-                new double[]{lf, lb, rf, rb}
+        runDrive(
+                lf,rf,rb,lb
         );
-
+        FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
+        deltaTime.reset();
+        lastTime = System.nanoTime();
+        FtcDashboard.getInstance().getTelemetry().update();
     }
-
+    double lastTime = 0;
     private double fpv(double x) {
         return (1 - 0.68) * x + 0.68 * x * x * x;
     }
@@ -164,6 +167,17 @@ public class Tele extends OpMode {
     private PIDFController yPid = new PIDFController(yPidC);
     private PIDFController hPid = new PIDFController(hPidC);
 
+    DcMotorEx motor_lf;
+    DcMotorEx motor_rf;
+    DcMotorEx motor_rb;
+    DcMotorEx motor_lb;
+
+    private void runDrive(double lf, double rf, double rb, double lb){
+        motor_lf.setPower(lf);
+        motor_rf.setPower(rf);
+        motor_rb.setPower(rb);
+        motor_lb.setPower(lb);
+    }
 
 
 }

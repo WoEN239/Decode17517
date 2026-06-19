@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
+import org.firstinspires.ftc.teamcode.Util.CashedServo;
 
 
 @Config
@@ -39,9 +40,9 @@ public class Flywheel {
 
     public static double kV = 0;
 
-    private Servo l;
-    private Servo r;
-    private Servo c;
+    private CashedServo l;
+    private CashedServo r;
+    private CashedServo c;
 
     public static double errorBorder = 0;
 
@@ -49,17 +50,15 @@ public class Flywheel {
 
     private Follower follower;
 
-    public static double minDistNear = 33;
-    public static double maxDistNear = 96;
+    public static double minDistNear = 57;
+    public static double maxDistNear = 104;
     public static double minDistFar = 145;
     public static double maxDistFar = 178;
 
     public static double xGoal = -70;
-    public static double yGoal = -68;
+    public static double yGoal = -70;
 
 
-    public static double xGoalFar = -80;
-    public static double yGoalFar = -80;
 
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
@@ -76,9 +75,11 @@ public class Flywheel {
         lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         cMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        r = hardwareMap.get(Servo.class, "banan_r");
-        c = hardwareMap.get(Servo.class, "banan_c");
-        l = hardwareMap.get(Servo.class, "banan_l");
+
+        r = new CashedServo(hardwareMap.get(Servo.class, "banan_r"));
+        c = new CashedServo(hardwareMap.get(Servo.class, "banan_c"));
+        l = new CashedServo(hardwareMap.get(Servo.class, "banan_l"));
+
         ///  if (ALLIANCE.alliance == ALLIANCE.RED) {
         //   goal = Utility.revertPose(goal);
         /// }
@@ -136,8 +137,7 @@ public class Flywheel {
         } else {
 
 
-            Pose poseFarGoal = new Pose(xGoalFar, yGoalFar, 0);
-            distToTarget = poseFarGoal.distanceFrom(follower.getPose());
+
 
             velL = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[4], ShooterConst.leftS[
                     6]);

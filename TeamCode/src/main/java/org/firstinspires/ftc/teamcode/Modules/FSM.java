@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.Modules;
 
 
-import android.net.TrafficStats;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -30,6 +29,8 @@ public class FSM {
     double rServo = Transfer.midR;
     double lServo = Transfer.midL;
     double cServo = Transfer.midC;
+
+    public static double shootDelay = 0.03;
 
 
     private FSM_STATE state = FSM_STATE.EAT;
@@ -75,9 +76,15 @@ public class FSM {
                 break;
             case SHOOT:
                 target = FSM_STATE.EAT;
-                transfer.setState(Transfer.STATE.UP);
+
                 intake.setState(Intake.State.REVERSE);
-                if (timer.seconds() > 0.3) {
+
+                transfer.setState(Transfer.STATE.CENTER);
+
+                if(timer.seconds() > shootDelay)
+                    transfer.setState(Transfer.STATE.UP);
+
+                if (timer.seconds() > 0.2) {
                     setState(FSM_STATE.EAT);
                     timer.reset();
                 }
@@ -118,25 +125,60 @@ public class FSM {
         }
     }
 
+    double lastAngle = -Math.PI*0.5;
     public void update() {
         if (target == state)
             timer.reset();
         updateStates();
-        double dX = Flywheel.xGoal - follower.getPose().getX();
-        double dY = Flywheel.yGoal - follower.getPose().getY();
+        Pose robotPose = follower.getPose();
+        double dX = Flywheel.xGoal - robotPose.getX();
+        double dY = Flywheel.yGoal - robotPose.getY();
         double absoluteAngleToGoal = Math.atan2(dY, dX);
+
 
         //FtcDashboard.getInstance().getTelemetry().addData("relative turret angle", Math.toDegrees(relativeTurretAngle));
         FtcDashboard.getInstance().getTelemetry().addData("dx", dX);
         FtcDashboard.getInstance().getTelemetry().addData("dY", dY);
-        FtcDashboard.getInstance().getTelemetry().update();
 
-       turret.setAngleToHold(absoluteAngleToGoal);
+        FtcDashboard.getInstance().getTelemetry().addData("x", robotPose.getX());
+        FtcDashboard.getInstance().getTelemetry().addData("Y", robotPose.getY());
+
+
+        if(isInNearZone(robotPose.getX(),robotPose.getY()) || isInFarZone(robotPose.getX(),robotPose.getY())) {
+            FtcDashboard.getInstance().getTelemetry().addData("in zone", true);
+            turret.setAngleToHold(absoluteAngleToGoal);
+            lastAngle = absoluteAngleToGoal;//-follower.getHeading();
+        } else {
+
+            FtcDashboard.getInstance().getTelemetry().addData("in zone", false);
+            turret.setAngleToHold(lastAngle);
+        }
+        //FtcDashboard.getInstance().getTelemetry().update();
         transfer.update();
         flywheel.update();
         turret.update();
         intake.update();
 
+    }
+    private boolean isInNearZone(double x, double y){
+        x-=15;
+        if(x>0){
+            return false;
+        }
+        if( y>(x*1.1) && (y< -x*1.1)){
+            return true;
+        }
+        return false;
+    }
+    private boolean isInFarZone(double x, double y){
+        x+=15;
+        if(x<45){
+            return false;
+        }
+        if( y<(x*1.1-48) && y>(-x*1.1+48) ){
+            return true;
+        }
+        return false;
     }
 
 }

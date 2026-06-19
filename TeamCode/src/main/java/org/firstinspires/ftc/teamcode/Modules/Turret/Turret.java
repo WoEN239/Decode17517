@@ -22,10 +22,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @Config
 public class Turret {
 
-    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.4,0,0.02,0);
+    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.4,0,0.02,0.04);
     public static double errorBorder = 0.02;
     private PIDFController turretPid = new PIDFController(turretPidC);
-    private GoBildaPinpointDriver gyro;
+    //private GoBildaPinpointDriver gyro;
     private Supplier<Double> robotAngle;
 
     public static double ENCODER_TICK_PER_REV = 8192.0;
@@ -43,9 +43,9 @@ public class Turret {
         ((PwmControl)turret0).setPwmRange(new PwmControl.PwmRange(500.0, 2500.0));
 
 
-        gyro = hardwareMap.get(GoBildaPinpointDriver.class,"turret_gyro");
-        gyro.setHeading(Math.PI*0.5,AngleUnit.RADIANS);
-        gyro.recalibrateIMU();
+//        gyro = hardwareMap.get(GoBildaPinpointDriver.class,"turret_gyro");
+//        gyro.setHeading(Math.PI*0.5,AngleUnit.RADIANS);
+//        gyro.recalibrateIMU();
         enc = hardwareMap.get(DcMotorEx.class, "motor_lb");
         enc.setDirection(DcMotorSimple.Direction.FORWARD);
         enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -84,7 +84,7 @@ public class Turret {
 
 
     public void update(){
-        gyro.update();
+        //gyro.update();
         double turretAngle = getAngleFromEnc();
         turretPid.setCoefficients(turretPidC);
         double angleRF = angleToHold - (robotAngle.get() + Math.PI*0.5);
@@ -97,9 +97,9 @@ public class Turret {
         FtcDashboard.getInstance().getTelemetry().addData("angle target rf", angleRF);
        // FtcDashboard.getInstance().getTelemetry().addData("angle target gf", angleToHoldN);
         FtcDashboard.getInstance().getTelemetry().addData("robotAngle", robotAngle.get());
-        FtcDashboard.getInstance().getTelemetry().addData("turretAngle", Math.toDegrees(gyro.getHeading(AngleUnit.RADIANS)));
+        FtcDashboard.getInstance().getTelemetry().addData("turretAngle", Math.toDegrees(turretAngle));
 
-        FtcDashboard.getInstance().getTelemetry().update();
+      //  FtcDashboard.getInstance().getTelemetry().update();
 
 
 
@@ -118,14 +118,14 @@ public class Turret {
     double power;
     public void debug(TelemetryManager telemetry){
         telemetry.debug("target turret", angleToHold);
-        telemetry.debug("pos turret", gyro.getHeading(AngleUnit.RADIANS));
+        //telemetry.debug("pos turret", gyro.getHeading(AngleUnit.RADIANS));
         telemetry.debug("power turret", power);
 
         FtcDashboard.getInstance().getTelemetry().addData("target turret", angleToHold);
-        FtcDashboard.getInstance().getTelemetry().addData("pos turret", gyro.getHeading(AngleUnit.RADIANS));
+        FtcDashboard.getInstance().getTelemetry().addData("pos turret", angleToHold);
         FtcDashboard.getInstance().getTelemetry().addData("power turret", power);
 
-        FtcDashboard.getInstance().getTelemetry().update();
+        //FtcDashboard.getInstance().getTelemetry().update();
     }
 
 }

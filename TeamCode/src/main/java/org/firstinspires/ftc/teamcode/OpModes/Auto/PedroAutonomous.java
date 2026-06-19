@@ -58,7 +58,7 @@ public class PedroAutonomous extends OpMode {
         Scheduler.reset();
 
 
-        Command autoRouthine = sequential(
+        Command autoRoutine = sequential(
 
                 follow(follower, paths.shoot1),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
@@ -112,7 +112,7 @@ public class PedroAutonomous extends OpMode {
 
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
-       Scheduler.schedule(autoRouthine);
+        Scheduler.schedule(autoRoutine);
     }
 
 
