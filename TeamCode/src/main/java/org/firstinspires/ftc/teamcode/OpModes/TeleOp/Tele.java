@@ -26,6 +26,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
+import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
+import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 @Configurable
 @Config
@@ -51,11 +53,15 @@ public class Tele extends OpMode {
     boolean isItReversed = false;
 
     ElapsedTime telemetryTimer = new ElapsedTime();
+    public static double wX = 1;
+    public static double wY = 1;
+    public static double wH = 0.85;
 
     @Override
     public void init() {
-     //   follower = Constants.createFollower(hardwareMap);
-       // follower.setStartingPose(new Pose(0, 0, PI));
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(0, 0, PI));
+
 
         follower.drivetrain.breakFollowing() ;
 
@@ -112,8 +118,12 @@ public class Tele extends OpMode {
         yPid.setCoefficients(yPidC);
 
         Vector sticks = new Vector();
-        sticks.setOrthogonalComponents(fpv(-gamepad1.left_stick_y),fpv(-gamepad1.left_stick_x));
-        sticks.rotateVector(-follower.getPose().getHeading() + Math.PI*0.5);
+        sticks.setOrthogonalComponents(fpv(-gamepad1.left_stick_y,wX),fpv(-gamepad1.left_stick_x,wY));
+        double allianceAngle = PI*0.5;
+        if(Boot.alliance == ALLIANCE.BLUE){
+            allianceAngle = -PI*0.5;
+        }
+        sticks.rotateVector(-follower.getPose().getHeading() + allianceAngle);
 
         Vector vel = follower.getVelocity();
         vel.rotateVector(-follower.getPose().getHeading());
@@ -122,15 +132,17 @@ public class Tele extends OpMode {
         xPid.updatePosition(vel.getXComponent());
         xPid.updateFeedForwardInput(sticks.getXComponent()*84);
         double x = xPid.run();
+        FtcDashboard.getInstance().getTelemetry().addData("xErr", xPid.getError());
 
         yPid.setTargetPosition(sticks.getYComponent()*65);
         yPid.updatePosition(vel.getYComponent());
         yPid.updateFeedForwardInput(sticks.getYComponent()*65);
         double y = yPid.run();
+        FtcDashboard.getInstance().getTelemetry().addData("yErr", yPid.getError());
 
-        hPid.setTargetPosition(fpv(-gamepad1.right_stick_x)*7);
+        hPid.setTargetPosition(fpv(-gamepad1.right_stick_x,wH)*7);
         hPid.updatePosition(follower.getAngularVelocity());
-        hPid.updateFeedForwardInput(fpv(-gamepad1.right_stick_x)*7);
+        hPid.updateFeedForwardInput(fpv(-gamepad1.right_stick_x,wH)*7);
         double h = hPid.run();
 
         telemetryM.debug(hPid.getError());
@@ -156,8 +168,8 @@ public class Tele extends OpMode {
         FtcDashboard.getInstance().getTelemetry().update();
     }
     double lastTime = 0;
-    private double fpv(double x) {
-        return (1 - 0.68) * x + 0.68 * x * x * x;
+    private double fpv(double x, double w) {
+        return (1 - w) * x + w * x * x * x;
     }
 
     public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015, 0, 0, 0.012);

@@ -50,13 +50,18 @@ public class Flywheel {
 
     private Follower follower;
 
-    public static double minDistNear = 57;
-    public static double maxDistNear = 104;
-    public static double minDistFar = 132;
+    public static double minDistNear = 51;
+    public static double maxDistNear = 110;
+    public static double minDistFar = 126;
     public static double maxDistFar = 160;
 
     public static double xGoal = -70;
     public static double yGoal = -70;
+
+    public static double xGoalFar = -70;
+    public static double yGoalFar = -65;
+
+    public static double diff = 0;
 
 
 
@@ -126,10 +131,10 @@ public class Flywheel {
                     2]);
 
             lPos = calculatePowerToDist(
-                    distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1], ShooterConst.leftS[3]
+                    distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1] + diff, ShooterConst.leftS[3] + diff
             );
             rPos = calculatePowerToDist(
-                    distToTarget, minDistNear, maxDistNear, ShooterConst.rightS[1], ShooterConst.rightS[3]
+                    distToTarget, minDistNear, maxDistNear, ShooterConst.rightS[1] + diff, ShooterConst.rightS[3]  + diff
             );
             cPos = calculatePowerToDist(
                     distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[1], ShooterConst.centerS[3]
@@ -147,10 +152,10 @@ public class Flywheel {
                     6]);
 
             lPos = calculatePowerToDist(
-                    distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[5], ShooterConst.leftS[7]
+                    distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[5] + diff, ShooterConst.leftS[7] + diff
             );
             rPos = calculatePowerToDist(
-                    distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[5], ShooterConst.rightS[7]
+                    distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[5] + diff, ShooterConst.rightS[7] + diff
             );
             cPos = calculatePowerToDist(
                     distToTarget, minDistFar, maxDistFar, ShooterConst.centerS[5], ShooterConst.centerS[7]

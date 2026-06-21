@@ -8,6 +8,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
 
 
@@ -30,6 +31,12 @@ public class Boot extends LinearOpMode {
 
         follower = Constants.createFollower(hardwareMap);
 
+        startPose = new Pose(0,0,0);
+
+        follower.setStartingPose(startPose);
+
+        waitForStart();
+
 
         while (opModeIsActive()) {
             boolean cross = gamepad1.cross;
@@ -44,7 +51,16 @@ public class Boot extends LinearOpMode {
                 alliance = ALLIANCE.BLUE;
 
             FtcDashboard.getInstance().getTelemetry().addData("startPose", startPose);
-            FtcDashboard.getInstance().getTelemetry().update();
+            FtcDashboard.getInstance().getTelemetry().addData("ALLIANCE", alliance);
+            telemetry.addData("startPose", startPose);
+            telemetry.addData("ALLIANCE", alliance);
+            telemetry.update();
+
+            follower.pausePathFollowing();
+
+            follower.drivetrain.breakFollowing();
+
+            follower.update();
         }
     }
 }

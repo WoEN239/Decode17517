@@ -30,7 +30,7 @@ public class FSM {
     double lServo = Transfer.midL;
     double cServo = Transfer.midC;
 
-    public static double shootDelay = 0.03;
+    public static double shootDelay = 0.055;
 
 
     private FSM_STATE state = FSM_STATE.EAT;
@@ -84,7 +84,7 @@ public class FSM {
                 if(timer.seconds() > shootDelay)
                     transfer.setState(Transfer.STATE.UP);
 
-                if (timer.seconds() > 0.2) {
+                if (timer.seconds() > 0.1) {
                     setState(FSM_STATE.EAT);
                     timer.reset();
                 }
@@ -131,8 +131,27 @@ public class FSM {
             timer.reset();
         updateStates();
         Pose robotPose = follower.getPose();
-        double dX = Flywheel.xGoal - robotPose.getX();
-        double dY = Flywheel.yGoal - robotPose.getY();
+
+        double x = Flywheel.xGoal;
+        double y = Flywheel.yGoal;
+
+
+        if (robotPose.distanceFrom(new Pose(Flywheel.xGoal, Flywheel.yGoal, 0)) > 120){
+            x = Flywheel.xGoalFar;
+            y = Flywheel.yGoalFar;
+        }
+        else {
+            shootDelay = 0;
+        }
+
+        Pose pose = new Pose(x,y,0);
+
+        FtcDashboard.getInstance().getTelemetry().addData("distance to goal", pose.distanceFrom(robotPose));
+        FtcDashboard.getInstance().getTelemetry().update();
+
+        double dX = x - robotPose.getX();
+        double dY = y - robotPose.getY();
+
         double absoluteAngleToGoal = Math.atan2(dY, dX);
 
 
