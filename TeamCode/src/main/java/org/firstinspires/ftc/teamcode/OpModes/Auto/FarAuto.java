@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class PedroAutonomous extends OpMode {
+public class FarAuto extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
@@ -42,7 +42,7 @@ public class PedroAutonomous extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(-58, -47, Math.toRadians(145)));
+        follower.setStartingPose(P(-58, -47, 145));
 
 
         paths = new Paths(follower);
@@ -129,19 +129,6 @@ public class PedroAutonomous extends OpMode {
                 follow(follower, paths.shoot4),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(250)
-              /*
-
-
-
-                parallel(follow(follower, paths.eat4),
-                        instant(() -> fsm.setState(FSM_STATE.EAT))),
-                waitMs(400),
-
-                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-                follow(follower, paths.shootAndPark5),
-                instant(() -> fsm.setState(FSM_STATE.SHOOT))
-
-               */
         );
 
         panelsTelemetry.debug("Status", "Initialized");
@@ -278,6 +265,13 @@ public class PedroAutonomous extends OpMode {
     public static Pose P(double x, double y) {
         if (Boot.alliance == ALLIANCE.RED) {
             return new Pose(-x, -y);
+        }
+        return new Pose(x, y);
+    }
+
+    public static Pose P(double x, double y, double h) {
+        if (Boot.alliance == ALLIANCE.RED) {
+            return new Pose(-x, -y, Math.toRadians(h) + Math.PI);
         }
         return new Pose(x, y);
     }
