@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.Modules.Shooter;
 
-import android.util.SparseArray;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -10,7 +8,6 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -50,8 +47,9 @@ public class Flywheel {
 
     private Follower follower;
 
-    public static double minDistNear = 51;
-    public static double maxDistNear = 110;
+    public static double minDistNear = 55;
+    public static double maxDistNear = 108;
+
     public static double minDistFar = 126;
     public static double maxDistFar = 160;
 
@@ -62,8 +60,6 @@ public class Flywheel {
     public static double yGoalFar = -65;
 
     public static double diff = 0;
-
-
 
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
@@ -85,6 +81,7 @@ public class Flywheel {
         c = new CashedServo(hardwareMap.get(Servo.class, "banan_c"));
         l = new CashedServo(hardwareMap.get(Servo.class, "banan_l"));
 
+
         ///  if (ALLIANCE.alliance == ALLIANCE.RED) {
         //   goal = Utility.revertPose(goal);
         /// }
@@ -103,7 +100,8 @@ public class Flywheel {
     double velL;
     double velR;
     double velC;
-    double lPos;
+
+    double lDelt = 0.04;
     double rPos;
     double cPos;
 
@@ -130,7 +128,7 @@ public class Flywheel {
             velC = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[0], ShooterConst.centerS[
                     2]);
 
-            lPos = calculatePowerToDist(
+            lDelt = calculatePowerToDist(
                     distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1] + diff, ShooterConst.leftS[3] + diff
             );
             rPos = calculatePowerToDist(
@@ -141,9 +139,6 @@ public class Flywheel {
             );
         } else {
 
-
-
-
             velL = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[4], ShooterConst.leftS[
                     6]);
             velR = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[4], ShooterConst.rightS[
@@ -151,9 +146,7 @@ public class Flywheel {
             velC = calculatePowerToDist(distToTarget, minDistFar, maxDistFar, ShooterConst.centerS[4], ShooterConst.centerS[
                     6]);
 
-            lPos = calculatePowerToDist(
-                    distToTarget, minDistFar, maxDistFar, ShooterConst.leftS[5] + diff, ShooterConst.leftS[7] + diff
-            );
+
             rPos = calculatePowerToDist(
                     distToTarget, minDistFar, maxDistFar, ShooterConst.rightS[5] + diff, ShooterConst.rightS[7] + diff
             );
@@ -197,9 +190,9 @@ public class Flywheel {
         lMotor.setPower(powerL);
         cMotor.setPower(powerC);
 
-        l.setPosition(lPos);
+        l.setPosition(1-(rPos+lDelt));
         r.setPosition(rPos);
-        c.setPosition(cPos);
+        c.setPosition(1-cPos);
         if (debug) {
             FtcDashboard dashboard = FtcDashboard.getInstance();
             TelemetryPacket packet = new TelemetryPacket();

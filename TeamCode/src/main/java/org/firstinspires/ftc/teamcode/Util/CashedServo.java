@@ -16,8 +16,8 @@ public class CashedServo {
     public void setPosition(double p){
         if( Math.abs(p-lastPosition)>0.01){
             servo.setPosition(p);
+            lastPosition = p;
         }
-        lastPosition = p;
     }
 
 }

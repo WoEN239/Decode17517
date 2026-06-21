@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -134,7 +135,9 @@ public class FSM {
 
         double x = Flywheel.xGoal;
         double y = Flywheel.yGoal;
-
+        Vector robotVel = follower.getVelocity();
+        x-= robotVel.getXComponent()*0.2;
+        y-= robotVel.getYComponent()*0.2;
 
         if (robotPose.distanceFrom(new Pose(Flywheel.xGoal, Flywheel.yGoal, 0)) > 120){
             x = Flywheel.xGoalFar;
@@ -162,24 +165,19 @@ public class FSM {
         FtcDashboard.getInstance().getTelemetry().addData("x", robotPose.getX());
         FtcDashboard.getInstance().getTelemetry().addData("Y", robotPose.getY());
 
+        turret.setAngleToHold(absoluteAngleToGoal);
+        turret.setRobotAngleVel( (absoluteAngleToGoal - lastAngle) /deltaTime.seconds());
+        lastAngle = absoluteAngleToGoal;
 
-        if(isInNearZone(robotPose.getX(),robotPose.getY()) || isInFarZone(robotPose.getX(),robotPose.getY())) {
-            FtcDashboard.getInstance().getTelemetry().addData("in zone", true);
-            turret.setAngleToHold(absoluteAngleToGoal);
-            lastAngle = absoluteAngleToGoal;//-follower.getHeading();
-        } else {
-
-            FtcDashboard.getInstance().getTelemetry().addData("in zone", false);
-            turret.setAngleToHold(lastAngle);
-        }
-
-        //FtcDashboard.getInstance().getTelemetry().update();
+        deltaTime.reset();
         transfer.update();
         flywheel.update();
         turret.update();
         intake.update();
 
     }
+    private ElapsedTime deltaTime = new ElapsedTime();
+
     private boolean isInNearZone(double x, double y){
         x-=15;
         if(x>0){
