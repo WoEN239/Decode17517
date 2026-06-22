@@ -31,7 +31,7 @@ public class FSM {
     double lServo = Transfer.midL;
     double cServo = Transfer.midC;
 
-    public static double shootDelay = 0.055;
+    public static double shootDelay = 0.065;
 
 
     private FSM_STATE state = FSM_STATE.EAT;
@@ -126,6 +126,8 @@ public class FSM {
         }
     }
 
+    public static double kV = 0.35;
+
     double lastAngle = -Math.PI*0.5;
     public void update() {
         if (target == state)
@@ -136,16 +138,14 @@ public class FSM {
         double x = Flywheel.xGoal;
         double y = Flywheel.yGoal;
         Vector robotVel = follower.getVelocity();
-        x-= robotVel.getXComponent()*0.2;
-        y-= robotVel.getYComponent()*0.2;
+        x-= robotVel.getXComponent()*kV;
+        y-= robotVel.getYComponent()*kV;
 
         if (robotPose.distanceFrom(new Pose(Flywheel.xGoal, Flywheel.yGoal, 0)) > 120){
             x = Flywheel.xGoalFar;
             y = Flywheel.yGoalFar;
         }
-        else {
-            shootDelay = 0;
-        }
+
 
         Pose pose = new Pose(x,y,0);
 
@@ -163,7 +163,12 @@ public class FSM {
         FtcDashboard.getInstance().getTelemetry().addData("dY", dY);
 
         FtcDashboard.getInstance().getTelemetry().addData("x", robotPose.getX());
-        FtcDashboard.getInstance().getTelemetry().addData("Y", robotPose.getY());
+        FtcDashboard.getInstance().getTelemetry().addData("y", robotPose.getY());
+        FtcDashboard.getInstance().getTelemetry().addData("h", robotPose.getHeading());
+
+        FtcDashboard.getInstance().getTelemetry().addData("x vel", follower.getVelocity().getXComponent());
+        FtcDashboard.getInstance().getTelemetry().addData("y vel", follower.getVelocity().getYComponent());
+        FtcDashboard.getInstance().getTelemetry().addData("h vel", follower.getAngularVelocity());
 
         turret.setAngleToHold(absoluteAngleToGoal);
         turret.setRobotAngleVel( (absoluteAngleToGoal - lastAngle) /deltaTime.seconds());

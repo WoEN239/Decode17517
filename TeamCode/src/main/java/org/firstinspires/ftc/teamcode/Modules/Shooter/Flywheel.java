@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
+import org.firstinspires.ftc.teamcode.Robot.Boot;
 import org.firstinspires.ftc.teamcode.Util.CashedServo;
 
 
@@ -47,17 +48,17 @@ public class Flywheel {
 
     private Follower follower;
 
-    public static double minDistNear = 55;
-    public static double maxDistNear = 108;
+    public static double minDistNear = 57;
+    public static double maxDistNear = 100;
 
-    public static double minDistFar = 126;
-    public static double maxDistFar = 160;
+    public static double minDistFar = 123;
+    public static double maxDistFar = 164;
 
     public static double xGoal = -70;
     public static double yGoal = -70;
 
     public static double xGoalFar = -70;
-    public static double yGoalFar = -65;
+    public static double yGoalFar = -68;
 
     public static double diff = 0;
 
@@ -82,9 +83,12 @@ public class Flywheel {
         l = new CashedServo(hardwareMap.get(Servo.class, "banan_l"));
 
 
-        ///  if (ALLIANCE.alliance == ALLIANCE.RED) {
-        //   goal = Utility.revertPose(goal);
-        /// }
+          if (Boot.alliance == ALLIANCE.RED) {
+           xGoal = -xGoal;
+           yGoal = -yGoal;
+           xGoalFar = -xGoalFar;
+           yGoalFar = -yGoalFar;
+         }
     }
 
     private double calculatePowerToDist(double dist2Tar, double minDist, double maxDist, double minVel2Tar, double maxVel2Tar) {
@@ -101,14 +105,14 @@ public class Flywheel {
     double velR;
     double velC;
 
-    double lDelt = 0.04;
+    public static double lDelt = -0.07;
     double rPos;
     double cPos;
 
     public static double vArtifact = 0.12;
 
     public void update() {
-        follower.update();
+        //follower.update();
 
         Pose goal = new Pose(xGoal, yGoal, 0);
 
@@ -128,9 +132,9 @@ public class Flywheel {
             velC = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[0], ShooterConst.centerS[
                     2]);
 
-            lDelt = calculatePowerToDist(
-                    distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1] + diff, ShooterConst.leftS[3] + diff
-            );
+//            lDelt = calculatePowerToDist(
+//                    distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1] + diff, ShooterConst.leftS[3] + diff
+//            );
             rPos = calculatePowerToDist(
                     distToTarget, minDistNear, maxDistNear, ShooterConst.rightS[1] + diff, ShooterConst.rightS[3]  + diff
             );
@@ -190,7 +194,7 @@ public class Flywheel {
         lMotor.setPower(powerL);
         cMotor.setPower(powerC);
 
-        l.setPosition(1-(rPos+lDelt));
+        l.setPosition(1-(rPos-lDelt));
         r.setPosition(rPos);
         c.setPosition(1-cPos);
         if (debug) {

@@ -24,19 +24,19 @@ public class ShooterConst {
 
             1970,
             1-0.25,
-            2150,
+            2220,
             1-0.4
     };
     public static double[] centerS = {
             1400,
-            1-0.14,
+            0.1,
             1800,
             1-0.4,
 
             1970,
-            0.2,
-            2150,
-            0.1
+            0.8,
+            2220,
+            0.85
     };
     public static double[] rightS = {
             1420,
@@ -45,8 +45,8 @@ public class ShooterConst {
             0.55,
 
             1970,
-            0.62,
-            2150,
-            0.85
+            0.65,
+            2220,
+            0.69
     };
 }

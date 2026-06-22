@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class FarAuto extends OpMode {
+public class PedroAutonomous extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
@@ -41,9 +41,7 @@ public class FarAuto extends OpMode {
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(P(-58, -47, 145));
-
+        follower = Boot.follower;
 
         paths = new Paths(follower);
 
@@ -129,6 +127,19 @@ public class FarAuto extends OpMode {
                 follow(follower, paths.shoot4),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(250)
+              /*
+
+
+
+                parallel(follow(follower, paths.eat4),
+                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                waitMs(400),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shootAndPark5),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT))
+
+               */
         );
 
         panelsTelemetry.debug("Status", "Initialized");
@@ -269,13 +280,6 @@ public class FarAuto extends OpMode {
         return new Pose(x, y);
     }
 
-    public static Pose P(double x, double y, double h) {
-        if (Boot.alliance == ALLIANCE.RED) {
-            return new Pose(-x, -y, Math.toRadians(h) + Math.PI);
-        }
-        return new Pose(x, y);
-    }
-
     public static double H(double deg) {
         double rad = Math.toRadians(deg);
         if (Boot.alliance == ALLIANCE.RED) {
@@ -288,5 +292,10 @@ public class FarAuto extends OpMode {
     public int autonomousPathUpdate() {
 
         return 0;
+    }
+
+    @Override
+    public void stop() {
+     //   fsm.stop();
     }
 }

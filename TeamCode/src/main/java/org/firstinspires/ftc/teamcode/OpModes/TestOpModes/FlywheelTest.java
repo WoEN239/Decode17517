@@ -8,17 +8,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @TeleOp
-public class TurretTest extends OpMode {
+public class FlywheelTest extends OpMode {
     @Override
     public void init() {
-        turret1 = hardwareMap.get(Servo.class,"turret1");
-        turret2 = hardwareMap.get(Servo.class,"turret2");
-
-        ((PwmControl)turret1).setPwmRange(new PwmControl.PwmRange(500.0, 2500.0));
-        ((PwmControl)turret2).setPwmRange(new PwmControl.PwmRange(500.0, 2500.0));
+        banan = hardwareMap.get(Servo.class,"banan_c");
     }
-    Servo turret1;
-    Servo turret2;
+    Servo banan;
+
     ElapsedTime deltaTime = new ElapsedTime();
     @Override
     public void loop() {
@@ -26,8 +22,6 @@ public class TurretTest extends OpMode {
         deltaTime.reset();
         FtcDashboard.getInstance().getTelemetry().update();
 
-
-        turret1.setPosition(1);
-        turret2.setPosition(0);
+        banan.setPosition(0.5);
     }
 }

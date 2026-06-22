@@ -59,6 +59,7 @@ public class Tele extends OpMode {
 
     @Override
     public void init() {
+//         follower = Boot.follower;
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(0, 0, PI));
 
@@ -73,7 +74,7 @@ public class Tele extends OpMode {
         motor_rb = hardwareMap.get(DcMotorEx.class,"motor_rb");
         motor_lb = hardwareMap.get(DcMotorEx.class,"motor_lb");
 
-        hardwareMap.getAll(LynxModule.class).forEach(i->i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO));
+        //hardwareMap.getAll(LynxModule.class).forEach(i->i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO));
     }
 
     @Override
@@ -85,8 +86,8 @@ public class Tele extends OpMode {
     ElapsedTime deltaTime = new ElapsedTime();
     @Override
     public void loop() {
-        fsm.update();
         follower.poseTracker.update();
+        fsm.update();
 
         if (gamepad1.left_trigger > 0.1) {
             fsm.setState(FSM_STATE.REVERSE);
@@ -159,10 +160,15 @@ public class Tele extends OpMode {
         double rb = x + h - y;
         double lb = x - h + y;
 
-        follower.getDrivetrain().runDrive(
-                new double[]{lf,lb,rf,rb}
-        );
+//        follower.getDrivetrain().runDrive(
+//                new double[]{lf,lb,rf,rb}
+//        );
+        runDrive(lf,rf,rb,lb);
         FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
+
+        FtcDashboard.getInstance().getTelemetry().addData("jx",gamepad1.left_stick_y);
+        FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
+
         deltaTime.reset();
         lastTime = System.nanoTime();
         FtcDashboard.getInstance().getTelemetry().update();
@@ -191,5 +197,8 @@ public class Tele extends OpMode {
         motor_lb.setPower(lb);
     }
 
-
+    @Override
+    public void stop() {
+        //fsm.stop();
+    }
 }

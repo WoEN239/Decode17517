@@ -40,7 +40,7 @@ public class Turret {
 
     public static double ENCODER_TICK_PER_REV = 8192.0;
     public static double GEAR_RATIO = 15.0/130.0;
-    public static double START_OFFSET = -Math.PI * 0.;
+    public static double START_OFFSET;
 
 
     DcMotorEx enc;

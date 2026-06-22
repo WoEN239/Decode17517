@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -86,7 +87,10 @@ public class DeviceTest extends LinearOpMode {
         telemetry.update();
         waitForStart();
         telemetry.update();
+        ElapsedTime deltaTime = new ElapsedTime();
         while (opModeIsActive()) {
+            FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
+            deltaTime.reset();
             try {
                 HardwareDevice hardwareDevice = hardwareMap.get(deviceName);
                 deviceType = getDeviceClass(hardwareDevice);

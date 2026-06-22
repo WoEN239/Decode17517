@@ -38,13 +38,18 @@ public class Transfer {
 
 
 
-    STATE state = STATE.UP;
+    private STATE state = STATE.UP;
 
     public void setState(STATE state){
-        this.state = state;timer.reset();
+        this.state = state;
     }
     private ElapsedTime timer = new ElapsedTime();
+    STATE lastState =  STATE.UP;
     public void update(){
+        if(lastState != state){
+            timer.reset();
+        }
+        lastState = state;
         switch (state){
             case UP:
                 r.setPosition(upR);
@@ -57,10 +62,10 @@ public class Transfer {
                 c.setPosition(downC);
                 break;
             case DRIVE:
-                r.setPosition(Math.max(downR - (midR-downR)/0.25 * timer.seconds(),midR));
-
-                l.setPosition(midL);
-                c.setPosition(midC);
+                double t = timer.seconds();
+                r.setPosition(Math.max(downR -  Math.abs(midR-downR)/0.25 * t,midR));
+                l.setPosition(Math.min(downL + Math.abs(midL-downL)/0.25 * t, midL));
+                c.setPosition(Math.min(downC + Math.abs(midC-downC)/0.25 * t, midC));
                 break;
             case LEFT:
                 l.setPosition(upL);
