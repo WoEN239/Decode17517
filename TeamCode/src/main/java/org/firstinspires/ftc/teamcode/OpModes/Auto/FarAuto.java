@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class PedroAutonomous extends OpMode {
+public class FarAuto extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
