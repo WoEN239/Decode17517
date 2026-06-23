@@ -92,6 +92,7 @@ public class Turret {
 
     public double getAngleFromEnc(){
         int currentTick = enc.getCurrentPosition();
+        FtcDashboard.getInstance().getTelemetry().addData("turret tks", currentTick);
         double encoderRev = currentTick / ENCODER_TICK_PER_REV;
         double turretRevs = encoderRev * GEAR_RATIO;
         double turretRadians = turretRevs * 2.0 * Math.PI;
@@ -101,6 +102,7 @@ public class Turret {
 
     public double getVelFromEnc(){
         double currentTick = enc.getVelocity();
+
         double encoderRev = currentTick / ENCODER_TICK_PER_REV;
         double turretRevs = encoderRev * GEAR_RATIO;
         double turretRadians = turretRevs * 2.0 * Math.PI;
@@ -113,7 +115,7 @@ public class Turret {
 
         gyro.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
 
-        double turretAngle = MathFunctions.normalizeAngleSigned(gyro.getHeading(AngleUnit.RADIANS) - robotAngle.get() - PI*0.5) ;//
+        double turretAngle = getAngleFromEnc();//MathFunctions.normalizeAngleSigned(gyro.getHeading(AngleUnit.RADIANS) - robotAngle.get() - PI*0.5) ;//
 
         turretPid.setCoefficients(turretPidC);
         double ff = robotAngleVel* kTrans + robotVel.get()* kAngular;
@@ -144,7 +146,7 @@ public class Turret {
         FtcDashboard.getInstance().getTelemetry().addData("angle target rf", angleRF);
         FtcDashboard.getInstance().getTelemetry().addData("robotAngle", robotAngle.get());
         FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd", Math.toDegrees(turretAngle));
-        FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd enc", Math.toDegrees(getAngleFromEnc()));
+      //  FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd enc", Math.toDegrees(getAngleFromEnc()));
         FtcDashboard.getInstance().getTelemetry().addData("turret Angle ffd", Math.toDegrees(gyro.getHeading(AngleUnit.RADIANS)));
         FtcDashboard.getInstance().getTelemetry().addData("turret err", Math.toDegrees(err));
         FtcDashboard.getInstance().getTelemetry().addData("turret vel", Math.toDegrees(getVelFromEnc()));

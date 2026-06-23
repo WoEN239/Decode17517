@@ -40,7 +40,7 @@ public class LimeLight {
     public static double searchRadius = 8;
 
     public enum SIDE_OF_FIELD {
-        LEFT, CENTER_R, CENTER_L, RIGHT
+        LEFT, CENTER_R, CENTER_L, LimeLight, RIGHT
     }
 
     SIDE_OF_FIELD theBiggestCounter = SIDE_OF_FIELD.RIGHT;

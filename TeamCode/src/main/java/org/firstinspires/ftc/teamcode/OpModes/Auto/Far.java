@@ -26,6 +26,8 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.Pose;
 
+import java.util.Objects;
+
 
 @Autonomous
 @Configurable // Panels
@@ -43,6 +45,13 @@ public class Far extends OpMode {
         Boot.startPose = follower.getPose();
         fsm.turret.stopTurret();
     }
+
+    Command eatPreloadChain;
+    Command eatPreloadHm;
+    Command eatMidLeftChan;
+    Command eatRightChain;
+    Command eatMidRightChain;
+
 
     @Override
     public void init() {
@@ -64,71 +73,111 @@ public class Far extends OpMode {
 
         Scheduler.reset();
 
+        eatPreloadChain = sequential(instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                waitMs(1000),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(350),
+                parallel(follow(follower, paths.eat1),
+                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                waitMs(200),
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+
+                follow(follower, paths.shoot2),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(350));
+
+         eatPreloadHm = sequential(parallel(race(follow(follower, paths.eat2),
+                                waitMs(1000)),
+                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                waitMs(350),
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+
+                follow(follower, paths.shoot3),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(350));
+
+         eatMidLeftChan = sequential(parallel(race(follow(follower, paths.eat3),
+                                waitMs(1000)),
+                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                waitMs(350),
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot4),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(350));
+
+         eatMidRightChain = sequential(parallel(race(follow(follower, paths.eat4),
+                                waitMs(1000)),
+                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                waitMs(350),
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot5),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(350));
+
+         eatRightChain = sequential(parallel(race(follow(follower, paths.eat5),
+                                waitMs(1000)),
+                        instant(() -> fsm.setState(FSM_STATE.EAT))),
+                waitMs(350),
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot6),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(350));
+
         panelsTelemetry.debug("Status", "Initialized");
         panelsTelemetry.update(telemetry);
 
         Command command = sequential(
                 eatPreloadChain,
-                eatPreloadChain,
+                eatPreloadHm,
                 waitMs(500),
-                instant(()-> limeLight.getTheCounter())
-
-                );
+                instant(this::startNextCycle)
 
 
+        );
         Scheduler.schedule(command);
         fsm.turret.lock(true, 0.2903);
     }
 
-    Command eatPreloadChain = sequential(instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-            waitMs(1000),
-            instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-            waitMs(350),
-            parallel(follow(follower, paths.eat1),
-                    instant(() -> fsm.setState(FSM_STATE.EAT))),
-            waitMs(200),
-            instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+    int countCycle = 0;
 
-            follow(follower, paths.shoot2),
-            instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-            waitMs(350));
+    private void startNextCycle() {
 
-    Command eatPreloadHm = sequential(parallel(race(follow(follower, paths.eat2),
-                            waitMs(1000)),
-                    instant(() -> fsm.setState(FSM_STATE.EAT))),
-            waitMs(350),
-            instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+        if (countCycle >= 9) {
+            Scheduler.schedule((Command) paths.park);
+            return;
+        }
 
-            follow(follower, paths.shoot3),
-            instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-            waitMs(350));
 
-    Command eatMidLeftChan = sequential(parallel(race(follow(follower, paths.eat3),
-                            waitMs(1000)),
-                    instant(() -> fsm.setState(FSM_STATE.EAT))),
-            waitMs(350),
-            instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-            follow(follower, paths.shoot4),
-            instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-            waitMs(350));
+        Command selected = eatMidLeftChan;
 
-    Command eatMidRightChain = sequential(parallel(race(follow(follower, paths.eat4),
-                            waitMs(1000)),
-                    instant(() -> fsm.setState(FSM_STATE.EAT))),
-            waitMs(350),
-            instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-            follow(follower, paths.shoot5),
-            instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-            waitMs(350));
+        LimeLight.SIDE_OF_FIELD sideOfField = limeLight.getTheCounter();
+        if (sideOfField == LimeLight.SIDE_OF_FIELD.LEFT) {
+            selected = eatPreloadHm;
+        } else {
+            if (sideOfField == LimeLight.SIDE_OF_FIELD.RIGHT) {
+                selected = (eatRightChain);
+            } else if (sideOfField == LimeLight.SIDE_OF_FIELD.CENTER_L) {
+                selected = (eatMidLeftChan);
+            } else if (sideOfField == LimeLight.SIDE_OF_FIELD.CENTER_R) {
+                selected = (eatMidRightChain);
+            }
+        }
 
-    Command eatRightChain = sequential(parallel(race(follow(follower, paths.eat5),
-                            waitMs(1000)),
-                    instant(() -> fsm.setState(FSM_STATE.EAT))),
-            waitMs(350),
-            instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-            follow(follower, paths.shoot6),
-            instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-            waitMs(350));
+        Command cycleTime = sequential(
+                selected,
+                instant(() -> {
+                            countCycle++;
+                            startNextCycle();
+                        }
+                )
+        );
+
+        Scheduler.schedule(cycleTime);
+
+    }
+
+
+
 
 
     @Override
@@ -139,6 +188,7 @@ public class Far extends OpMode {
         fsm.update();
 
         limeLight.update();
+
 
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
