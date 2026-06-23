@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 @Autonomous
 @Configurable // Panels
-public class NearAuto extends OpMode {
+public class Solo extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
@@ -58,9 +58,9 @@ public class NearAuto extends OpMode {
         Command autoRoutine = sequential(
 
                 follow(follower, paths.shoot1),
-                waitMs(150),
+                waitMs(50),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150),
+                waitMs(300),
 
 
                 parallel(follow(follower, paths.eat1),
@@ -68,9 +68,9 @@ public class NearAuto extends OpMode {
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
 
                 follow(follower, paths.shoot2),
-                waitMs(200),
+                waitMs(50),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150),
+                waitMs(300),
 
 
                 parallel(race(follow(follower, paths.eatAndOpenGate1),
@@ -81,9 +81,9 @@ public class NearAuto extends OpMode {
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
                 follow(follower, paths.shoot3),
-                waitMs(200),
+                waitMs(20),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150),
+                waitMs(300),
 
                 race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
@@ -92,9 +92,9 @@ public class NearAuto extends OpMode {
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
                 follow(follower, paths.shoot4),
-                waitMs(150),
+                waitMs(50),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150),
+                waitMs(300),
                 race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200)),
@@ -102,9 +102,9 @@ public class NearAuto extends OpMode {
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
                 follow(follower, paths.shoot4),
-                waitMs(150),
+                waitMs(50),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(250),
+                waitMs(300),
                 race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200)),
@@ -112,9 +112,9 @@ public class NearAuto extends OpMode {
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
                 follow(follower, paths.shoot4),
-                waitMs(150),
+                waitMs(50),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150),
+                waitMs(300),
                 race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200)),
@@ -122,19 +122,19 @@ public class NearAuto extends OpMode {
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
                 follow(follower, paths.shoot4),
-                waitMs(150),
+                waitMs(50),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150),
+                waitMs(300),
                 race(parallel(follow(follower, paths.eat3),
                                 instant(() -> fsm.setState(FSM_STATE.EAT))),
                         waitMs(1200)),
                 waitMs(2000),
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-                waitMs(150),
+                waitMs(50),
                 follow(follower, paths.shoot4),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(150)
+                waitMs(300)
               /*
 
 
@@ -223,12 +223,9 @@ public class NearAuto extends OpMode {
                             new BezierCurve(
                                     P(-13, -22),
                                     P(13, -25),
-                                    P(13, -55),
-
-
-
-                                   P(3, -20),
-                                  P(3, -52.4)
+                                    P(13, -55)
+                                    // P(3, -20),
+                                    //        P(3, -52.4)
                             )
                     )
                     .setLinearHeadingInterpolation(H(90), H(90)).setTranslationalConstraint(0.75)
@@ -249,7 +246,7 @@ public class NearAuto extends OpMode {
                             new BezierCurve(
                                     P(-13, -22),
                                     P(11, -44),
-                                    P(11, -58.7)
+                                    P(11, -59.7)
                             )
                     )
                     .setLinearHeadingInterpolation(H(90), H(60)).setTranslationalConstraint(0.75)

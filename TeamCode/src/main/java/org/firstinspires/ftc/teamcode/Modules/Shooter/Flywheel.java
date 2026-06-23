@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Modules.Shooter;
 
+import static org.firstinspires.ftc.teamcode.Modules.FSM.kT;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -8,6 +10,7 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -56,19 +59,20 @@ public class Flywheel {
     public static double maxDistFar = 164;
 
     public static double xGoal = -70;
-    public static double yGoal = -70;
+    public static double yGoal = -65;
 
     public static double xGoalFar = -70;
-    public static double yGoalFar = -68;
+    public static double yGoalFar = -65;
 
     public static double diff = 0;
 
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
         this.follower = follower;
-        lMotor = hardwareMap.get(CashedMotor.class, "gun_l");
-        rMotor = hardwareMap.get(CashedMotor.class, "gun_r");
-        cMotor = hardwareMap.get(CashedMotor.class, "gun_c");
+        lMotor = new CashedMotor(hardwareMap.get(DcMotorEx.class, "gun_l"));
+        rMotor = new CashedMotor(hardwareMap.get(DcMotorEx.class, "gun_r"));
+        cMotor = new CashedMotor(hardwareMap.get(DcMotorEx.class, "gun_c"));
+
         lMotor.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
         cMotor.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
         rMotor.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
@@ -85,9 +89,9 @@ public class Flywheel {
 
 
           if (Boot.alliance == ALLIANCE.RED) {
-           xGoal = -xGoal;
+           xGoal = xGoal;
            yGoal = -yGoal;
-           xGoalFar = -xGoalFar;
+           xGoalFar = xGoalFar;
            yGoalFar = -yGoalFar;
          }
     }
@@ -123,7 +127,17 @@ public class Flywheel {
         rPIDFCotroler.setCoefficients(flywheelMotorCoef);
         cPIDFCotroler.setCoefficients(flywheelMotorCoef);
 
-        if (distToTarget < 115) {
+        if (distToTarget < 120) {
+            Pose robotPose = follower.getPose();
+            Vector robotVel =  follower.getVelocity();
+
+            double dX = xGoal - robotPose.getX();
+            double dY = yGoal - robotPose.getY();
+
+            double absoluteAngleToGoal = Math.atan2(dY, dX);
+
+
+            double velFix = robotVel.getMagnitude()*Math.cos(absoluteAngleToGoal)*kT;
 
 
             velL = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[0], ShooterConst.leftS[
@@ -132,6 +146,10 @@ public class Flywheel {
                     2]);
             velC = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[0], ShooterConst.centerS[
                     2]);
+
+            velL += velFix;
+            velR += velFix;
+            velC += velFix;
 
 //            lDelt = calculatePowerToDist(
 //                    distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1] + diff, ShooterConst.leftS[3] + diff

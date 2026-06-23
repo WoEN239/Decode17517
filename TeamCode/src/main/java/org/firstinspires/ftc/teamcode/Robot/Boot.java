@@ -9,9 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
 
@@ -27,38 +25,45 @@ public class Boot extends LinearOpMode {
 
     public static ALLIANCE alliance = ALLIANCE.BLUE;
 
+    public static Pose startPose;
+    public static double turret_start_offset = 0;
+    public static double turret_start_angle  =PI*0.5;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         boolean oldCross = false;
+        follower = Constants.getInstance().createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(0,0, PI));
 
         waitForStart();
-        Turret.START_OFFSET = 0;
+        turret_start_offset = 0;
+        turret_start_angle = -PI*0.5;
+
         while (opModeIsActive()) {
+            follower.update();
             boolean cross = gamepad1.cross;
             if(gamepad1.left_bumper)
                 alliance = ALLIANCE.RED;
             if(gamepad1.right_bumper)
                 alliance = ALLIANCE.BLUE;
 
+            if(gamepad1.dpadDownWasPressed()){
+                startPose=null ;
+            }
+            if(gamepad1.dpadUpWasPressed()){
+                startPose = follower.getPose();
+            }
+
             FtcDashboard.getInstance().getTelemetry().addData("ALLIANCE", alliance);
+
             telemetry.addData("ALLIANCE", alliance);
+            telemetry.addData("pose",follower.getPose());
+            telemetry.addData("start",startPose==null?"null":startPose);
+
             telemetry.update();
 
-            if(gamepad1.dpadDownWasPressed()){
-                follower = Constants.createFollower(hardwareMap);
-                if(alliance == ALLIANCE.BLUE) {
-                    follower.setStartingPose(new Pose(0, 0, PI));
-                    //follower.setStartingPose(new Pose(-58, -47, Math.toRadians(145)));
-                }else{
-                    //follower.setStartingPose(new Pose(-58, -47, -Math.toRadians(145)));
-                }
-                follower.drivetrain.breakFollowing() ;
-
-                follower.update();
-
-            }
         }
 
 

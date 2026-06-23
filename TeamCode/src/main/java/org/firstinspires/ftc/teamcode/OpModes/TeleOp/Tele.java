@@ -1,15 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import static com.pedropathing.math.MathFunctions.normalizeAngle;
 import static com.pedropathing.math.MathFunctions.normalizeAngleSigned;
 import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.field.FieldManager;
-import com.bylazar.field.PanelsField;
-import com.bylazar.field.Style;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.control.PIDFCoefficients;
@@ -17,7 +13,7 @@ import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
-import com.qualcomm.hardware.lynx.LynxModule;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -25,6 +21,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
+import org.firstinspires.ftc.teamcode.Modules.Shooter.Flywheel;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 import org.firstinspires.ftc.teamcode.Robot.Boot;
@@ -37,16 +34,11 @@ public class Tele extends OpMode {
     private Follower follower;
     private TelemetryManager telemetryM;
 
-    public static final double ROBOT_RADIUS = 9;
-    private static final FieldManager panelsField = PanelsField.INSTANCE.getField();
-
-    private static final Style robotLook = new Style("", "#3F51B5", 0.75);
-
     FSM fsm = new FSM();
 
     boolean isAngleControl = true;
     double angleToControl = PI * 0.5;
-    public static PIDFCoefficients anglePidC = new PIDFCoefficients(1, 0, 0, 0);
+    public static PIDFCoefficients anglePidC = new PIDFCoefficients(2.5, 0, 0.1, 0);
     private PIDFController anglePid = new PIDFController(anglePidC);
 
     boolean old_left_bumper = false;
@@ -54,15 +46,14 @@ public class Tele extends OpMode {
     boolean isItReversed = false;
 
     ElapsedTime telemetryTimer = new ElapsedTime();
-    public static double wX = 1;
-    public static double wY = 1;
-    public static double wH = 0.85;
+    public static double wX = 0.8;
+    public static double wY = 0.8;
+    public static double wH = 0.95;
 
     @Override
     public void init() {
-//         follower = Boot.follower;
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(0, 0, PI));
+        follower = Constants.getInstance().createFollower(hardwareMap);
+        follower.setStartingPose(Boot.startPose != null ? Boot.startPose :new Pose(0, 0, PI));
 
 
         follower.drivetrain.breakFollowing() ;
@@ -70,10 +61,10 @@ public class Tele extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        motor_lf = hardwareMap.get(CashedMotor.class,"motor_lf");
-        motor_rf = hardwareMap.get(CashedMotor.class,"motor_rf");
-        motor_rb = hardwareMap.get(CashedMotor.class,"motor_rb");
-        motor_lb = hardwareMap.get(CashedMotor.class,"motor_lb");
+        motor_lf = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_lf"));
+        motor_rf = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_rf"));
+        motor_rb = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_rb"));
+        motor_lb = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_lb"));
 
         //hardwareMap.getAll(LynxModule.class).forEach(i->i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO));
     }
@@ -90,6 +81,28 @@ public class Tele extends OpMode {
         follower.poseTracker.update();
         fsm.update();
 
+        if(gamepad2.dpadUpWasPressed()){
+            Flywheel.yGoal -= 1;
+            Flywheel.yGoalFar -= 1;
+        }
+
+        if(gamepad2.dpadDownWasPressed()){
+            Flywheel.yGoal += 1;
+            Flywheel.yGoalFar += 1;
+        }
+        if(gamepad2.dpadRightWasPressed()){
+            Boot.turret_start_offset += 0.01;
+        }
+        if(gamepad2.dpadLeftWasPressed()){
+            Boot.turret_start_offset -= 0.01;
+        }
+        telemetry.addData("xGoal",Flywheel.xGoal);
+        telemetry.addData("yGoal",Flywheel.yGoal);
+        telemetry.addData("xGoalFar",Flywheel.xGoalFar);
+        telemetry.addData("yGoalFar",Flywheel.yGoalFar);
+
+        telemetry.addData("start offset",Boot.turret_start_offset);
+        telemetry.update();
         if (gamepad1.left_trigger > 0.1) {
             fsm.setState(FSM_STATE.REVERSE);
             isItReversed = true;
@@ -152,7 +165,7 @@ public class Tele extends OpMode {
         isAngleControl = gamepad1.right_trigger>0.1;
         if(isAngleControl){
             anglePid.setCoefficients(anglePidC);
-            anglePid.updateError( normalizeAngle(angleToControl-follower.getHeading()) );
+            anglePid.updateError( normalizeAngleSigned(angleToControl-follower.getHeading()) );
             h = anglePid.run();
         }
 
@@ -161,10 +174,10 @@ public class Tele extends OpMode {
         double rb = x + h - y;
         double lb = x - h + y;
 
-//        follower.getDrivetrain().runDrive(
-//                new double[]{lf,lb,rf,rb}
-//        );
-        runDrive(lf,rf,rb,lb);
+        follower.getDrivetrain().runDrive(
+                new double[]{lf,lb,rf,rb}
+        );
+       // runDrive(lf,rf,rb,lb);
         FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
 
         FtcDashboard.getInstance().getTelemetry().addData("jx",gamepad1.left_stick_y);

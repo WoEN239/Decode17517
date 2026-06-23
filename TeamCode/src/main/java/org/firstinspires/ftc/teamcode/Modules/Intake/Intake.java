@@ -10,13 +10,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Util.CashedMotor;
 
 @Configurable
 @Config
 public class Intake {
     public static double maxPower = 1;
     public static boolean debug = false;
-    private DcMotorEx brush;
+    private CashedMotor brush;
     private double power = maxPower;
     private State currentState = State.ON;
 
@@ -25,8 +26,8 @@ public class Intake {
     }
 
     public void start(HardwareMap hardwareMap){
-        brush = hardwareMap.get(DcMotorEx.class, "brush");
-        brush.setDirection(DcMotorSimple.Direction.FORWARD);
+        brush =new CashedMotor(hardwareMap.get(DcMotorEx.class, "brush"));
+        brush.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void setState(State newState) {
@@ -54,7 +55,7 @@ public class Intake {
             FtcDashboard dashboard = FtcDashboard.getInstance();
             TelemetryPacket packet = new TelemetryPacket();
             packet.put("Intake State", currentState.toString());
-            packet.put("Intake Current ", brush.getCurrent(CurrentUnit.AMPS));
+            packet.put("Intake Current ", brush.getMotor().getCurrent(CurrentUnit.AMPS));
             dashboard.sendTelemetryPacket(packet);
         }
     }

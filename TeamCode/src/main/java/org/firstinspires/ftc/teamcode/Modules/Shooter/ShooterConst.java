@@ -36,7 +36,7 @@ public class ShooterConst {
             1970,
             0.8,
             2220,
-            0.85
+            0.92
     };
     public static double[] rightS = {
             1420,

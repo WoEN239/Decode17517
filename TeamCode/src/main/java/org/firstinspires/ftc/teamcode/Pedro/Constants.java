@@ -17,13 +17,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
-    public static FollowerConstants followerConstants = new FollowerConstants()
+    public  FollowerConstants followerConstants = new FollowerConstants()
             .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0)) // tuned constants
             .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.1, 0.029896583867  , 0.002591709039)) // (kP, kLinear, kQuadratic)
             .centripetalScaling(0)
     ;
 
-    public static MecanumConstants driveConstants = new MecanumConstants()
+    public  MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("motor_lf")
             .leftRearMotorName("motor_lb")
             .rightFrontMotorName("motor_rf")
@@ -37,7 +37,7 @@ public class Constants {
             .xVelocity(83.6)
             .yVelocity(66);
 
-    public static PinpointConstants localizerConstants = new PinpointConstants()
+    public  PinpointConstants localizerConstants = new PinpointConstants()
             .forwardPodY(7.3530)
             .strafePodX(-0.8306)
             .distanceUnit(DistanceUnit.INCH)
@@ -65,11 +65,14 @@ public class Constants {
     );
 
     //Add custom localizers or drivetrains here
-    public static Follower createFollower(HardwareMap hardwareMap) {
+    public  Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .mecanumDrivetrain(driveConstants)
                 .pinpointLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .build();
+    }
+    public static Constants getInstance(){
+        return new Constants();
     }
 }

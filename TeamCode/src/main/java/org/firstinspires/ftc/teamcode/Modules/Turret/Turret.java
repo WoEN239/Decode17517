@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Modules.Turret;
 
+import static org.firstinspires.ftc.teamcode.Robot.Boot.turret_start_angle;
+import static org.firstinspires.ftc.teamcode.Robot.Boot.turret_start_offset;
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.signum;
 
@@ -10,23 +13,25 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.math.MathFunctions;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Supplier;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 @Configurable
 @Config
 public class Turret {
 
-    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.5,0,0.05,0);
+    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.8,0,0.04,0);
 
-    public static double kTrans = 0.2;
-    public static double kAngular = -0.14;
+    public static double kTrans = 0.175;
+    public static double kAngular = -0.1;
 
     private PIDFController turretPid = new PIDFController(turretPidC);
 
@@ -40,17 +45,22 @@ public class Turret {
 
     public static double ENCODER_TICK_PER_REV = 8192.0;
     public static double GEAR_RATIO = 15.0/130.0;
-    public static double START_OFFSET;
 
+    private GoBildaPinpointDriver gyro;
 
     DcMotorEx enc;
     public void start(HardwareMap hardwareMap, Supplier<Double> robotAngle,Supplier<Double> robotVel ) {
         turret1 = hardwareMap.get(Servo.class,"turret1");
         turret2 = hardwareMap.get(Servo.class,"turret2");
         turret0 = hardwareMap.get(Servo.class,"turret0");
-        ((PwmControl)turret1).setPwmRange(new PwmControl.PwmRange(500.0, 2500.0));
-        ((PwmControl)turret2).setPwmRange(new PwmControl.PwmRange(500.0, 2500.0));
-        ((PwmControl)turret0).setPwmRange(new PwmControl.PwmRange(500.0, 2500.0));
+
+        gyro = hardwareMap.get(GoBildaPinpointDriver.class,"turret_gyro");
+        gyro.setHeading(-0.5*PI, AngleUnit.RADIANS);
+        gyro.recalibrateIMU();
+
+        turret0.setPosition(0.5);
+        turret1.setPosition(0.5);
+        turret2.setPosition(0.5);
 
 
         enc = hardwareMap.get(DcMotorEx.class, "motor_lb");
@@ -75,7 +85,7 @@ public class Turret {
         turret0 .setPosition(power);
     }
 
-    private double angleToHold = Math.PI*0.5;
+    private double angleToHold = -Math.PI*0.5;
     public void setAngleToHold(double angleToHold){
         this.angleToHold = angleToHold;
     }
@@ -86,8 +96,9 @@ public class Turret {
         double turretRevs = encoderRev * GEAR_RATIO;
         double turretRadians = turretRevs * 2.0 * Math.PI;
 
-        return MathFunctions.normalizeAngleSigned(-turretRadians + START_OFFSET);
+        return MathFunctions.normalizeAngleSigned(-turretRadians + turret_start_offset);
     }
+
     public double getVelFromEnc(){
         double currentTick = enc.getVelocity();
         double encoderRev = currentTick / ENCODER_TICK_PER_REV;
@@ -100,15 +111,20 @@ public class Turret {
 
     public void update(){
 
-        double turretAngle = getAngleFromEnc();
+        gyro.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
+
+        double turretAngle = MathFunctions.normalizeAngleSigned(gyro.getHeading(AngleUnit.RADIANS) - robotAngle.get() - PI*0.5) ;//
+
         turretPid.setCoefficients(turretPidC);
         double ff = robotAngleVel* kTrans + robotVel.get()* kAngular;
         double angleRF = angleToHold - (robotAngle.get() + Math.PI*0.5);
+        if(isLock){
+            angleRF = lockAngle;
+        }
         angleRF = MathFunctions.normalizeAngleSigned(angleRF);
         angleRF = MathFunctions.clamp(angleRF,-1.3,1.3);
 
         double err = MathFunctions.normalizeAngleSigned(angleRF - turretAngle);
-        err = MathFunctions.normalizeAngleSigned(err);
 
         turretPid.updateError(err);
         power = turretPid.run();
@@ -119,13 +135,17 @@ public class Turret {
             }
         }
 
-        driveTurret(power + ff);
+        if(isLock){
+            ff = 0;
+        }
 
-        FtcDashboard.getInstance().getTelemetry().addData("angle",Math.toDegrees(getAngleFromEnc()));
+        driveTurret(power + ff);
 
         FtcDashboard.getInstance().getTelemetry().addData("angle target rf", angleRF);
         FtcDashboard.getInstance().getTelemetry().addData("robotAngle", robotAngle.get());
-        FtcDashboard.getInstance().getTelemetry().addData("turretAngle", Math.toDegrees(turretAngle));
+        FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd", Math.toDegrees(turretAngle));
+        FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd enc", Math.toDegrees(getAngleFromEnc()));
+        FtcDashboard.getInstance().getTelemetry().addData("turret Angle ffd", Math.toDegrees(gyro.getHeading(AngleUnit.RADIANS)));
         FtcDashboard.getInstance().getTelemetry().addData("turret err", Math.toDegrees(err));
         FtcDashboard.getInstance().getTelemetry().addData("turret vel", Math.toDegrees(getVelFromEnc()));
         FtcDashboard.getInstance().getTelemetry().addData("turret FF", ff);
@@ -142,7 +162,16 @@ public class Turret {
         FtcDashboard.getInstance().getTelemetry().addData("power turret", power);
 
     }
+    private boolean isLock = false;
+    private double lockAngle = 0;
+    public void lock(boolean lock, double lockAngle){
+        isLock = lock;
+        this.lockAngle = lockAngle;
+    }
 
+    public void stopTurret(){
+        turret_start_offset = getAngleFromEnc();
+    }
 }
 
 

@@ -19,17 +19,13 @@ import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 @Config
 @Configurable
 public class FSM {
-    Turret turret = new Turret();
-    Flywheel flywheel = new Flywheel();
-    Intake intake = new Intake();
-    Transfer transfer = new Transfer();
-    HardwareMap hardwareMap;
+    public Turret turret = new Turret();
+    public Flywheel flywheel = new Flywheel();
+    public Intake intake = new Intake();
+    public Transfer transfer = new Transfer();
+    public HardwareMap hardwareMap;
     ElapsedTime timer = new ElapsedTime();
 
-
-    double rServo = Transfer.midR;
-    double lServo = Transfer.midL;
-    double cServo = Transfer.midC;
 
     public static double shootDelay = 0.065;
 
@@ -85,7 +81,7 @@ public class FSM {
                 if(timer.seconds() > shootDelay)
                     transfer.setState(Transfer.STATE.UP);
 
-                if (timer.seconds() > 0.1) {
+                if (timer.seconds() > 0.25) {
                     setState(FSM_STATE.EAT);
                     timer.reset();
                 }
@@ -126,7 +122,8 @@ public class FSM {
         }
     }
 
-    public static double kV = 0.35;
+    public static double kV = 0.1;
+    public static double kT = -1.5;
 
     double lastAngle = -Math.PI*0.5;
     public void update() {
@@ -135,11 +132,16 @@ public class FSM {
         updateStates();
         Pose robotPose = follower.getPose();
 
+        FtcDashboard.getInstance().getTelemetry().addData("timer", timer
+                .seconds());
+
         double x = Flywheel.xGoal;
         double y = Flywheel.yGoal;
         Vector robotVel = follower.getVelocity();
-        x-= robotVel.getXComponent()*kV;
-        y-= robotVel.getYComponent()*kV;
+        x -= kV*robotVel.getXComponent()*kV;
+        y -= kV*robotVel.getYComponent()*kV;
+
+
 
         if (robotPose.distanceFrom(new Pose(Flywheel.xGoal, Flywheel.yGoal, 0)) > 120){
             x = Flywheel.xGoalFar;
@@ -157,14 +159,13 @@ public class FSM {
 
         double absoluteAngleToGoal = Math.atan2(dY, dX);
 
-
         //FtcDashboard.getInstance().getTelemetry().addData("relative turret angle", Math.toDegrees(relativeTurretAngle));
         FtcDashboard.getInstance().getTelemetry().addData("dx", dX);
         FtcDashboard.getInstance().getTelemetry().addData("dY", dY);
 
         FtcDashboard.getInstance().getTelemetry().addData("x", robotPose.getX());
         FtcDashboard.getInstance().getTelemetry().addData("y", robotPose.getY());
-        FtcDashboard.getInstance().getTelemetry().addData("h", robotPose.getHeading());
+        FtcDashboard.getInstance().getTelemetry().addData("h", Math.toDegrees(robotPose.getHeading()));
 
         FtcDashboard.getInstance().getTelemetry().addData("x vel", follower.getVelocity().getXComponent());
         FtcDashboard.getInstance().getTelemetry().addData("y vel", follower.getVelocity().getYComponent());
