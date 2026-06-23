@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 import org.firstinspires.ftc.teamcode.Robot.Boot;
+import org.firstinspires.ftc.teamcode.Util.CashedMotor;
 import org.firstinspires.ftc.teamcode.Util.CashedServo;
 
 
@@ -30,9 +31,9 @@ public class Flywheel {
     private PIDFController cPIDFCotroler = new PIDFController(flywheelMotorCoef);
 
     private PIDFController rPIDFCotroler = new PIDFController(flywheelMotorCoef);
-    private DcMotorEx lMotor;
-    private DcMotorEx rMotor;
-    private DcMotorEx cMotor;
+    private CashedMotor lMotor;
+    private CashedMotor rMotor;
+    private CashedMotor cMotor;
 
     public static boolean debug = false;
 
@@ -65,18 +66,18 @@ public class Flywheel {
 
     public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
         this.follower = follower;
-        lMotor = hardwareMap.get(DcMotorEx.class, "gun_l");
-        rMotor = hardwareMap.get(DcMotorEx.class, "gun_r");
-        cMotor = hardwareMap.get(DcMotorEx.class, "gun_c");
-        lMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        cMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        rMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        lMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        cMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        cMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lMotor = hardwareMap.get(CashedMotor.class, "gun_l");
+        rMotor = hardwareMap.get(CashedMotor.class, "gun_r");
+        cMotor = hardwareMap.get(CashedMotor.class, "gun_c");
+        lMotor.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
+        cMotor.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
+        rMotor.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
+        lMotor.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rMotor.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        cMotor.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lMotor.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rMotor.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        cMotor.getMotor().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         r = new CashedServo(hardwareMap.get(Servo.class, "banan_r"));
         c = new CashedServo(hardwareMap.get(Servo.class, "banan_c"));
@@ -160,9 +161,9 @@ public class Flywheel {
 
         }
 
-        double errL = velL - lMotor.getVelocity();
-        double errC = velC - cMotor.getVelocity();
-        double errR = velR - rMotor.getVelocity();
+        double errL = velL - lMotor.getMotor().getVelocity();
+        double errC = velC - cMotor.getMotor().getVelocity();
+        double errR = velR - rMotor.getMotor().getVelocity();
 
 
         if (Math.abs(errL) < errorBorder) {
@@ -205,9 +206,9 @@ public class Flywheel {
             packet.put("Target Velocity L", velL * 0.00039);
 
 
-            packet.put("Current Velocity L", lMotor.getVelocity());
-            packet.put("Current Velocity C", cMotor.getVelocity());
-            packet.put("Current Velocity R", rMotor.getVelocity());
+            packet.put("Current Velocity L", lMotor.getMotor().getVelocity());
+            packet.put("Current Velocity C", cMotor.getMotor().getVelocity());
+            packet.put("Current Velocity R", rMotor.getMotor().getVelocity());
             packet.put("distance", distToTarget);
             packet.put("far", distToTarget > 150);
 

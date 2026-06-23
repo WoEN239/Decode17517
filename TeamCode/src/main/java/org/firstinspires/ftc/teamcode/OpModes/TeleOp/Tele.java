@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 import org.firstinspires.ftc.teamcode.Robot.Boot;
+import org.firstinspires.ftc.teamcode.Util.CashedMotor;
 
 @Configurable
 @Config
@@ -69,10 +70,10 @@ public class Tele extends OpMode {
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        motor_lf = hardwareMap.get(DcMotorEx.class,"motor_lf");
-        motor_rf = hardwareMap.get(DcMotorEx.class,"motor_rf");
-        motor_rb = hardwareMap.get(DcMotorEx.class,"motor_rb");
-        motor_lb = hardwareMap.get(DcMotorEx.class,"motor_lb");
+        motor_lf = hardwareMap.get(CashedMotor.class,"motor_lf");
+        motor_rf = hardwareMap.get(CashedMotor.class,"motor_rf");
+        motor_rb = hardwareMap.get(CashedMotor.class,"motor_rb");
+        motor_lb = hardwareMap.get(CashedMotor.class,"motor_lb");
 
         //hardwareMap.getAll(LynxModule.class).forEach(i->i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO));
     }
@@ -185,10 +186,10 @@ public class Tele extends OpMode {
     private PIDFController yPid = new PIDFController(yPidC);
     private PIDFController hPid = new PIDFController(hPidC);
 
-    DcMotorEx motor_lf;
-    DcMotorEx motor_rf;
-    DcMotorEx motor_rb;
-    DcMotorEx motor_lb;
+    CashedMotor motor_lf;
+    CashedMotor motor_rf;
+    CashedMotor motor_rb;
+    CashedMotor motor_lb;
 
     private void runDrive(double lf, double rf, double rb, double lb){
         motor_lf.setPower(lf);

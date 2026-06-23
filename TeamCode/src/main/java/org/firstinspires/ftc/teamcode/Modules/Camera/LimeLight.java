@@ -1,13 +1,19 @@
 package org.firstinspires.ftc.teamcode.Modules.Camera;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
+import org.firstinspires.ftc.teamcode.Robot.Boot;
+import org.opencv.core.Mat;
 
 import java.util.List;
 
@@ -21,6 +27,8 @@ public class LimeLight {
 
     public void start(HardwareMap hardwareMap){
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.start();
+        limelight.pipelineSwitch(0);
     }
 
 
@@ -72,8 +80,15 @@ public class LimeLight {
 
     double targetY = 0;
 
-    public double getTargetY(){
-        return targetY;
+    public double calculateY(){
+
+        double y = Math.round(0.1125 * targetY * 10)/10.0 ;
+        if(Boot.alliance == ALLIANCE.RED){
+            y = 72 - y;
+        }
+        return y = Range.clip(y,18,72);
+
+
     }
 
     public static double searchRadius = 8;
@@ -92,16 +107,16 @@ public class LimeLight {
             int maxObjects = (int) bestCluster[2];
 
 
-            telemetry.addData("Objects in frame", detections.size());
+            FtcDashboard.getInstance().getTelemetry().addData("Objects in frame", detections.size());
 
             if (maxObjects > 0) {
-                telemetry.addData("Biggest artifacts zone", maxObjects);
-                telemetry.addData("Coords", "%.2f, %.2f", targetX, targetY);
+                FtcDashboard.getInstance().getTelemetry().addData("Biggest artifacts zone", maxObjects);
+                FtcDashboard.getInstance().getTelemetry().addData("Coords", "%.2f, %.2f", targetX, targetY);
 
                 this.targetY = targetY;
 
             }
-            telemetry.update();
+            FtcDashboard.getInstance().getTelemetry().update();
         }
 
     }

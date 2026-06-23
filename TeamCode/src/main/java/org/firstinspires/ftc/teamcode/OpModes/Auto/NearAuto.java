@@ -20,14 +20,13 @@ import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
-import org.firstinspires.ftc.teamcode.Pedro.Constants;
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 
 @Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class FarAuto extends OpMode {
+public class NearAuto extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
