@@ -50,6 +50,7 @@ public class Tele extends OpMode {
     public static double wY = 0.8;
     public static double wH = 0.95;
 
+
     @Override
     public void init() {
         follower = Constants.getInstance().createFollower(hardwareMap);
@@ -65,6 +66,9 @@ public class Tele extends OpMode {
         motor_rf = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_rf"));
         motor_rb = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_rb"));
         motor_lb = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_lb"));
+
+        FSM.usingK = true;
+
 
         //hardwareMap.getAll(LynxModule.class).forEach(i->i.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO));
     }

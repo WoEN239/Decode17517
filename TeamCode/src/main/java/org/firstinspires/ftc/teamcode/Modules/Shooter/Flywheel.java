@@ -53,16 +53,16 @@ public class Flywheel {
     private Follower follower;
 
     public static double minDistNear = 57;
-    public static double maxDistNear = 100;
+    public static double maxDistNear = 108;
 
     public static double minDistFar = 123;
     public static double maxDistFar = 164;
 
     public static double xGoal = -70;
-    public static double yGoal = -65;
+    public static double yGoal = -70;
 
     public static double xGoalFar = -70;
-    public static double yGoalFar = -65;
+    public static double yGoalFar = -68;
 
     public static double diff = 0;
 
@@ -88,12 +88,12 @@ public class Flywheel {
         l = new CashedServo(hardwareMap.get(Servo.class, "banan_l"));
 
 
-          if (Boot.alliance == ALLIANCE.RED) {
-           xGoal = xGoal;
-           yGoal = -yGoal;
-           xGoalFar = xGoalFar;
-           yGoalFar = -yGoalFar;
-         }
+      if (Boot.alliance == ALLIANCE.RED) {
+            xGoal = xGoal;
+            yGoal = -yGoal;
+            xGoalFar = xGoalFar;
+            yGoalFar = -yGoalFar;
+     }
     }
 
     private double calculatePowerToDist(double dist2Tar, double minDist, double maxDist, double minVel2Tar, double maxVel2Tar) {
@@ -110,7 +110,7 @@ public class Flywheel {
     double velR;
     double velC;
 
-    public static double lDelt = -0.07;
+    public static double lDelt = -0.06;
     double rPos;
     double cPos;
 
@@ -119,9 +119,11 @@ public class Flywheel {
     public void update() {
         //follower.update();
 
+        Vector robotVel =  follower.getVelocity();
+
         Pose goal = new Pose(xGoal, yGoal, 0);
 
-        double distToTarget = goal.distanceFrom(follower.getPose());///add for future
+        double distToTarget = follower.getPose().distanceFrom(new Pose(Flywheel.xGoal + kT*robotVel.getXComponent(), Flywheel.yGoal + kT*robotVel.getYComponent()));///add for future
 
         lPIDFCotroler.setCoefficients(flywheelMotorCoef);
         rPIDFCotroler.setCoefficients(flywheelMotorCoef);
@@ -129,15 +131,11 @@ public class Flywheel {
 
         if (distToTarget < 120) {
             Pose robotPose = follower.getPose();
-            Vector robotVel =  follower.getVelocity();
-
             double dX = xGoal - robotPose.getX();
             double dY = yGoal - robotPose.getY();
 
             double absoluteAngleToGoal = Math.atan2(dY, dX);
 
-
-            double velFix = robotVel.getMagnitude()*Math.cos(absoluteAngleToGoal)*kT;
 
 
             velL = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[0], ShooterConst.leftS[
@@ -147,13 +145,8 @@ public class Flywheel {
             velC = calculatePowerToDist(distToTarget, minDistNear, maxDistNear, ShooterConst.centerS[0], ShooterConst.centerS[
                     2]);
 
-            velL += velFix;
-            velR += velFix;
-            velC += velFix;
 
-//            lDelt = calculatePowerToDist(
-//                    distToTarget, minDistNear, maxDistNear, ShooterConst.leftS[1] + diff, ShooterConst.leftS[3] + diff
-//            );
+
             rPos = calculatePowerToDist(
                     distToTarget, minDistNear, maxDistNear, ShooterConst.rightS[1] + diff, ShooterConst.rightS[3]  + diff
             );

@@ -25,7 +25,7 @@ public class Transfer {
     public static double downC = 0.2;
 
     public static double midL = 0.34;
-    public static double midR = 0.68;
+    public static double midR = 0.7;
     public static double midC = 0.35;
     public void start(HardwareMap hardwareMap){
         r = new CashedServo(hardwareMap.get(Servo.class, "upper_r"));

@@ -19,10 +19,10 @@ public class ShooterConst {
     public static double[] leftS = {
             1420,
             0.06,
-            1820,
+            1800,
             0.55,
 
-            1970,
+            1960,
             1-0.25,
             2220,
             1-0.4
@@ -36,17 +36,17 @@ public class ShooterConst {
             1970,
             0.8,
             2220,
-            0.92
+            0.95
     };
     public static double[] rightS = {
             1420,
             0.06,
-            1820,
+            1800,
             0.55,
 
-            1970,
+            1960,
             0.65,
             2220,
-            0.69
+            0.74
     };
 }

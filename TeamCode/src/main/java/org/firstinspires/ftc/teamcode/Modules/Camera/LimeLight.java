@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.OpModes.Auto.Far;
+
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 import org.firstinspires.ftc.teamcode.Robot.Boot;
 import org.opencv.core.Mat;

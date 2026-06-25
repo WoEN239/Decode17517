@@ -10,6 +10,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
 import org.firstinspires.ftc.teamcode.Pedro.Constants;
 
@@ -40,6 +41,8 @@ public class Boot extends LinearOpMode {
         waitForStart();
         turret_start_offset = 0;
         turret_start_angle = -PI*0.5;
+
+        FSM.usingK = false;
 
         while (opModeIsActive()) {
             follower.update();

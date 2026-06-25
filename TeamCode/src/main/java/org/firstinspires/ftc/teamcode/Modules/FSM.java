@@ -122,8 +122,10 @@ public class FSM {
         }
     }
 
-    public static double kV = 0.1;
-    public static double kT = -1.5;
+    public static double kV = 0.003;
+    public static double kT = -2;
+
+    public static boolean usingK = true;
 
     double lastAngle = -Math.PI*0.5;
     public void update() {
@@ -138,10 +140,11 @@ public class FSM {
         double x = Flywheel.xGoal;
         double y = Flywheel.yGoal;
         Vector robotVel = follower.getVelocity();
-        x -= kV*robotVel.getXComponent()*kV;
-        y -= kV*robotVel.getYComponent()*kV;
 
-
+        if(usingK) {
+            x -= robotVel.getXComponent() * kV;
+            y -= robotVel.getYComponent() * kV;
+        }
 
         if (robotPose.distanceFrom(new Pose(Flywheel.xGoal, Flywheel.yGoal, 0)) > 120){
             x = Flywheel.xGoalFar;

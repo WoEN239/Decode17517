@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.Robot.Boot;
 @Config
 public class Turret {
 
-    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.8,0,0.04,0);
+    public static PIDFCoefficients turretPidC = new PIDFCoefficients(0.6,0,0.03,0);
 
     public static double kTrans = 0.175;
     public static double kAngular = -0.1;
@@ -54,9 +54,9 @@ public class Turret {
         turret2 = hardwareMap.get(Servo.class,"turret2");
         turret0 = hardwareMap.get(Servo.class,"turret0");
 
-        gyro = hardwareMap.get(GoBildaPinpointDriver.class,"turret_gyro");
-        gyro.setHeading(-0.5*PI, AngleUnit.RADIANS);
-        gyro.recalibrateIMU();
+        //gyro = hardwareMap.get(GoBildaPinpointDriver.class,"turret_gyro");
+        //gyro.setHeading(-0.5*PI, AngleUnit.RADIANS);
+        //gyro.recalibrateIMU();
 
         turret0.setPosition(0.5);
         turret1.setPosition(0.5);
@@ -113,7 +113,7 @@ public class Turret {
 
     public void update(){
 
-        gyro.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
+        //gyro.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
 
         double turretAngle = getAngleFromEnc();//MathFunctions.normalizeAngleSigned(gyro.getHeading(AngleUnit.RADIANS) - robotAngle.get() - PI*0.5) ;//
 
@@ -147,7 +147,7 @@ public class Turret {
         FtcDashboard.getInstance().getTelemetry().addData("robotAngle", robotAngle.get());
         FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd", Math.toDegrees(turretAngle));
       //  FtcDashboard.getInstance().getTelemetry().addData("turret Angle rfd enc", Math.toDegrees(getAngleFromEnc()));
-        FtcDashboard.getInstance().getTelemetry().addData("turret Angle ffd", Math.toDegrees(gyro.getHeading(AngleUnit.RADIANS)));
+        //FtcDashboard.getInstance().getTelemetry().addData("turret Angle ffd", Math.toDegrees(gyro.getHeading(AngleUnit.RADIANS)));
         FtcDashboard.getInstance().getTelemetry().addData("turret err", Math.toDegrees(err));
         FtcDashboard.getInstance().getTelemetry().addData("turret vel", Math.toDegrees(getVelFromEnc()));
         FtcDashboard.getInstance().getTelemetry().addData("turret FF", ff);

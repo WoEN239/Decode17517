@@ -81,7 +81,7 @@ public class Solo extends OpMode {
 
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
                 follow(follower, paths.shoot3),
-                waitMs(20),
+                waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(300),
 
@@ -223,7 +223,7 @@ public class Solo extends OpMode {
                             new BezierCurve(
                                     P(-13, -22),
                                     P(13, -25),
-                                    P(13, -55)
+                                    P(13, -58)
                                     // P(3, -20),
                                     //        P(3, -52.4)
                             )
@@ -234,7 +234,7 @@ public class Solo extends OpMode {
             shoot3 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    P(3, -20),
+                                    P(13, -58),
                                     P(-13, -22)
                             )
                     )
@@ -246,7 +246,7 @@ public class Solo extends OpMode {
                             new BezierCurve(
                                     P(-13, -22),
                                     P(11, -44),
-                                    P(11, -59.7)
+                                    P(10.5, -59.7)
                             )
                     )
                     .setLinearHeadingInterpolation(H(90), H(60)).setTranslationalConstraint(0.75)
@@ -255,12 +255,12 @@ public class Solo extends OpMode {
             shoot4 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    P(11, -57.7),
-                                    P(8, -52.4),
+                                    P(10, -59.7),
+                                    P(15, -59.7),
                                     P(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(H(90), H(90))
+                    .setLinearHeadingInterpolation(H(60), H(90))
                     .build();
 
 
