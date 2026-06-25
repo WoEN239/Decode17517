@@ -16,7 +16,7 @@ public class CashedMotor {
         this.motor = motor;
     }
     public void setPower(double p){
-        if( Math.abs(p-lastPower)>0.001){
+        if( Math.abs(p-lastPower)>0.01){
             motor.setPower(p);
             lastPower = p;
         }

@@ -122,12 +122,13 @@ public class FSM {
         }
     }
 
-    public static double kV = 0.003;
-    public static double kT = -2;
+    public static double kV = 0.004;
+    public static double kT = -0.4;
 
     public static boolean usingK = true;
 
     double lastAngle = -Math.PI*0.5;
+
     public void update() {
         if (target == state)
             timer.reset();
@@ -136,6 +137,8 @@ public class FSM {
 
         FtcDashboard.getInstance().getTelemetry().addData("timer", timer
                 .seconds());
+
+
 
         double x = Flywheel.xGoal;
         double y = Flywheel.yGoal;
@@ -154,15 +157,15 @@ public class FSM {
 
         Pose pose = new Pose(x,y,0);
 
-        FtcDashboard.getInstance().getTelemetry().addData("distance to goal", pose.distanceFrom(robotPose));
+        FtcDashboard.getInstance().getTelemetry().addData("distance to rotated goal", pose.distanceFrom(robotPose));
         FtcDashboard.getInstance().getTelemetry().update();
+
 
         double dX = x - robotPose.getX();
         double dY = y - robotPose.getY();
 
         double absoluteAngleToGoal = Math.atan2(dY, dX);
 
-        //FtcDashboard.getInstance().getTelemetry().addData("relative turret angle", Math.toDegrees(relativeTurretAngle));
         FtcDashboard.getInstance().getTelemetry().addData("dx", dX);
         FtcDashboard.getInstance().getTelemetry().addData("dY", dY);
 
@@ -183,6 +186,7 @@ public class FSM {
         flywheel.update();
         turret.update();
         intake.update();
+
 
     }
     private ElapsedTime deltaTime = new ElapsedTime();

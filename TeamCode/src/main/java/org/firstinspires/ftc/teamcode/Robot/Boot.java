@@ -4,11 +4,15 @@ import static java.lang.Math.PI;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
@@ -43,6 +47,13 @@ public class Boot extends LinearOpMode {
         turret_start_angle = -PI*0.5;
 
         FSM.usingK = false;
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        DcMotorEx enc = hardwareMap.get(DcMotorEx.class, "motor_lb");
+        enc.setDirection(DcMotorSimple.Direction.FORWARD);
+        enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        enc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         while (opModeIsActive()) {
             follower.update();

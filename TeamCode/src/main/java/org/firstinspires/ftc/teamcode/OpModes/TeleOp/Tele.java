@@ -14,6 +14,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -48,16 +49,18 @@ public class Tele extends OpMode {
     ElapsedTime telemetryTimer = new ElapsedTime();
     public static double wX = 0.8;
     public static double wY = 0.8;
-    public static double wH = 0.95;
+    public static double wH = 0.8;
 
 
     @Override
     public void init() {
+//        GoBildaPinpointDriver odo = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+
         follower = Constants.getInstance().createFollower(hardwareMap);
         follower.setStartingPose(Boot.startPose != null ? Boot.startPose :new Pose(0, 0, PI));
 
 
-        follower.drivetrain.breakFollowing() ;
+//        follower.drivetrain.breakFollowing() ;
 
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -147,15 +150,15 @@ public class Tele extends OpMode {
         Vector vel = follower.getVelocity();
         vel.rotateVector(-follower.getPose().getHeading());
 
-        xPid.setTargetPosition(sticks.getXComponent()*84);
+        xPid.setTargetPosition(sticks.getXComponent()*88);
         xPid.updatePosition(vel.getXComponent());
-        xPid.updateFeedForwardInput(sticks.getXComponent()*84);
+        xPid.updateFeedForwardInput(sticks.getXComponent()*88);
         double x = xPid.run();
         FtcDashboard.getInstance().getTelemetry().addData("xErr", xPid.getError());
 
-        yPid.setTargetPosition(sticks.getYComponent()*65);
+        yPid.setTargetPosition(sticks.getYComponent()*88);
         yPid.updatePosition(vel.getYComponent());
-        yPid.updateFeedForwardInput(sticks.getYComponent()*65);
+        yPid.updateFeedForwardInput(sticks.getYComponent()*88);
         double y = yPid.run();
         FtcDashboard.getInstance().getTelemetry().addData("yErr", yPid.getError());
 
@@ -178,10 +181,10 @@ public class Tele extends OpMode {
         double rb = x + h - y;
         double lb = x - h + y;
 
-        follower.getDrivetrain().runDrive(
-                new double[]{lf,lb,rf,rb}
-        );
-       // runDrive(lf,rf,rb,lb);
+//        follower.getDrivetrain().runDrive(
+//                new double[]{lf,lb,rf,rb}
+//        );
+        runDrive(lf,rf,rb,lb);
         FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
 
         FtcDashboard.getInstance().getTelemetry().addData("jx",gamepad1.left_stick_y);
@@ -196,8 +199,8 @@ public class Tele extends OpMode {
         return (1 - w) * x + w * x * x * x;
     }
 
-    public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015, 0, 0, 0.012);
-    public static PIDFCoefficients yPidC = new PIDFCoefficients(0.02, 0, 0, 0.0154);
+    public static PIDFCoefficients xPidC = new PIDFCoefficients(0.015, 0, 0, 0.011);
+    public static PIDFCoefficients yPidC = new PIDFCoefficients(0.02, 0, 0, 0.011);
     public static PIDFCoefficients hPidC = new PIDFCoefficients(0.05, 0, 0, 0.14);
     private PIDFController xPid = new PIDFController(xPidC);
     private PIDFController yPid = new PIDFController(yPidC);

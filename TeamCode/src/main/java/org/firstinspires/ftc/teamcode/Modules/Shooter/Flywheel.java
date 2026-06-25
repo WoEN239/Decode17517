@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Modules.Shooter;
 
 import static org.firstinspires.ftc.teamcode.Modules.FSM.kT;
+import static org.firstinspires.ftc.teamcode.Modules.FSM.usingK;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -40,8 +41,6 @@ public class Flywheel {
 
     public static boolean debug = false;
 
-    public static double kV = 0;
-
     private CashedServo l;
     private CashedServo r;
     private CashedServo c;
@@ -56,7 +55,7 @@ public class Flywheel {
     public static double maxDistNear = 108;
 
     public static double minDistFar = 123;
-    public static double maxDistFar = 164;
+    public static double maxDistFar = 161;
 
     public static double xGoal = -70;
     public static double yGoal = -70;
@@ -90,10 +89,11 @@ public class Flywheel {
 
       if (Boot.alliance == ALLIANCE.RED) {
             xGoal = xGoal;
-            yGoal = -yGoal;
+            yGoal = Math.abs(yGoal);
+
             xGoalFar = xGoalFar;
-            yGoalFar = -yGoalFar;
-     }
+            yGoalFar = Math.abs(yGoalFar);
+      }
     }
 
     private double calculatePowerToDist(double dist2Tar, double minDist, double maxDist, double minVel2Tar, double maxVel2Tar) {
@@ -121,9 +121,16 @@ public class Flywheel {
 
         Vector robotVel =  follower.getVelocity();
 
-        Pose goal = new Pose(xGoal, yGoal, 0);
+        Pose goal;
+        if(usingK) {
+            goal = new Pose(Flywheel.xGoal + kT * robotVel.getXComponent(), Flywheel.yGoal + kT * robotVel.getYComponent(), 0);
+        }else{
+            goal = new Pose(Flywheel.xGoal, Flywheel.yGoal);
+        }
 
-        double distToTarget = follower.getPose().distanceFrom(new Pose(Flywheel.xGoal + kT*robotVel.getXComponent(), Flywheel.yGoal + kT*robotVel.getYComponent()));///add for future
+        double distToTarget = follower.getPose().distanceFrom(goal);///add for future
+        FtcDashboard.getInstance().getTelemetry().addData("goal + X", goal.getX());
+        FtcDashboard.getInstance().getTelemetry().addData("goal + Y", goal.getY());
 
         lPIDFCotroler.setCoefficients(flywheelMotorCoef);
         rPIDFCotroler.setCoefficients(flywheelMotorCoef);
@@ -221,7 +228,7 @@ public class Flywheel {
             packet.put("Current Velocity C", cMotor.getMotor().getVelocity());
             packet.put("Current Velocity R", rMotor.getMotor().getVelocity());
             packet.put("distance", distToTarget);
-            packet.put("far", distToTarget > 150);
+            packet.put("far", distToTarget > 120);
 
             dashboard.sendTelemetryPacket(packet);
 

@@ -25,9 +25,9 @@ import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 
-@Autonomous
+@Autonomous(name = "Pedro Pathing Autonomous", group = "Autonomous")
 @Configurable // Panels
-public class Solo extends OpMode {
+public class FarAutoNoLL extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
@@ -41,40 +41,23 @@ public class Solo extends OpMode {
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
-        follower = Constants.getInstance().createFollower(hardwareMap);
-        follower.setStartingPose(Boot.startPose != null ? Boot.startPose : new Pose(-58, -45.5, Math.toRadians(142)));
+        follower = Boot.follower;
 
         paths = new Paths(follower);
 
 
         fsm.start(hardwareMap, follower);
 
-
         fsm.setState(FSM_STATE.DRIVE);
 
         Scheduler.reset();
 
-        Command gateFarming = sequential(
-                instant(() -> fsm.setState(FSM_STATE.EAT)),
-                race(
-                        follow(follower, paths.eat3),
-                        waitMs(1200)),
-                waitMs(1000),
-
-                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
-                follow(follower, paths.shoot4),
-                waitMs(600),
-                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(300)
-        );
-
 
         Command autoRoutine = sequential(
-                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+
                 follow(follower, paths.shoot1),
-                waitMs(150),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(300),
+                waitMs(150),
 
 
                 parallel(follow(follower, paths.eat1),
@@ -82,9 +65,9 @@ public class Solo extends OpMode {
                 instant(() -> fsm.setState(FSM_STATE.DRIVE)),
 
                 follow(follower, paths.shoot2),
-                waitMs(50),
+                waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(300),
+                waitMs(150),
 
 
                 parallel(race(follow(follower, paths.eatAndOpenGate1),
@@ -97,15 +80,54 @@ public class Solo extends OpMode {
                 follow(follower, paths.shoot3),
                 waitMs(100),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
-                waitMs(300),
-                gateFarming,
-                gateFarming,
-                gateFarming,
-                gateFarming,
-               gateFarming
+                waitMs(150),
 
+                race(parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200)),
+                waitMs(1000),
 
-               /*
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot4),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(250),
+                race(parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200)),
+                waitMs(2000),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot4),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(250),
+                race(parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200)),
+                waitMs(2000),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot4),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(250),
+                race(parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200)),
+                waitMs(2000),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot4),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(250),
+                race(parallel(follow(follower, paths.eat3),
+                                instant(() -> fsm.setState(FSM_STATE.EAT))),
+                        waitMs(1200)),
+                waitMs(2000),
+
+                instant(() -> fsm.setState(FSM_STATE.DRIVE)),
+                follow(follower, paths.shoot4),
+                instant(() -> fsm.setState(FSM_STATE.SHOOT)),
+                waitMs(250)
+              /*
 
 
 
@@ -130,7 +152,6 @@ public class Solo extends OpMode {
     public void loop() {
 
         fsm.update();
-        follower.update();
 
         Scheduler.execute();
 
@@ -161,18 +182,18 @@ public class Solo extends OpMode {
             shoot1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    P(-57, -45.5),
+                                    P(-58, -47),
                                     P(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(H(142), H(90))
+                    .setLinearHeadingInterpolation(H(145), H(90))
                     .build();
 
             eat1 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
                                     P(-13, -22),
-                                    P(-12, -53)
+                                    P(-12, -52)
                             )
                     )
                     .setConstantHeadingInterpolation(H(90)).setVelocityConstraint(20).setTranslationalConstraint(0.75)
@@ -193,9 +214,9 @@ public class Solo extends OpMode {
                             new BezierCurve(
                                     P(-13, -22),
                                     P(13, -25),
-                                    P(13, -58)
-                                    // P(3, -20),
-                                    //        P(3, -52.4)
+                                    P(13, -55),
+                                    P(3, -20),
+                                    P(3, -52.4)
                             )
                     )
                     .setLinearHeadingInterpolation(H(90), H(90)).setTranslationalConstraint(0.75)
@@ -204,12 +225,12 @@ public class Solo extends OpMode {
             shoot3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    P(13, -58),
-                                    P(13, -35),
+                                    P(8, -52.4),
+                                    P(2, -36),
                                     P(-13, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(H(90))
+                    .setLinearHeadingInterpolation(H(90), H(55))
                     .build();
 
             eat3 = follower.pathBuilder()
@@ -217,7 +238,7 @@ public class Solo extends OpMode {
                             new BezierCurve(
                                     P(-13, -22),
                                     P(11, -44),
-                                    P(10.5, -59.7)
+                                    P(11, -57.7)
                             )
                     )
                     .setLinearHeadingInterpolation(H(90), H(60)).setTranslationalConstraint(0.75)
@@ -226,13 +247,14 @@ public class Solo extends OpMode {
             shoot4 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    P(10, -59.7),
-                                    P(15, -59.7),
+                                    P(11, -57.7),
+                                    P(8, -52.4),
                                     P(-13, -22)
                             )
                     )
-                    .setLinearHeadingInterpolation(H(60), H(70)).setTranslationalConstraint(0.5)
+                    .setLinearHeadingInterpolation(H(90), H(90))
                     .build();
+
 
 
             shootAndPark5 = follower.pathBuilder()
@@ -253,7 +275,7 @@ public class Solo extends OpMode {
 
     public static Pose P(double x, double y) {
         if (Boot.alliance == ALLIANCE.RED) {
-            return new Pose(x, -y);
+            return new Pose(-x, -y);
         }
         return new Pose(x, y);
     }
@@ -261,7 +283,7 @@ public class Solo extends OpMode {
     public static double H(double deg) {
         double rad = Math.toRadians(deg);
         if (Boot.alliance == ALLIANCE.RED) {
-            return -rad + Math.PI;
+            return rad + Math.PI;
         }
         return rad;
     }
@@ -274,8 +296,6 @@ public class Solo extends OpMode {
 
     @Override
     public void stop() {
-        fsm.turret.stopTurret();
-        Boot.startPose = follower.getPose();
+        //   fsm.stop();
     }
-
 }

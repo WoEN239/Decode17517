@@ -64,9 +64,6 @@ public class Turret {
 
 
         enc = hardwareMap.get(DcMotorEx.class, "motor_lb");
-        enc.setDirection(DcMotorSimple.Direction.FORWARD);
-        enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        enc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.robotAngle = robotAngle;
         this.robotVel = robotVel;
@@ -172,7 +169,7 @@ public class Turret {
     }
 
     public void stopTurret(){
-        turret_start_offset = getAngleFromEnc();
+        //turret_start_offset = getAngleFromEnc();
     }
 }
 
