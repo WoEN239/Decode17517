@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import static com.pedropathing.math.MathFunctions.normalizeAngleSigned;
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -201,6 +203,14 @@ public class Tele extends OpMode {
         double rf = x + h + y;
         double rb = x + h - y;
         double lb = x - h + y;
+
+        double max = max( max(abs(lf),abs(lb)),max(abs(rf),abs(rb)) );
+        if(max>1){
+            lf/=max;
+            lb/=max;
+            rb/=max;
+            rf/=max;
+        }
 
         runDrive(lf,rf,rb,lb);
         FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));

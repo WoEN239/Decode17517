@@ -24,8 +24,6 @@ import org.firstinspires.ftc.teamcode.Pedro.Constants;
 @Configurable
 public class Boot extends LinearOpMode {
 
-    //public static Pose startPose = new Pose(-58, -47, Math.toRadians(145));
-
     public static Follower follower;
 
     public static ALLIANCE alliance = ALLIANCE.BLUE;
