@@ -24,6 +24,8 @@ import org.firstinspires.ftc.teamcode.Robot.Boot;
 import org.firstinspires.ftc.teamcode.Util.CashedMotor;
 import org.firstinspires.ftc.teamcode.Util.CashedServo;
 
+import java.util.function.Supplier;
+
 
 @Config
 @Configurable
@@ -49,8 +51,6 @@ public class Flywheel {
 
     ShooterConst shooterConst = new ShooterConst();
 
-    private Follower follower;
-
     public static double minDistNear = 57;
     public static double maxDistNear = 108;
 
@@ -65,9 +65,10 @@ public class Flywheel {
 
     public static double diff = 0;
 
+    Supplier<Pose> pose;
+    Supplier<Pose> vel;
 
-    public void start(HardwareMap hardwareMap, Follower follower, ALLIANCE alliance) {
-        this.follower = follower;
+    public void start(HardwareMap hardwareMap, Supplier<Pose> pose, Supplier<Pose> vel, ALLIANCE alliance) {
         lMotor = new CashedMotor(hardwareMap.get(DcMotorEx.class, "gun_l"));
         rMotor = new CashedMotor(hardwareMap.get(DcMotorEx.class, "gun_r"));
         cMotor = new CashedMotor(hardwareMap.get(DcMotorEx.class, "gun_c"));
@@ -119,7 +120,7 @@ public class Flywheel {
     public void update() {
         //follower.update();
 
-        Vector robotVel =  follower.getVelocity();
+        Vector robotVel = vel.get().getAsVector();
 
         Pose goal;
         if(usingK) {
@@ -128,7 +129,7 @@ public class Flywheel {
             goal = new Pose(Flywheel.xGoal, Flywheel.yGoal);
         }
 
-        double distToTarget = follower.getPose().distanceFrom(goal);///add for future
+        double distToTarget = pose.get().distanceFrom(goal);///add for future
         FtcDashboard.getInstance().getTelemetry().addData("goal + X", goal.getX());
         FtcDashboard.getInstance().getTelemetry().addData("goal + Y", goal.getY());
 
@@ -137,7 +138,7 @@ public class Flywheel {
         cPIDFCotroler.setCoefficients(flywheelMotorCoef);
 
         if (distToTarget < 120) {
-            Pose robotPose = follower.getPose();
+            Pose robotPose = pose.get();
             double dX = xGoal - robotPose.getX();
             double dY = yGoal - robotPose.getY();
 

@@ -20,6 +20,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Modules.FSM;
 import org.firstinspires.ftc.teamcode.Modules.FSM_STATE;
 import org.firstinspires.ftc.teamcode.Modules.Shooter.Flywheel;
@@ -32,7 +35,6 @@ import org.firstinspires.ftc.teamcode.Util.CashedMotor;
 @Config
 @TeleOp
 public class Tele extends OpMode {
-    private Follower follower;
     private TelemetryManager telemetryM;
 
     FSM fsm = new FSM();
@@ -51,18 +53,11 @@ public class Tele extends OpMode {
     public static double wY = 0.8;
     public static double wH = 0.8;
 
-
+    GoBildaPinpointDriver odo;
     @Override
     public void init() {
-//        GoBildaPinpointDriver odo = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        follower = Constants.getInstance().createFollower(hardwareMap);
-        follower.setStartingPose(Boot.startPose != null ? Boot.startPose :new Pose(0, 0, PI));
-
-
-//        follower.drivetrain.breakFollowing() ;
-
-        follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         motor_lf = new CashedMotor(hardwareMap.get(DcMotorEx.class,"motor_lf"));
@@ -78,14 +73,29 @@ public class Tele extends OpMode {
 
     @Override
     public void start() {
-        fsm.start(hardwareMap, follower);
+        fsm.start(hardwareMap,this::getPose, this::getVelocity);
         telemetryTimer.reset();
     }
 
     ElapsedTime deltaTime = new ElapsedTime();
+    Pose velocity;
+    Pose pose;
+
+    public Pose getPose() {
+        return pose.copy();
+    }
+    public Pose getVelocity(){
+        return velocity.copy();
+    }
+
     @Override
     public void loop() {
-        follower.poseTracker.update();
+        odo.update();
+        Pose2D pose2D = odo.getPosition();
+        pose = new Pose(pose2D.getX(DistanceUnit.INCH), pose2D.getY(DistanceUnit.INCH), pose2D.getHeading(AngleUnit.RADIANS));
+
+        velocity = new Pose(odo.getVelX(DistanceUnit.INCH),odo.getVelY(DistanceUnit.INCH),odo.getHeading(AngleUnit.RADIANS));
+
         fsm.update();
 
         if(gamepad2.dpadUpWasPressed()){
@@ -97,10 +107,21 @@ public class Tele extends OpMode {
             Flywheel.yGoal += 1;
             Flywheel.yGoalFar += 1;
         }
+
         if(gamepad2.dpadRightWasPressed()){
+            Flywheel.xGoal -= 1;
+            Flywheel.xGoalFar -= 1;
+        }
+
+        if(gamepad2.dpadLeftWasPressed()){
+            Flywheel.xGoal += 1;
+            Flywheel.xGoalFar += 1;
+        }
+
+        if(gamepad2.rightBumperWasPressed()){
             Boot.turret_start_offset += 0.01;
         }
-        if(gamepad2.dpadLeftWasPressed()){
+        if(gamepad2.leftBumperWasPressed()){
             Boot.turret_start_offset -= 0.01;
         }
         telemetry.addData("xGoal",Flywheel.xGoal);
@@ -145,10 +166,10 @@ public class Tele extends OpMode {
         if(Boot.alliance == ALLIANCE.BLUE){
             allianceAngle = -PI*0.5;
         }
-        sticks.rotateVector(-follower.getPose().getHeading() + allianceAngle);
+        sticks.rotateVector(-pose.getHeading() + allianceAngle);
 
-        Vector vel = follower.getVelocity();
-        vel.rotateVector(-follower.getPose().getHeading());
+        Vector vel = getVelocity().getAsVector();
+        vel.rotateVector(getPose().getHeading());
 
         xPid.setTargetPosition(sticks.getXComponent()*88);
         xPid.updatePosition(vel.getXComponent());
@@ -163,7 +184,7 @@ public class Tele extends OpMode {
         FtcDashboard.getInstance().getTelemetry().addData("yErr", yPid.getError());
 
         hPid.setTargetPosition(fpv(-gamepad1.right_stick_x,wH)*7);
-        hPid.updatePosition(follower.getAngularVelocity());
+        hPid.updatePosition(getVelocity().getHeading());
         hPid.updateFeedForwardInput(fpv(-gamepad1.right_stick_x,wH)*7);
         double h = hPid.run();
 
@@ -172,7 +193,7 @@ public class Tele extends OpMode {
         isAngleControl = gamepad1.right_trigger>0.1;
         if(isAngleControl){
             anglePid.setCoefficients(anglePidC);
-            anglePid.updateError( normalizeAngleSigned(angleToControl-follower.getHeading()) );
+            anglePid.updateError( normalizeAngleSigned(angleToControl-getPose().getHeading()) );
             h = anglePid.run();
         }
 
@@ -181,9 +202,6 @@ public class Tele extends OpMode {
         double rb = x + h - y;
         double lb = x - h + y;
 
-//        follower.getDrivetrain().runDrive(
-//                new double[]{lf,lb,rf,rb}
-//        );
         runDrive(lf,rf,rb,lb);
         FtcDashboard.getInstance().getTelemetry().addData("herz",1d/(deltaTime.seconds()));
 

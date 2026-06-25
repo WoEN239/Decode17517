@@ -67,7 +67,7 @@ public class Far extends OpMode {
         paths = new Paths(follower); // Build paths
 
 
-        fsm.start(hardwareMap, follower);
+        fsm.start(hardwareMap, ()->follower.getPose(),()->new Pose(follower.getVelocity().getXComponent(),follower.getVelocity().getYComponent(),follower.getAngularVelocity()));
 
         fsm.setState(FSM_STATE.DRIVE);
 

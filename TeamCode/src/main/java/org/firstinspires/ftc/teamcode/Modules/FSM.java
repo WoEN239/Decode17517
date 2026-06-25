@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.Modules.Transfer.Transfer;
 import org.firstinspires.ftc.teamcode.Modules.Turret.Turret;
 import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
 
+import java.util.function.Supplier;
+
 @Config
 @Configurable
 public class FSM {
@@ -42,16 +44,17 @@ public class FSM {
         return state;
     }
 
-    private Follower follower;
 
-
-    public void start(HardwareMap hardwareMap, Follower follower) {
+    Supplier<Pose> pose;
+    Supplier<Pose> vel;
+    public void start(HardwareMap hardwareMap, Supplier<Pose> pose, Supplier<Pose> vel) {
         this.hardwareMap = hardwareMap;
-        this.follower = follower;
-        turret.start(hardwareMap, follower::getHeading, follower::getAngularVelocity);
-        flywheel.start(hardwareMap, follower, ALLIANCE.alliance);
+        turret.start(hardwareMap, ()->pose.get().getHeading(), ()->vel.get().getHeading());
+        flywheel.start(hardwareMap, ()->pose.get(), ()->vel.get(), ALLIANCE.alliance);
         intake.start(hardwareMap);
         transfer.start(hardwareMap);
+        this.pose = pose;
+        this.vel = vel;
     }
 
     public void updateStates() {
@@ -133,7 +136,7 @@ public class FSM {
         if (target == state)
             timer.reset();
         updateStates();
-        Pose robotPose = follower.getPose();
+        Pose robotPose = pose.get();
 
         FtcDashboard.getInstance().getTelemetry().addData("timer", timer
                 .seconds());
@@ -142,7 +145,7 @@ public class FSM {
 
         double x = Flywheel.xGoal;
         double y = Flywheel.yGoal;
-        Vector robotVel = follower.getVelocity();
+        Vector robotVel = vel.get().getAsVector();
 
         if(usingK) {
             x -= robotVel.getXComponent() * kV;
@@ -173,9 +176,9 @@ public class FSM {
         FtcDashboard.getInstance().getTelemetry().addData("y", robotPose.getY());
         FtcDashboard.getInstance().getTelemetry().addData("h", Math.toDegrees(robotPose.getHeading()));
 
-        FtcDashboard.getInstance().getTelemetry().addData("x vel", follower.getVelocity().getXComponent());
-        FtcDashboard.getInstance().getTelemetry().addData("y vel", follower.getVelocity().getYComponent());
-        FtcDashboard.getInstance().getTelemetry().addData("h vel", follower.getAngularVelocity());
+        FtcDashboard.getInstance().getTelemetry().addData("x vel", vel.get().getAsVector().getXComponent());
+        FtcDashboard.getInstance().getTelemetry().addData("y vel", vel.get().getAsVector().getYComponent());
+        FtcDashboard.getInstance().getTelemetry().addData("h vel", vel.get().getHeading());
 
         turret.setAngleToHold(absoluteAngleToGoal);
         turret.setRobotAngleVel( (absoluteAngleToGoal - lastAngle) /deltaTime.seconds());
