@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Modules.Camera.LimeLight;
+import org.firstinspires.ftc.teamcode.Robot.ALLIANCE;
+import org.firstinspires.ftc.teamcode.Robot.Boot;
 
 import java.util.List;
 
@@ -77,15 +79,26 @@ public class LimelightRealTime extends OpMode {
 
 
             telemetry.addData("Задержка (Staleness)", result.getStaleness() + " мс");
-
-            if (leftCount > rightCount && leftCount > centerCountRight && leftCount > centerCountLeft) {
-                theBiggestCounter = LimeLight.SIDE_OF_FIELD.LEFT;
-            } else if (rightCount > leftCount && rightCount > centerCountRight && rightCount > centerCountLeft) {
-                theBiggestCounter = LimeLight.SIDE_OF_FIELD.RIGHT;
-            } else if (centerCountLeft > leftCount && centerCountLeft > centerCountRight && centerCountLeft > rightCount) {
-                theBiggestCounter = LimeLight.SIDE_OF_FIELD.CENTER_L;
-            } else if (centerCountRight > leftCount && centerCountRight > centerCountLeft && centerCountRight > rightCount) {
-                theBiggestCounter = LimeLight.SIDE_OF_FIELD.CENTER_R;
+            if(Boot.alliance == ALLIANCE.BLUE) {
+                if (leftCount > rightCount && leftCount > centerCountRight && leftCount > centerCountLeft) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.LEFT;
+                } else if (rightCount > leftCount && rightCount > centerCountRight && rightCount > centerCountLeft) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.RIGHT;
+                } else if (centerCountLeft > leftCount && centerCountLeft > centerCountRight && centerCountLeft > rightCount) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.CENTER_L;
+                } else if (centerCountRight > leftCount && centerCountRight > centerCountLeft && centerCountRight > rightCount) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.CENTER_R;
+                }
+            }else{
+                if (leftCount > rightCount && leftCount > centerCountRight && leftCount > centerCountLeft) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.RIGHT;
+                } else if (rightCount > leftCount && rightCount > centerCountRight && rightCount > centerCountLeft) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.LEFT;
+                } else if (centerCountLeft > leftCount && centerCountLeft > centerCountRight && centerCountLeft > rightCount) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.CENTER_R;
+                } else if (centerCountRight > leftCount && centerCountRight > centerCountLeft && centerCountRight > rightCount) {
+                    theBiggestCounter = LimeLight.SIDE_OF_FIELD.CENTER_L;
+                }
             }
 
         } else {

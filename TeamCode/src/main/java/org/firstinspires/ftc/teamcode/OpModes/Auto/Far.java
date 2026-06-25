@@ -78,7 +78,7 @@ public class Far extends OpMode {
                 waitMs(1000),
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(350),
-                instant(()->fsm.turret.lock(true, 0.2903)),
+                instant(() -> fsm.turret.lock(true, 0.2903)),
                 parallel(follow(follower, paths.eat1),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
                 waitMs(200),
@@ -88,8 +88,8 @@ public class Far extends OpMode {
                 instant(() -> fsm.setState(FSM_STATE.SHOOT)),
                 waitMs(350));
 
-        eatPreloadHm = sequential(parallel(race(follow(follower, paths.eat2),  waitMs(2000)),
-                                instant(() -> fsm.turret.lock(true, 0.2903)                            //waitMs(2000)
+        eatPreloadHm = sequential(parallel(race(follow(follower, paths.eat2), waitMs(2000)),
+                        instant(() -> fsm.turret.lock(true, 0.2903)                            //waitMs(2000)
                         ),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
                 waitMs(350),
@@ -101,9 +101,9 @@ public class Far extends OpMode {
                 instant(() -> fsm.turret.lock(true, 0)),
                 waitMs(200));
 
-        eatMidLeftChan = sequential(parallel(race(follow(follower, paths.eat3),  waitMs(2000)),
-                                instant(() -> fsm.turret.lock(true, 0.2903)
-                        //        waitMs(2000)
+        eatMidLeftChan = sequential(parallel(race(follow(follower, paths.eat3), waitMs(2000)),
+                        instant(() -> fsm.turret.lock(true, 0.2903)
+                                //        waitMs(2000)
                         ),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
                 waitMs(350),
@@ -114,8 +114,8 @@ public class Far extends OpMode {
                 instant(() -> fsm.turret.lock(true, 0)),
                 waitMs(200));
 
-        eatMidRightChain = sequential(parallel(race(follow(follower, paths.eat4),  waitMs(2000)),
-                                instant(() -> fsm.turret.lock(true, 0.2903)
+        eatMidRightChain = sequential(parallel(race(follow(follower, paths.eat4), waitMs(2000)),
+                        instant(() -> fsm.turret.lock(true, 0.2903)
 
                         ),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
@@ -127,9 +127,9 @@ public class Far extends OpMode {
                 instant(() -> fsm.turret.lock(true, 0)),
                 waitMs(200));
 
-        eatRightChain = sequential(parallel(race(follow(follower, paths.eat5),  waitMs(2000)),
-                                instant(() -> fsm.turret.lock(true, 0.2903)
-                        //        waitMs(2000)
+        eatRightChain = sequential(parallel(race(follow(follower, paths.eat5), waitMs(2000)),
+                        instant(() -> fsm.turret.lock(true, 0.2903)
+                                //        waitMs(2000)
                         ),
                         instant(() -> fsm.setState(FSM_STATE.EAT))),
                 waitMs(350),
@@ -234,124 +234,141 @@ public class Far extends OpMode {
             eat1 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(60, -32),
-                                    new Pose(35, -25),
-                                    new Pose(34, -59)
+                                    P(60, -32),
+                                    P(35, -25),
+                                    P(34, -59)
                             )
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(90))
+                    .setLinearHeadingInterpolation(H(90), H(90))
                     .build();
 
 
             shoot2 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(34, -54),
-                                    new Pose(56, -22)
+                                    P(34, -54),
+                                    P(56, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             eat2 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(56, -22),
-                                    new Pose(58, -65)
+                                    P(56, -22),
+                                    P(58, -65)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             shoot3 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(58, -65),
-                                    new Pose(56, -22)
+                                    P(58, -65),
+                                    P(56, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             eat3 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(56, -22),
-                                    new Pose(42, -50),
-                                    new Pose(42, -65)
+                                    P(56, -22),
+                                    P(42, -50),
+                                    P(42, -65)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             shoot4 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(42, -65),
-                                    new Pose(56, -22)
+                                    P(42, -65),
+                                    P(56, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             eat4 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(56, -22),
-                                    new Pose(30, -50),
-                                    new Pose(30, -65)
+                                    P(56, -22),
+                                    P(30, -50),
+                                    P(30, -65)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             shoot5 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(30, -65),
-                                    new Pose(56, -22)
+                                    P(30, -65),
+                                    P(56, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
             eat5 = follower.pathBuilder()
                     .addPath(
                             new BezierCurve(
-                                    new Pose(56, -22),
-                                    new Pose(18, -50),
-                                    new Pose(18, -65)
+                                    P(56, -22),
+                                    P(18, -50),
+                                    P(18, -65)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
 
             shoot6 = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(18, -65),
-                                    new Pose(56, -22)
+                                    P(18, -65),
+                                    P(56, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
             park = follower.pathBuilder()
                     .addPath(
                             new BezierLine(
-                                    new Pose(56, -22),
-                                    new Pose(40, -22)
+                                    P(56, -22),
+                                    P(40, -22)
                             )
                     )
-                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .setConstantHeadingInterpolation(H(90))
                     .build();
 
+
         }
+
+        public static Pose P(double x, double y) {
+            if (Boot.alliance == ALLIANCE.RED) {
+                return new Pose(x, -y);
+            }
+            return new Pose(x, y);
+        }
+
+        public static double H(double deg) {
+            double rad = Math.toRadians(deg);
+            if (Boot.alliance == ALLIANCE.RED) {
+                return -rad + Math.PI;
+            }
+            return rad;
+        }
+
     }
 
 
@@ -362,20 +379,5 @@ public class Far extends OpMode {
         return 0;
     }
 
-
-    public static Pose P(double x, double y) {
-        if (Boot.alliance == ALLIANCE.RED) {
-            return new Pose(x, -y);
-        }
-        return new Pose(x, y);
-    }
-
-    public static double H(double deg) {
-        double rad = Math.toRadians(deg);
-        if (Boot.alliance == ALLIANCE.RED) {
-            return -rad + Math.PI;
-        }
-        return rad;
-    }
 
 }
