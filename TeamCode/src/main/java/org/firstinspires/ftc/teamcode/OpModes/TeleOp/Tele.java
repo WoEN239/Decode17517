@@ -14,6 +14,7 @@ import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.math.Vector;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
@@ -101,23 +102,43 @@ public class Tele extends OpMode {
         fsm.update();
 
         if(gamepad2.dpadUpWasPressed()){
-            Flywheel.yGoal -= 1;
-            Flywheel.yGoalFar -= 1;
+            if(Boot.alliance == ALLIANCE.RED){
+                Flywheel.yGoal += 1;
+                Flywheel.yGoalFar += 1;
+            }else{
+                Flywheel.yGoal -= 1;
+                Flywheel.yGoalFar -= 1;
+            }
         }
 
         if(gamepad2.dpadDownWasPressed()){
-            Flywheel.yGoal += 1;
-            Flywheel.yGoalFar += 1;
+            if(Boot.alliance == ALLIANCE.RED){
+                Flywheel.yGoal -= 1;
+                Flywheel.yGoalFar -= 1;
+            }else{
+                Flywheel.yGoal += 1;
+                Flywheel.yGoalFar += 1;
+            }
         }
 
         if(gamepad2.dpadRightWasPressed()){
-            Flywheel.xGoal -= 1;
-            Flywheel.xGoalFar -= 1;
+            if(Boot.alliance == ALLIANCE.RED){
+                Flywheel.xGoal += 1;
+                Flywheel.xGoalFar += 1;
+            }else{
+                Flywheel.xGoal -= 1;
+                Flywheel.xGoalFar -= 1;
+            }
         }
 
         if(gamepad2.dpadLeftWasPressed()){
-            Flywheel.xGoal += 1;
-            Flywheel.xGoalFar += 1;
+            if(Boot.alliance == ALLIANCE.RED){
+                Flywheel.xGoal -= 1;
+                Flywheel.xGoalFar -= 1;
+            }else{
+                Flywheel.xGoal += 1;
+                Flywheel.xGoalFar += 1;
+            }
         }
 
         if(gamepad2.rightBumperWasPressed()){
@@ -198,6 +219,10 @@ public class Tele extends OpMode {
             anglePid.updateError( normalizeAngleSigned(angleToControl-getPose().getHeading()) );
             h = anglePid.run();
         }
+
+        x = MathFunctions.clamp(x,-1,1);
+        h = MathFunctions.clamp(h,-1,1);
+        y = MathFunctions.clamp(y,-1,1);
 
         double lf = x - h - y;
         double rf = x + h + y;
